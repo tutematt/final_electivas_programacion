@@ -12,7 +12,7 @@
         android:theme="@style/Theme.Final_electivas_programacion"
         tools:targetApi="31">
         <activity
-            android:name=".PantallaLogin"
+            android:name=".LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.Final_electivas_programacion.NoActionBar">
             <intent-filter>

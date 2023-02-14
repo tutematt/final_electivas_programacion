@@ -1,53 +1,29 @@
 package com.example.final_electivas_programacion;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.text.Editable;
+import android.text.Layout;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.DatePickerDialog;
-import android.content.Intent;
-import android.os.Bundle;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AppCompatActivity;
-import android.view.View;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-//import com.example.afinal.databinding.ActivityMainBinding;
-
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
-import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.util.Calendar;
+import com.google.android.material.textfield.TextInputLayout;
 
 
 public class LoginActivity extends AppCompatActivity {
 
-    Button login;
-    Button crearUsuario;
-    EditText usuario;
-    EditText password;
+    Button login, crearUsuario;
     Cursor data;
-    Integer idPersona;
+    Integer idPersona; // REVISAR COMO MANEJAR VARIABLES "GLOBALES" PARA SABER SI ES ADMIN O NO
     Boolean esAdmin; // REVISAR COMO MANEJAR VARIABLES "GLOBALES" PARA SABER SI ES ADMIN O NO
+
+    /*Layout*/
+    TextInputLayout layoutUser, layoutPass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,48 +31,84 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pantalla_login);
 
-        DataBase admin = new DataBase(this, null);
+        DataBase admin = new DataBase(this);
         //this.databaseExists();
+        setearBotones();
 
-        login = findViewById(R.id.buttonLogin);
-        crearUsuario = findViewById(R.id.buttonCrearUsuario);
-        usuario = findViewById(R.id.editTextUsuario);
-        password = findViewById(R.id.editTextPassword);
+        layoutUser.getEditText().setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                hideKeyboard(v);
+            }
+        });
+
+        layoutPass.getEditText().setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                hideKeyboard(v);
+            }
+        });
+
+        login.setOnClickListener(view -> {
+            login();
+        });
+
+        crearUsuario.setOnClickListener(view -> {
+            registrarse();
+        });
+
+
     }
 
-    public void login(View vista) {
-        Persona p = this.validarUsuario(vista); // valido que complete los campos requeridos
+    private void setearBotones() {
+        login = findViewById(R.id.ButtonIniciarSesionPL);
+        crearUsuario = findViewById(R.id.ButtonRegistrarsePL);
+        layoutUser = findViewById(R.id.layoutPasswordPL);
+        layoutPass = findViewById(R.id.layoutPasswordPL);
+    }
+
+    public void login() {
+        Persona p = validarUsuario(); // valido que complete los campos requeridos
         if(p != null){
             idPersona = p.getDni();
             Intent intent;
             if(p.getEsAdmin()){
-                intent = new Intent(vista.getContext(), AdminActivity.class);
+                intent = new Intent(this, AdminActivity.class);
+
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
             else{
-                intent = new Intent(vista.getContext(), MainActivity.class);
+                intent = new Intent(this, MainActivity.class);
+
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
             intent.putExtra("idPersona", idPersona);
             startActivity(intent);
         }
     }
 
-    public void registrarse(View vista) {
-        Intent intent = new Intent(vista.getContext(), CrearUsuarioActivity.class);
-        startActivity(intent);
+    public void registrarse() {
+        Intent i = new Intent(this, PantallaRegistrarse.class);
+        startActivity(i);
+
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
-    public Persona validarUsuario(View vista) {
+    public Persona validarUsuario() {
         Persona p = null;
-        if (usuario.getText().toString().isEmpty() || password.getText().toString().isEmpty()){
+        if (layoutUser.getEditText().getText().toString().isEmpty() || layoutPass.getEditText().getText().toString().isEmpty()){
             Toast.makeText(this, "Debe ingresar un Usuario y una Contraseña", Toast.LENGTH_SHORT).show();
         }
         else{
-            DataBase admin = new DataBase(this, null);
-            p = admin.buscarPersona(usuario.getText().toString(), password.getText().toString());
+            DataBase admin = new DataBase(this);
+            p = admin.buscarPersona(layoutUser.getEditText().getText().toString(), layoutPass.getEditText().getText().toString());
             if(p == null){
                 Toast.makeText(this, "Usuario y/o Contraseña invalidos", Toast.LENGTH_SHORT).show();
             }
         }
         return p;
+    }
+
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

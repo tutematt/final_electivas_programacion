@@ -42,7 +42,7 @@ public class DataBase extends SQLiteOpenHelper {
         onCreate(dataBase);
     }
 
-    private Persona buscarPersona(String username, String password){
+    public Persona buscarPersona(String username, String password){
         SQLiteDatabase db = this.getWritableDatabase();
         Persona p = null;
         String q = "SELECT * FROM PERSONA WHERE usuario = " + "'" + username + "' AND contrasenia = " + "'" + password + "';";
