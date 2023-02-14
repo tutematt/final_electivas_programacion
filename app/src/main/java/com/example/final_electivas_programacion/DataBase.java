@@ -1,6 +1,7 @@
 package com.example.final_electivas_programacion;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -17,26 +18,48 @@ public class DataBase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase dataBase) {
-        dataBase.execSQL("CREATE TABLE TARIFAS(id_tarifa int primary key, codigo text, nombre text, precio float)");
-        dataBase.execSQL("CREATE TABLE PAGOS(id_pago int primary key, DateTime fecha, id_tarifa int, descuento float, total float, cant_pasajeros int, tipo_pago text)");
-        dataBase.execSQL("CREATE TABLE VUELOS(id_vuelo int primary key, destino text, origen text, fecha_salida dateTime, fecha_llegada dateTime, restriccion double, descuento double)");
-        // tabla intermedia para asociar asientos al vuelo
-        dataBase.execSQL("CREATE TABLE ASIENTOS(id_asiento int primary key, fila text, estado int, id_tarifa int)");
-        dataBase.execSQL("CREATE TABLE RESERVAS(id_reserva int primary key, id_vuelo int, id_pasajero int, id_pago int, cancelado boolean)");
-        //tabla intermedia para los asientos de una reserva
-        dataBase.execSQL("CREATE TABLE ASIENTOS_RESERVAS(id int primary key, id_reserva int, id_asiento int)");
-        dataBase.execSQL("CREATE TABLE PERSONAS(id_pasajero int primary key, nro_documento int, nombre text, apellido text, usuario text, contrasenia text, admin boolean)");
+        dataBase.execSQL("CREATE TABLE TARIFA(ID_TARIFA int primary key, CODE text, NAME text, PRICE float)");
+        dataBase.execSQL("CREATE TABLE PAGO(ID_PAGO int primary key, DateTime DATE, ID_TARIFA int, DISCOUNT float, NUMBER_PASSENGERS int, TOTAL_AMOUNT float /*, PAYMENT_TYPE text*/ )");
+        dataBase.execSQL("CREATE TABLE VUELO(ID_VUELO int primary key, CODE text, ORIGIN text, ARRIVAL text, DATE dateTime, CAPABILITY double, RESTRICTION double)");
+        // FALTA tabla intermedia para asociar asientos al vuelo ASIENTOS_X_VUELO
+        dataBase.execSQL("CREATE TABLE ASIENTO(ID_ASIENTO int primary key, LINE text, NUMBER int, STATUS int, ID_TARIFA int)");
+        dataBase.execSQL("CREATE TABLE RESERVA(ID_RESERVA int primary key, ID_VUELO int, ID_PAGO int, IS_CANCEL boolean, ID_PASAJERO int)");
+        //tabla intermedia entre los la reserva y los tickets
+        //dataBase.execSQL("CREATE TABLE ASIENTOS_RESERVAS(id int primary key, id_reserva int, id_asiento int)");
+        dataBase.execSQL("CREATE TABLE PERSONA(ID_PERSONA int primary key, DNI int, NAME text, SURNAME text, USERNAME text, PASSWORD text, IS_ADMIN boolean)");
         // tabla intermedia para asociar las reservas a la persona
+        dataBase.execSQL("CREATE TABLE TICKET(ID_TICKET int primary key, ID_VUELO int, ID_PERSONA int, ISVALID boolean)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase dataBase, int var1, int var2) {
-        dataBase.execSQL("DROP TABLE IF EXISTS TARIFAS");
-        dataBase.execSQL("DROP TABLE IF EXISTS PAGOS");
-        dataBase.execSQL("DROP TABLE IF EXISTS VUELOS");
-        dataBase.execSQL("DROP TABLE IF EXISTS RESERVAS");
-        dataBase.execSQL("DROP TABLE IF EXISTS PERSONAS");
-        dataBase.execSQL("DROP TABLE IF EXISTS ASIENTOS_RESERVAS");
+        dataBase.execSQL("DROP TABLE IF EXISTS TARIFA");
+        dataBase.execSQL("DROP TABLE IF EXISTS PAGO");
+        dataBase.execSQL("DROP TABLE IF EXISTS VUELO");
+        dataBase.execSQL("DROP TABLE IF EXISTS RESERVA");
+        dataBase.execSQL("DROP TABLE IF EXISTS PERSONA");
+        dataBase.execSQL("DROP TABLE IF EXISTS TICKET");
         onCreate(dataBase);
+    }
+
+    private Persona buscarPersona(String username, String password){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Persona p = null;
+        String q = "SELECT * FROM PERSONA WHERE usuario = " + "'" + username + "' AND contrasenia = " + "'" + password + "';";
+        Cursor cursor= db.rawQuery(q,null);
+        if(cursor.moveToFirst()){
+            int id, doc;
+            String nom, apell, user, pass;
+            Boolean esAdmin;
+            //id = cursor.getInt(0);
+            doc = cursor.getInt(1);
+            nom = cursor.getString(2);
+            apell = cursor.getString(3);
+            user = cursor.getString(4);
+            pass = cursor.getString(5);
+            esAdmin = Boolean.parseBoolean(cursor.getString(5));
+            p = new Persona(/*id, */ doc, nom, apell, user, pass, esAdmin);
+        }
+        return p;
     }
 }
