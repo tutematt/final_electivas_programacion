@@ -1,4 +1,4 @@
-package com.example.afinal;
+package com.example.final_electivas_programacion;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -93,6 +93,6 @@ public class Persona {
     }
 
 
-    public String getNombreCompleto(){return nombre + " " + apellido}
+    public String getNombreCompleto(){return nombre + " " + apellido;}
 }
 

@@ -1,18 +1,18 @@
-package com.example.afinal;
+package com.example.final_electivas_programacion;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Reserva {
+public class Ticket {
 
     private int codigo; //ID_TICKET
     private Boolean esValido;
     private Vuelo vuelo;
     private Persona pasajero;
 
-    public Reserva(int cod, Boolean valid, Vuelo v, Persona p){
+    public Ticket(int cod, Boolean valid, Vuelo v, Persona p){
         codigo = cod;
-        esValido = cancel;
+        esValido = valid;
         vuelo = v;
         pasajero = p;
     }
@@ -34,7 +34,7 @@ public class Reserva {
     public void setPasajero(Persona p){
         pasajero = p;
     }
-    public Pago getPasajero(){
+    public Persona getPasajero(){
         return (pasajero);
     }
 

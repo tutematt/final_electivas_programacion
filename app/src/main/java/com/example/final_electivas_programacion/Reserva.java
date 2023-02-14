@@ -1,4 +1,4 @@
-package com.example.afinal;
+package com.example.final_electivas_programacion;
 
 import java.util.ArrayList;
 import java.util.Date;

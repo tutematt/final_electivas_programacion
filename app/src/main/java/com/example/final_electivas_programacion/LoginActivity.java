@@ -1,4 +1,4 @@
-package com.example.afinal;
+package com.example.final_electivas_programacion;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_pantalla_login);
 
         DataBase admin = new DataBase(this, null);
         //this.databaseExists();
@@ -92,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         else{
             DataBase admin = new DataBase(this, null);
-            p = admin.buscarPersona2(usuario.getText().toString(), password.getText().toString());
+            p = admin.buscarPersona(usuario.getText().toString(), password.getText().toString());
             if(p == null){
                 Toast.makeText(this, "Usuario y/o Contraseña invalidos", Toast.LENGTH_SHORT).show();
             }
