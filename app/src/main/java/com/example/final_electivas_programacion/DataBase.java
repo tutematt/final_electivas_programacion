@@ -1,5 +1,6 @@
 package com.example.final_electivas_programacion;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -41,6 +42,24 @@ public class DataBase extends SQLiteOpenHelper {
         dataBase.execSQL("DROP TABLE IF EXISTS TICKET");
         onCreate(dataBase);
     }
+    // region Personas
+    public void crearPersona(String user, String pass, String name, String surname, Integer dni) {
+        try{
+            SQLiteDatabase dataBase = this.getWritableDatabase();
+            ContentValues campos = new ContentValues();
+            campos.put("DNI", dni);             // 1
+            campos.put("USERNAME", user);       // 2
+            campos.put("PASSWORD", pass);       // 3
+            campos.put("NAME", name);           // 4
+            campos.put("SURNAME", surname);     // 5
+            campos.put("IS_ADMIN", false);      // 6
+            dataBase.insert("PERSONA", null, campos);
+            dataBase.close();
+        }
+        catch (Exception exception){
+            exception.getMessage();
+        }
+    }
 
     public Persona buscarPersona(String username, String password){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -57,9 +76,62 @@ public class DataBase extends SQLiteOpenHelper {
             apell = cursor.getString(3);
             user = cursor.getString(4);
             pass = cursor.getString(5);
-            esAdmin = Boolean.parseBoolean(cursor.getString(5));
+            esAdmin = Boolean.parseBoolean(cursor.getString(6));
             p = new Persona(/*id, */ doc, nom, apell, user, pass, esAdmin);
         }
         return p;
     }
+
+    public Persona buscarPersonaPorDni(Integer dni){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Persona p = null;
+        String q = "SELECT * FROM PERSONA WHERE DNI = " + dni + ";";
+        Cursor cursor= db.rawQuery(q,null);
+        if(cursor.moveToFirst()){
+            int id, doc;
+            String nom, apell, user, pass;
+            Boolean esAdmin;
+            // id = cursor.getInt(0);
+            doc = cursor.getInt(1);
+            nom = cursor.getString(2);
+            apell = cursor.getString(3);
+            user = cursor.getString(4);
+            pass = cursor.getString(5);
+            esAdmin = Boolean.parseBoolean(cursor.getString(6));
+            p = new Persona(/*id,*/ doc, nom, apell, user, pass, esAdmin);
+        }
+        return p;
+    }
+
+    public Persona buscarPersonaPorUser(String username){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Persona p = null;
+        String q = "SELECT * FROM PERSONA WHERE USERNAME = " + "'" + username + "';";
+        Cursor cursor= db.rawQuery(q,null);
+        if(cursor.moveToFirst()){
+            int id, doc;
+            String nom, apell, user, pass;
+            Boolean esAdmin;
+            id = cursor.getInt(0);
+            doc = cursor.getInt(1);
+            nom = cursor.getString(2);
+            apell = cursor.getString(3);
+            user = cursor.getString(4);
+            pass = cursor.getString(5);
+            esAdmin = Boolean.parseBoolean(cursor.getString(6));
+            p = new Persona(/*id,*/ doc, nom, apell, user, pass, esAdmin);
+        }
+        return p;
+    }
+
+    public void actualizarPersona(Integer dni, String username, String pass, String name, String surname)
+    {
+        SQLiteDatabase dataBase= this.getWritableDatabase();
+        Cursor query = dataBase.rawQuery("UPDATE PERSONA SET USERNMAE = " + "'" + username + "', PASSWORD = " + "'" + pass + "', NAME = " + "'" + name + "', SURNAME = " + "'" + surname + "' WHERE DNI = " + dni + ";", null);
+    }
+
+
+
+    // endregion
+
 }
