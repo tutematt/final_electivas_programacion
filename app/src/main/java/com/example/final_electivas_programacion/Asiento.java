@@ -9,12 +9,14 @@ public class Asiento {
     private String fila;
     private Integer estado; // 0 = LIBRE, 1 = OCUPADO, 2 = RESTRINGIDO
     private Tarifa tarifa;
+    private String clase;   // PRIMERA O ECONOMICA
 
-    public Asiento(int num, String row, Integer state, Tarifa price){
+    public Asiento(int num, String row, Integer state, Tarifa price, String c){
         nro = num;
         fila = row;
         estado = state;
         tarifa = price;
+        clase = c;
     }
 
     public int getNro() {
@@ -48,10 +50,17 @@ public class Asiento {
     public void setTarifa(Tarifa tarifa) {
         this.tarifa = tarifa;
     }
+    public String getClase() {
+        return clase;
+    }
+
+    public void setClase(String fila) {
+        this.clase = clase;
+    }
 
     @Override
     public String toString(){
-        return ("Asiento: "+ fila.toUpperCase() + nro + " - Estado: " + estado);
+        return ("Asiento: "+ fila.toUpperCase() + nro + " - Estado: " + estado + " - Tipo: " + clase);
     }
 }
 
