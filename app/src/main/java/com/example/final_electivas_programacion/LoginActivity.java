@@ -68,10 +68,12 @@ public class LoginActivity extends AppCompatActivity {
         if(p != null){
             idPersona = p.getDni();
             Intent intent;
-            intent = new Intent(this, MainActivity.class);
             if(p.getEsAdmin()){
+                intent = new Intent(this, AdminActivity.class);
                 intent.putExtra("esAdmin", true);
             }
+            else
+                intent = new Intent(this, AdminActivity.class);
             intent.putExtra("idPersona", idPersona);
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

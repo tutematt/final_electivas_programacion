@@ -130,6 +130,13 @@ public class DataBase extends SQLiteOpenHelper {
         Cursor query = dataBase.rawQuery("UPDATE PERSONA SET USERNMAE = " + "'" + username + "', PASSWORD = " + "'" + pass + "', NAME = " + "'" + name + "', SURNAME = " + "'" + surname + "' WHERE DNI = " + dni + ";", null);
     }
 
+    public Cursor traerVuelos() {
+        SQLiteDatabase database= this.getWritableDatabase();
+        Cursor data = database.rawQuery("SELECT CODE FROM VUELO", null);
+        return data;
+    }
+
+
 
 
     // endregion
