@@ -64,7 +64,7 @@ public class DataBase extends SQLiteOpenHelper {
     public Persona buscarPersona(String username, String password){
         SQLiteDatabase db = this.getWritableDatabase();
         Persona p = null;
-        String q = "SELECT * FROM PERSONA WHERE usuario = " + "'" + username + "' AND contrasenia = " + "'" + password + "';";
+        String q = "SELECT * FROM PERSONA WHERE USERNAME = " + "'" + username + "' AND PASSWORD = " + "'" + password + "';";
         Cursor cursor= db.rawQuery(q,null);
         if(cursor.moveToFirst()){
             int id, doc;

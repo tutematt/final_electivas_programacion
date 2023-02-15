@@ -8,4 +8,6 @@
     <string name="comleta_datos">Completa tus datos</string>
     <string name="DNI">D.N.I</string>
     <string name="volver">Volver</string>
+    <string name="nombre">Nombre</string>
+    <string name="apellido">Apellido</string>
 </resources>

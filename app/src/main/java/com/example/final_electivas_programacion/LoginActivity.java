@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.text.Layout;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -61,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
     private void setearBotones() {
         login = findViewById(R.id.ButtonIniciarSesionPL);
         crearUsuario = findViewById(R.id.ButtonRegistrarsePL);
-        layoutUser = findViewById(R.id.layoutPasswordPL);
+        layoutUser = findViewById(R.id.layoutUsuarioPL);
         layoutPass = findViewById(R.id.layoutPasswordPL);
     }
 
@@ -70,25 +68,19 @@ public class LoginActivity extends AppCompatActivity {
         if(p != null){
             idPersona = p.getDni();
             Intent intent;
+            intent = new Intent(this, MainActivity.class);
             if(p.getEsAdmin()){
-                intent = new Intent(this, AdminActivity.class);
-
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-            }
-            else{
-                intent = new Intent(this, MainActivity.class);
-
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                intent.putExtra("esAdmin", true);
             }
             intent.putExtra("idPersona", idPersona);
             startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         }
     }
 
     public void registrarse() {
         Intent i = new Intent(this, PantallaRegistrarse.class);
         startActivity(i);
-
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 

@@ -38,7 +38,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/usuario"
+            android:hint="@string/nombre"
             app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -55,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/distancia_campos_registro"
-            android:hint="@string/password"
+            android:hint="@string/apellido"
             app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText
