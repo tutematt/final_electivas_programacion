@@ -175,8 +175,8 @@ public class AgregarVuelo extends AppCompatActivity {
         restriccionStr = layoutPorcRestriccion.getEditText().getText().toString();
         String fecha  = seleccionarFecha.getText().toString();
         if(avionStr.isEmpty() || codigoStr.isEmpty() || origenStr.isEmpty() || destinoStr.isEmpty()
-                || horaStr.isEmpty() || horaStr != "Horario Partida" || restriccionStr.isEmpty()
-                || fecha.isEmpty() || fecha != "Fecha"){
+                || (horaStr.isEmpty() && horaStr != "Horario Partida") || restriccionStr.isEmpty()
+                || (fecha.isEmpty() && fecha != "Fecha")){
             Toast.makeText(this, "Por favor, complete todos los campos.", Toast.LENGTH_LONG).show();
             return false;
         }
