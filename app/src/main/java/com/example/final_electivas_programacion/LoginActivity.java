@@ -15,7 +15,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 public class LoginActivity extends AppCompatActivity {
 
-    Button login, crearUsuario;
+    Button login, crearUsuario, recuperarContrasenia;
     Cursor data;
     Integer idPersona; // REVISAR COMO MANEJAR VARIABLES "GLOBALES" PARA SABER SI ES ADMIN O NO
     Boolean esAdmin; // REVISAR COMO MANEJAR VARIABLES "GLOBALES" PARA SABER SI ES ADMIN O NO
@@ -38,27 +38,27 @@ public class LoginActivity extends AppCompatActivity {
                 hideKeyboard(v);
             }
         });
-
         layoutPass.getEditText().setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 hideKeyboard(v);
             }
         });
-
         login.setOnClickListener(view -> {
             login();
         });
-
         crearUsuario.setOnClickListener(view -> {
             registrarse();
         });
-
+        recuperarContrasenia.setOnClickListener(view -> {
+            recuperarContrasenia();
+        });
 
     }
 
     private void setearBotones() {
         login = findViewById(R.id.ButtonIniciarSesionPL);
-        crearUsuario = findViewById(R.id.ButtonRegistrarsePL);
+        crearUsuario = findViewById(R.id.ButtonRegistrarsePL);;
+        recuperarContrasenia = findViewById(R.id.buttonRecuperarContraseña);
         layoutUser = findViewById(R.id.layoutUsuarioPL);
         layoutPass = findViewById(R.id.layoutPasswordPL);
     }
@@ -99,6 +99,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
         return p;
+    }
+
+    public void recuperarContrasenia() {
+        Intent i = new Intent(this, PantallaRecuperarContrasenia.class);
+        startActivity(i);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     public void hideKeyboard(View view) {

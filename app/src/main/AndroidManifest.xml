@@ -25,7 +25,7 @@
         <activity android:name=".AdminActivity"></activity>
         <activity android:name=".ABM_Vuelo"></activity>
         <activity android:name=".AgregarVuelo"></activity>
-
+        <activity android:name=".PantallaRecuperarContrasenia"></activity>
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

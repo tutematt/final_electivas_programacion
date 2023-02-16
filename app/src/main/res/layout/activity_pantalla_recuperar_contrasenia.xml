@@ -5,7 +5,8 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     android:focusableInTouchMode="true"
-    android:clickable="true">
+    android:clickable="true"
+    android:focusable="true">
 
     <LinearLayout
         android:id="@+id/formulario_registro"
@@ -27,76 +28,48 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="50sp"
             android:fontFamily="@font/lato_bold"
-            android:text="@string/titulo_app"
+            android:text="@string/recuperar"
             android:textAlignment="center"
             android:textSize="30sp" />
 
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutUsuarioPL"
+            android:id="@+id/layoutDNIPRC"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/usuario"
+            android:hint="@string/DNI"
             app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTextUsuarioPL"
+                android:id="@+id/editTextUsuarioPLC"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/lato"
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutPasswordPL"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/distancia_campos_registro"
-            android:hint="@string/password"
-            app:endIconMode="clear_text">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTextPasswordPL"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/lato"
-                android:inputType="textPassword"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
-
         <Button
-            android:id="@+id/ButtonIniciarSesionPL"
+            android:id="@+id/ButtonRecuperarPRC"
             style="@style/Widget.Material3.Button.IconButton.Filled"
             android:layout_width="320sp"
             android:layout_height="70dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="250sp"
             android:fontFamily="@font/lato"
-            android:text="@string/iniciarSesion"
+            android:text="@string/recuperar"
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/ButtonRegistrarsePL"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="320sp"
-            android:layout_height="48sp"
+            android:id="@+id/ButtonVolverPRC"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="300sp"
+            android:layout_height="40sp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="50sp"
+            android:layout_marginTop="30sp"
             android:fontFamily="@font/lato"
-            android:text="@string/registrarse"
-            android:textSize="14sp" />
-
-        <Button
-            android:id="@+id/buttonRecuperarContraseña"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="match_parent"
-            android:layout_height="48sp"
-            android:layout_gravity="center_horizontal"
-            android:fontFamily="@font/lato"
-            android:text="@string/recuperar"
-            android:textSize="14sp" />
+            android:text="@string/volver"
+            android:textSize="15sp" />
 
 
     </LinearLayout>

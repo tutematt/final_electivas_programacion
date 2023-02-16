@@ -26,4 +26,5 @@
     <string name="fecha_llegada">Fecha Llegada</string>
     <string name="codigo">Codigo</string>
     <string name="horario_partida">Horario Partida</string>
+    <string name="recuperar">Recuperar contraseña</string>
 </resources>

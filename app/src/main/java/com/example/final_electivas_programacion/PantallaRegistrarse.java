@@ -133,7 +133,7 @@ public class PantallaRegistrarse extends AppCompatActivity {
     }
 
     public void ingresar(Persona p){
-        Toast.makeText(this, "¡Bienvenido" + userStr + "!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "¡Bienvenido " + userStr + "!", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent (this, MainActivity.class);
         intent.putExtra("idPersona", p.getDni());
         startActivity(intent);
