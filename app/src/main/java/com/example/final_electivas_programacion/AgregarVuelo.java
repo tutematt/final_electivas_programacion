@@ -1,6 +1,7 @@
 package com.example.final_electivas_programacion;
 
 import android.app.Activity;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Layout;
@@ -10,7 +11,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.TimePicker;
 import android.widget.Toast;
+
+import java.util.Locale;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,8 +31,11 @@ public class AgregarVuelo extends AppCompatActivity {
     private static final String[] destino = {"Aeropuerto Internacional Roma (ROM)"};
     AutoCompleteTextView autoCompleteAvion, autoCompleteOrigen, autoCompleteDestino;
     Button seleccionarFecha, btnEnviar, btnVolver;
-    TextInputLayout layoutCodigo, layoutHorario, layoutAvion, layoutOrigen, layoutDestino, layoutPorcRestriccion;
+    TextInputLayout layoutCodigo, layoutAvion, layoutOrigen, layoutDestino, layoutPorcRestriccion;
     String avionStr, codigoStr, origenStr, destinoStr, horaStr, restriccionStr;
+
+    Button timeButton;
+    int hour, minute;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,12 +53,6 @@ public class AgregarVuelo extends AppCompatActivity {
             }
         });
 
-        layoutHorario.getEditText().setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                hideKeyboard(v);
-            }
-        });
-
         btnEnviar = (Button) findViewById(R.id.buttonConfirmAV);
         btnEnviar.setOnClickListener(view -> {
             crearVuelo();
@@ -60,11 +61,32 @@ public class AgregarVuelo extends AppCompatActivity {
         /*Back Menu Configuracion*/
         btnVolver = (Button) findViewById(R.id.buttonVolverAV);
         btnVolver.setOnClickListener(view -> volver());
+
+
+    }
+    public void popTimePicker(View view)
+    {
+        TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener()
+        {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute)
+            {
+                hour = selectedHour;
+                minute = selectedMinute;
+                timeButton.setText(String.format(Locale.getDefault(), "%02d:%02d",hour, minute));
+            }
+        };
+
+        // int style = AlertDialog.THEME_HOLO_DARK;
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, /*style,*/ onTimeSetListener, hour, minute, true);
+
+        timePickerDialog.setTitle("Select Time");
+        timePickerDialog.show();
     }
 
     private void setearBotones() {
         layoutCodigo = findViewById(R.id.layoutCodigoAV);
-        layoutHorario = findViewById(R.id.layoutHorarioIdaAV);
         layoutAvion = findViewById(R.id.layoutAvionAV);
         layoutOrigen = findViewById(R.id.layoutOrigenAV);
         layoutDestino = findViewById(R.id.layoutDestinoAV);
@@ -73,6 +95,7 @@ public class AgregarVuelo extends AppCompatActivity {
         autoCompleteOrigen = findViewById(R.id.autoCompleteOrigenAV);
         autoCompleteDestino = findViewById(R.id.autoCompleteDestinoAV);
         seleccionarFecha = findViewById(R.id.buttonFechaVueloAV);
+        timeButton = findViewById(R.id.timeButton);
     }
 
     private void completarComboAviones() {
@@ -127,8 +150,8 @@ public class AgregarVuelo extends AppCompatActivity {
     private void crearVuelo(){
         try{
             if(this.validar()){
-                // validar que no se de de alta el mismo avion en el misma fecha
-                String fechaYHora = seleccionarFecha.getText().toString() + horaStr;
+                // FALTA validar que no se de de alta el mismo avion en el misma fecha
+                String fechaYHora = seleccionarFecha.getText().toString() + " " + horaStr;
                 int capacidad  = this.calcularCapacidad();
                 admin.crearVuelo(codigoStr, origenStr, destinoStr, fechaYHora, capacidad, Double.parseDouble(restriccionStr));
                 Toast.makeText(this, "Vuelo creado correctamente.", Toast.LENGTH_SHORT).show();
@@ -145,7 +168,7 @@ public class AgregarVuelo extends AppCompatActivity {
         codigoStr = layoutCodigo.getEditText().getText().toString();
         origenStr = layoutOrigen.getEditText().getText().toString();
         destinoStr =  layoutDestino.getEditText().getText().toString();
-        horaStr = layoutHorario.getEditText().getText().toString();
+        horaStr = timeButton.getText().toString();
         restriccionStr = layoutPorcRestriccion.getEditText().getText().toString();
         String fecha  = seleccionarFecha.getText().toString();
         if(avionStr.isEmpty() || codigoStr.isEmpty() || origenStr.isEmpty() || destinoStr.isEmpty() || horaStr.isEmpty()
@@ -153,6 +176,9 @@ public class AgregarVuelo extends AppCompatActivity {
             Toast.makeText(this, "Por favor, complete todos los campos.", Toast.LENGTH_LONG).show();
             return false;
         }
+
+        // FALTA: Validar que la fecha seleccionada sea mayor a hoy
+
         return true;
     }
     public int calcularCapacidad(){

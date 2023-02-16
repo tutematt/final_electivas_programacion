@@ -90,6 +90,7 @@
             android:layout_marginTop="@dimen/distancia_campos_registro"
             android:gravity="center_horizontal|center_vertical"
             android:text="@string/fecha"
+            android:textColor="#000000"
             android:fontFamily="@font/lato_bold"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             app:layout_constraintEnd_toEndOf="parent"
@@ -98,21 +99,22 @@
             app:icon="@drawable/image_calendar"
             app:iconGravity="end"/>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutHorarioIdaAV"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/timeButton"
+            android:onClick="popTimePicker"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/horario_partida"
-            app:endIconMode="clear_text">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTextIdaAV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/lato"
-                android:inputType="datetime" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="@dimen/distancia_campos_registro"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/horario_partida"
+            android:textColor="#000000"
+            android:fontFamily="@font/lato_bold"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/formulario_registro"
+            app:icon="@drawable/baseline_access_time_24"
+            app:iconGravity="end" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutPorcentRestriccionAV"
@@ -129,6 +131,13 @@
                 android:fontFamily="@font/lato"
                 android:inputType="text|numberDecimal" />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
 
         <Button
             android:id="@+id/buttonConfirmAV"
