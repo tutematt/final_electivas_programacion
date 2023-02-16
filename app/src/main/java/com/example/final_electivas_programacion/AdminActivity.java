@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AdminActivity extends AppCompatActivity {
-    Button btnVuelos;
+    Button btnVuelos, btnSalir;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,6 +18,9 @@ public class AdminActivity extends AppCompatActivity {
         btnVuelos.setOnClickListener(view -> {
             abmVuelos();
         });
+        btnSalir.setOnClickListener(view -> {
+            salir();
+        });
     }
 
     private void abmVuelos() {
@@ -26,7 +29,14 @@ public class AdminActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
+    private void salir() {
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
     private void setearBotones() {
         btnVuelos = findViewById(R.id.buttonVuelosPA);
+        btnSalir = findViewById(R.id.buttonSalirPMP);
     }
 }

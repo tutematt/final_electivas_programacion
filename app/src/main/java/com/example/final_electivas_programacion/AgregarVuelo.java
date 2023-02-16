@@ -1,6 +1,7 @@
 package com.example.final_electivas_programacion;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Layout;
 import android.view.View;
@@ -9,12 +10,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.sql.Date;
 
 public class AgregarVuelo extends AppCompatActivity {
     DataBase admin = new DataBase(AgregarVuelo.this);
@@ -23,7 +27,8 @@ public class AgregarVuelo extends AppCompatActivity {
     private static final String[] destino = {"Aeropuerto Internacional Roma (ROM)"};
     AutoCompleteTextView autoCompleteAvion, autoCompleteOrigen, autoCompleteDestino;
     Button seleccionarFecha, btnEnviar, btnVolver;
-    TextInputLayout layoutCodigo, layoutHorario;
+    TextInputLayout layoutCodigo, layoutHorario, layoutAvion, layoutOrigen, layoutDestino, layoutPorcRestriccion;
+    String avionStr, codigoStr, origenStr, destinoStr, horaStr, restriccionStr;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,7 +54,7 @@ public class AgregarVuelo extends AppCompatActivity {
 
         btnEnviar = (Button) findViewById(R.id.buttonConfirmAV);
         btnEnviar.setOnClickListener(view -> {
-            guardarVuelo();
+            crearVuelo();
         });
 
         /*Back Menu Configuracion*/
@@ -57,24 +62,20 @@ public class AgregarVuelo extends AppCompatActivity {
         btnVolver.setOnClickListener(view -> volver());
     }
 
-    private void guardarVuelo() {
-    }
-
     private void setearBotones() {
         layoutCodigo = findViewById(R.id.layoutCodigoAV);
         layoutHorario = findViewById(R.id.layoutHorarioIdaAV);
+        layoutAvion = findViewById(R.id.layoutAvionAV);
+        layoutOrigen = findViewById(R.id.layoutOrigenAV);
+        layoutDestino = findViewById(R.id.layoutDestinoAV);
+        layoutPorcRestriccion = findViewById(R.id.layoutPorcentRestriccionAV);
         autoCompleteAvion = findViewById(R.id.autoCompleteAvionAV);
         autoCompleteOrigen = findViewById(R.id.autoCompleteOrigenAV);
         autoCompleteDestino = findViewById(R.id.autoCompleteDestinoAV);
         seleccionarFecha = findViewById(R.id.buttonFechaVueloAV);
     }
 
-    private void volver() {
-    }
-
     private void completarComboAviones() {
-        
-        
         ArrayAdapter<String> itemAdapter = new ArrayAdapter<String>(AgregarVuelo.this, R.layout.activity_items_list, aviones);
         autoCompleteAvion.setAdapter(itemAdapter);
         autoCompleteAvion.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -87,8 +88,6 @@ public class AgregarVuelo extends AppCompatActivity {
     }
 
     private void completarComboOrigen() {
-        
-        
         ArrayAdapter<String> itemAdapter = new ArrayAdapter<String>(AgregarVuelo.this, R.layout.activity_items_list, origen);
         autoCompleteOrigen.setAdapter(itemAdapter);
         autoCompleteOrigen.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -101,8 +100,6 @@ public class AgregarVuelo extends AppCompatActivity {
     }
 
     private void completarComboDestino() {
-        
-        
         ArrayAdapter<String> itemAdapter = new ArrayAdapter<String>(AgregarVuelo.this, R.layout.activity_items_list, destino);
         autoCompleteDestino.setAdapter(itemAdapter);
         autoCompleteDestino.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -126,4 +123,49 @@ public class AgregarVuelo extends AppCompatActivity {
         InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    private void crearVuelo(){
+        try{
+            if(this.validar()){
+                // validar que no se de de alta el mismo avion en el misma fecha
+                String fechaYHora = seleccionarFecha.getText().toString() + horaStr;
+                int capacidad  = this.calcularCapacidad();
+                admin.crearVuelo(codigoStr, origenStr, destinoStr, fechaYHora, capacidad, Double.parseDouble(restriccionStr));
+                Toast.makeText(this, "Vuelo creado correctamente.", Toast.LENGTH_SHORT).show();
+                this.volver();
+            }
+        }
+        catch (Exception ex){
+            Toast.makeText(this, "Hubo un error, vuelva a intentar más tarde.", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+    private boolean validar(){
+        avionStr = layoutAvion.getEditText().getText().toString();
+        codigoStr = layoutCodigo.getEditText().getText().toString();
+        origenStr = layoutOrigen.getEditText().getText().toString();
+        destinoStr =  layoutDestino.getEditText().getText().toString();
+        horaStr = layoutHorario.getEditText().getText().toString();
+        restriccionStr = layoutPorcRestriccion.getEditText().getText().toString();
+        String fecha  = seleccionarFecha.getText().toString();
+        if(avionStr.isEmpty() || codigoStr.isEmpty() || origenStr.isEmpty() || destinoStr.isEmpty() || horaStr.isEmpty()
+                || restriccionStr.isEmpty() || fecha.isEmpty()){
+            Toast.makeText(this, "Por favor, complete todos los campos.", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
+    }
+    public int calcularCapacidad(){
+        int capacidad = 340;
+        double porc = Double.parseDouble(restriccionStr);
+        double restringidos = (capacidad * (int) Math.round(porc)) / 100;
+        capacidad = (int) (capacidad - restringidos);
+        return capacidad;
+    }
+
+    private void volver() {
+        Intent i = new Intent(AgregarVuelo.this, ABM_Vuelo.class);
+        startActivity(i);
+    }
+
 }

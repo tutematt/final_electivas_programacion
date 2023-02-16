@@ -27,4 +27,7 @@
     <string name="codigo">Codigo</string>
     <string name="horario_partida">Horario Partida</string>
     <string name="recuperar">Recuperar contraseña</string>
+    <string name="salir">Salir</string>
+    <string name="porcentajeRestriccion">Porcentaje de Restricción</string>
+    <string name="avion">Avion</string>
 </resources>
