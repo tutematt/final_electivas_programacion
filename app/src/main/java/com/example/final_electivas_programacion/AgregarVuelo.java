@@ -14,6 +14,9 @@ import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import androidx.annotation.Nullable;
@@ -171,8 +174,9 @@ public class AgregarVuelo extends AppCompatActivity {
         horaStr = timeButton.getText().toString();
         restriccionStr = layoutPorcRestriccion.getEditText().getText().toString();
         String fecha  = seleccionarFecha.getText().toString();
-        if(avionStr.isEmpty() || codigoStr.isEmpty() || origenStr.isEmpty() || destinoStr.isEmpty() || horaStr.isEmpty()
-                || restriccionStr.isEmpty() || fecha.isEmpty()){
+        if(avionStr.isEmpty() || codigoStr.isEmpty() || origenStr.isEmpty() || destinoStr.isEmpty()
+                || horaStr.isEmpty() || horaStr != "Horario Partida" || restriccionStr.isEmpty()
+                || fecha.isEmpty() || fecha != "Fecha"){
             Toast.makeText(this, "Por favor, complete todos los campos.", Toast.LENGTH_LONG).show();
             return false;
         }
