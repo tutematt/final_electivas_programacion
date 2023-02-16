@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment_vuelo">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        >
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutOrigenPPV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/distancia_campos_registro"
+            android:hint="@string/origen"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+            <AutoCompleteTextView
+                android:id="@+id/autoCompleteOrigenPPV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato_bold"
+                android:inputType="none"
+                android:textColor="#000000" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutDestinoPPV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/distancia_campos_registro"
+            android:hint="@string/destino"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+            <AutoCompleteTextView
+                android:id="@+id/autoCompleteDestinoPPV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato_bold"
+                android:inputType="none"
+                android:textColor="#000000" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/buttonFechaDesdePPV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/distancia_campos_registro"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/fecha_desde"
+            android:fontFamily="@font/lato_bold"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            />
+
+        <Button
+            android:id="@+id/buttonFechaHastaPPV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/distancia_campos_registro"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/fecha_hasta"
+            android:fontFamily="@font/lato_bold"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutHorarioIdaAV"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/cant_personas"
+            android:layout_marginTop="@dimen/distancia_campos_registro"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextIdaAV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <Button
+            android:id="@+id/ButtonBuscarPPV"
+            style="@style/Widget.Material3.Button.IconButton.Filled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30sp"
+            android:fontFamily="@font/lato"
+            android:text="@string/buscar"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+
+
+</FrameLayout>

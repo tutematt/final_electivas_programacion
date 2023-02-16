@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment_reserva">
+
+    <LinearLayout
+        android:id="@+id/formulario_registro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="40dp"
+        android:paddingTop="0dp"
+        >
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutNroReservaPPR"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/nro_reserva"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextNroReservaPPR"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lato"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <Button
+            android:id="@+id/ButtonBuscarPPR"
+            style="@style/Widget.Material3.Button.IconButton.Filled"
+            android:layout_width="320sp"
+            android:layout_height="70dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30sp"
+            android:fontFamily="@font/lato"
+            android:text="@string/buscar"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+</FrameLayout>
