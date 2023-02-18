@@ -9,11 +9,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class AdminActivity extends AppCompatActivity {
     Button btnVuelos, btnSalir;
+    String nombre;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pantalla_admin);
         setearBotones();
+
+        nombre = getIntent().getStringExtra("trivia_nombre");
 
         btnVuelos.setOnClickListener(view -> {
             abmVuelos();

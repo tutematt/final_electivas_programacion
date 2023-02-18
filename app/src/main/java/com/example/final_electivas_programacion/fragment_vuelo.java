@@ -32,9 +32,7 @@ public class fragment_vuelo extends Fragment {
     private static final String[] origen = {"Aeropuerto Internacional Ezeiza (EZE)"};
     private static final String[] destino = {"Aeropuerto Internacional Roma (ROM)"};
     AutoCompleteTextView autoCompleteOrigen, autoCompleteDestino;
-    AutoCompleteTextView autoCompleteOrigen, autoCompleteDestino;
-    private static final String[] origen = {"Aeropuerto Internacional Ezeiza (EZE)"};
-    private static final String[] destino = {"Aeropuerto Internacional Roma (ROM)"};
+
     Button seleccionarFechaIda, seleccionarFechaVuelta, btnBuscar;
     View inflatedView = null;
     TextInputLayout cantPasajeros;
