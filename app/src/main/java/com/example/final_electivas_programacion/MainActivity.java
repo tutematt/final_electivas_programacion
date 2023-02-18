@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new fragment_vuelo(), "Vuelos");
         adapter.addFragment(new fragment_reserva(), "Reservas");
         adapter.addFragment(new fragment_config(), "Configuracion");
-
         viewPager.setAdapter(adapter);
         tabLayout.getTabAt(0).setIcon(R.drawable.flight_icon);
         tabLayout.getTabAt(1).setIcon(R.drawable.travel_icon);
