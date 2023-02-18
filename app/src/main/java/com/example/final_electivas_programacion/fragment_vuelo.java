@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -54,8 +55,15 @@ public class fragment_vuelo extends Fragment {
         completarComboDestino();
         completarDatePicker();
 
+
         btnBuscar.setOnClickListener(view -> {
-            buscarVuelo();
+            LinearLayout fragmento = inflatedView.findViewById(R.id.linearLayoutFV);
+            getActivity().overridePendingTransition(R.anim.slide_out_left, R.anim.slide_in_left);
+            fragmento.setVisibility(View.GONE);
+                Fragment secondFrag = new fragment_reserva();
+                FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction() ;
+                fm.replace(R.id.PantallaMenuPrincipal,secondFrag).commit();
+
         });
 
         // Inflate the layout for this fragment

@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -48,7 +50,9 @@ public class AdapterVueloAdmin extends RecyclerView.Adapter<AdapterVueloAdmin.My
     public void onBindViewHolder(@NonNull AdapterVueloAdmin.MyViewHolder holder, int position) {
         if(modoUso.equals("user"))
         {
-
+            Intent intent = new Intent(context, MainActivity.class);
+            intent.putExtra("editar_vuelo", true);
+            activity.startActivityForResult(intent, 1);
         }
         else
         {
@@ -60,7 +64,6 @@ public class AdapterVueloAdmin extends RecyclerView.Adapter<AdapterVueloAdmin.My
                 intent.putExtra("editar", true);
                 intent.putExtra("codigo_vuelo", String.valueOf(nombres.get(position)));
                 activity.startActivityForResult(intent, 1);
-
             });
         }
 

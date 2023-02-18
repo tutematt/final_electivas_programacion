@@ -62,7 +62,7 @@ public class DataBase extends SQLiteOpenHelper {
             dataBase.close();*/
             SQLiteDatabase dataBase = this.getWritableDatabase();
             //String q = "INSERT OR IGNORE INTO PERSONA(DNI, USERNAME, PASSWORD, SURNAME, IS_ADMIN) VALUES (9999, 'admin', '1234', 'user', 'admin', true)";
-            String q = "INSERT INTO PERSONA(DNI, USERNAME, PASSWORD, SURNAME, IS_ADMIN) SELECT * FROM (SELECT 9999 AS dni, 'admin' as username, '1234' as password, 'user' as surname, true as is_admin) AS X WHERE NOT EXISTS (SELECT * FROM PERSONA WHERE DNI=X.dni)";
+            String q = "INSERT INTO PERSONA(DNI, USERNAME, PASSWORD, SURNAME, IS_ADMIN) SELECT * FROM (SELECT 0000 AS dni, 'admin' as username, '1234' as password, 'user' as surname, 1 as is_admin) AS X WHERE NOT EXISTS (SELECT * FROM PERSONA WHERE DNI=X.dni)";
             dataBase.execSQL( q );
 
         } catch (Exception exception) {
@@ -103,7 +103,12 @@ public class DataBase extends SQLiteOpenHelper {
             apell = cursor.getString(3);
             user = cursor.getString(4);
             pass = cursor.getString(5);
-            esAdmin = Boolean.parseBoolean(cursor.getString(6));
+            String valor = cursor.getString(6);
+            if(cursor.getString(6).equals("1"))
+                esAdmin = true;
+            else
+                esAdmin = false;
+            //esAdmin = Boolean.parseBoolean(cursor.getString(6));
             p = new Persona(/*id, */ doc, nom, apell, user, pass, esAdmin);
         }
         return p;
