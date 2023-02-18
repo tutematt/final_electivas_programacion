@@ -6,20 +6,21 @@
     tools:context=".fragment_vuelo">
 
     <LinearLayout
+        android:id="@+id/linearLayoutFV"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        >
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutOrigenPPV"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/distancia_campos_registro"
-            android:hint="@string/origen"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+            android:hint="@string/origen">
 
             <AutoCompleteTextView
                 android:id="@+id/autoCompleteOrigenPPV"
@@ -32,11 +33,11 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutDestinoPPV"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/distancia_campos_registro"
-            android:hint="@string/destino"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+            android:hint="@string/destino">
 
             <AutoCompleteTextView
                 android:id="@+id/autoCompleteDestinoPPV"
@@ -49,43 +50,39 @@
 
         <Button
             android:id="@+id/buttonFechaDesdePPV"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/distancia_campos_registro"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="@string/fecha_desde"
             android:fontFamily="@font/lato_bold"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            />
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/fecha_desde" />
 
         <Button
             android:id="@+id/buttonFechaHastaPPV"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/distancia_campos_registro"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="@string/fecha_hasta"
             android:fontFamily="@font/lato_bold"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            />
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/fecha_hasta" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutHorarioIdaAV"
+            android:id="@+id/layoutCantidadPasajerosPPV"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/cant_personas"
             android:layout_marginTop="@dimen/distancia_campos_registro"
-            >
+            android:hint="@string/cant_personas">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTextIdaAV"
+                android:id="@+id/editTextCantPasajerosPPV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/lato"
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
-
 
 
         <Button
@@ -98,6 +95,50 @@
             android:fontFamily="@font/lato"
             android:text="@string/buscar"
             android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/layouBusquedaVuelo"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/txtOpcionesAclaracion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:fontFamily="@font/lato_bold"
+            android:text="Seleccione una opción del listado para editarla. Sume una nueva desde el '+'."
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="12dp"
+            android:textStyle="italic"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycleViewResultadoVuelos"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+           >
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingButtonAddVuelo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            android:clickable="true"
+            android:focusable="true"
+            />
 
     </LinearLayout>
 

@@ -29,7 +29,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pantalla_login);
 
-        DataBase admin = new DataBase(this);
+        DataBase admin = new DataBase(LoginActivity.this);
+        admin.validarUsuariosAdmin();
         //this.databaseExists();
         setearBotones();
 
@@ -73,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                 intent.putExtra("esAdmin", true);
             }
             else
-                intent = new Intent(this, AdminActivity.class);
+                intent = new Intent(this, MainActivity.class);
             intent.putExtra("idPersona", idPersona);
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

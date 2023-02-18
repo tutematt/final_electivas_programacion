@@ -3,8 +3,8 @@ package com.example.final_electivas_programacion;
 import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.text.Layout;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -14,9 +14,6 @@ import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import androidx.annotation.Nullable;
@@ -25,10 +22,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.sql.Date;
-
-public class AgregarVuelo extends AppCompatActivity {
-    DataBase admin = new DataBase(AgregarVuelo.this);
+public class PantallaVuelos extends AppCompatActivity {
+    DataBase admin;
     private static final String[] aviones = {"AIR-BUS500", "AIR-BUS700", "AIRBUS800"};
     private static final String[] origen = {"Aeropuerto Internacional Ezeiza (EZE)"};
     private static final String[] destino = {"Aeropuerto Internacional Roma (ROM)"};
@@ -44,11 +39,13 @@ public class AgregarVuelo extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_vuelo);
+        admin = new DataBase(PantallaVuelos.this);
         setearBotones();
         completarDatePicker();
         completarComboAviones();
         completarComboOrigen();
         completarComboDestino();
+        editarVuelo();
 
         layoutCodigo.getEditText().setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
@@ -56,9 +53,12 @@ public class AgregarVuelo extends AppCompatActivity {
             }
         });
 
-        btnEnviar = (Button) findViewById(R.id.buttonConfirmAV);
+
         btnEnviar.setOnClickListener(view -> {
-            crearVuelo();
+            if(getIntent().hasExtra("editar"))
+                actualizarVuelo();
+            else
+                crearVuelo();
         });
 
         /*Back Menu Configuracion*/
@@ -67,6 +67,48 @@ public class AgregarVuelo extends AppCompatActivity {
 
 
     }
+
+    private void actualizarVuelo() {
+        try{
+            if(this.validar()){
+                // FALTA validar que no se de de alta el mismo avion en el misma fecha
+                String fechaYHora = seleccionarFecha.getText().toString() + " " + horaStr;
+                admin.actualizarVuelo(fechaYHora, getIntent().getStringExtra("codigo_vuelo"));
+                Toast.makeText(this, "Vuelo actualizado correctamente.", Toast.LENGTH_SHORT).show();
+                this.volver();
+            }
+        }
+        catch (Exception ex){
+            Toast.makeText(this, "Hubo un error, vuelva a intentar más tarde.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void editarVuelo() {
+        if(getIntent().hasExtra("editar"))
+        {
+            inhabilitarCampos();
+            layoutCodigo.getEditText().setText(getIntent().getStringExtra("codigo_vuelo"));
+            Cursor cursor = admin.buscarVuelo(getIntent().getStringExtra("codigo_vuelo"));
+            if(cursor.getCount()!=0)
+            {
+                int cant = cursor.getCount();
+                //layoutPorcRestriccion.getEditText().setText(String.valueOf(cursor.getInt(0)));
+                //seleccionarFecha.setText(DateFormat.format("yyyy.MM.dd", ).toString() );
+                //timeButton.setText(cursor.getString(2));
+                String valor = cursor.getColumnName(0);
+            }
+            btnEnviar.setText("Actualizar");
+        }
+    }
+
+    private void inhabilitarCampos() {
+        layoutAvion.setEnabled(false);
+        layoutCodigo.setEnabled(false);
+        layoutOrigen.setEnabled(false);
+        layoutDestino.setEnabled(false);
+        layoutPorcRestriccion.setEnabled(false);
+    }
+
     public void popTimePicker(View view)
     {
         TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener()
@@ -84,7 +126,7 @@ public class AgregarVuelo extends AppCompatActivity {
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(this, /*style,*/ onTimeSetListener, hour, minute, true);
 
-        timePickerDialog.setTitle("Select Time");
+        timePickerDialog.setTitle("Horario de Vuelo:");
         timePickerDialog.show();
     }
 
@@ -99,10 +141,11 @@ public class AgregarVuelo extends AppCompatActivity {
         autoCompleteDestino = findViewById(R.id.autoCompleteDestinoAV);
         seleccionarFecha = findViewById(R.id.buttonFechaVueloAV);
         timeButton = findViewById(R.id.timeButton);
+        btnEnviar = (Button) findViewById(R.id.buttonConfirmAV);
     }
 
     private void completarComboAviones() {
-        ArrayAdapter<String> itemAdapter = new ArrayAdapter<String>(AgregarVuelo.this, R.layout.activity_items_list, aviones);
+        ArrayAdapter<String> itemAdapter = new ArrayAdapter<String>(PantallaVuelos.this, R.layout.activity_items_list, aviones);
         autoCompleteAvion.setAdapter(itemAdapter);
         autoCompleteAvion.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -111,10 +154,11 @@ public class AgregarVuelo extends AppCompatActivity {
                 //layoutTrivias.getEditText().setText((String)adapterView.getItemAtPosition(i));
             }
         });
+
     }
 
     private void completarComboOrigen() {
-        ArrayAdapter<String> itemAdapter = new ArrayAdapter<String>(AgregarVuelo.this, R.layout.activity_items_list, origen);
+        ArrayAdapter<String> itemAdapter = new ArrayAdapter<String>(PantallaVuelos.this, R.layout.activity_items_list, origen);
         autoCompleteOrigen.setAdapter(itemAdapter);
         autoCompleteOrigen.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -123,10 +167,12 @@ public class AgregarVuelo extends AppCompatActivity {
                 //layoutTrivias.getEditText().setText((String)adapterView.getItemAtPosition(i));
             }
         });
+        if(getIntent().hasExtra("editar"))
+            autoCompleteOrigen.setText(itemAdapter.getItem(0));
     }
 
     private void completarComboDestino() {
-        ArrayAdapter<String> itemAdapter = new ArrayAdapter<String>(AgregarVuelo.this, R.layout.activity_items_list, destino);
+        ArrayAdapter<String> itemAdapter = new ArrayAdapter<String>(PantallaVuelos.this, R.layout.activity_items_list, destino);
         autoCompleteDestino.setAdapter(itemAdapter);
         autoCompleteDestino.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -135,6 +181,8 @@ public class AgregarVuelo extends AppCompatActivity {
                 //layoutTrivias.getEditText().setText((String)adapterView.getItemAtPosition(i));
             }
         });
+        if(getIntent().hasExtra("editar"))
+            autoCompleteDestino.setText(itemAdapter.getItem(0));
     }
 
     void completarDatePicker(){
@@ -175,8 +223,8 @@ public class AgregarVuelo extends AppCompatActivity {
         restriccionStr = layoutPorcRestriccion.getEditText().getText().toString();
         String fecha  = seleccionarFecha.getText().toString();
         if(avionStr.isEmpty() || codigoStr.isEmpty() || origenStr.isEmpty() || destinoStr.isEmpty()
-                || horaStr.isEmpty() || horaStr != "Horario Partida" || restriccionStr.isEmpty()
-                || fecha.isEmpty() || fecha != "Fecha"){
+                && (horaStr.isEmpty() || horaStr != "Horario Partida") || restriccionStr.isEmpty()
+                && (fecha.isEmpty() || fecha != "Fecha")){
             Toast.makeText(this, "Por favor, complete todos los campos.", Toast.LENGTH_LONG).show();
             return false;
         }
@@ -194,7 +242,7 @@ public class AgregarVuelo extends AppCompatActivity {
     }
 
     private void volver() {
-        Intent i = new Intent(AgregarVuelo.this, ABM_Vuelo.class);
+        Intent i = new Intent(PantallaVuelos.this, ABM_Vuelo.class);
         startActivity(i);
     }
 

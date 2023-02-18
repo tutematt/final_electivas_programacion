@@ -38,6 +38,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/distancia_campos_registro"
             android:hint="@string/codigo"
             app:endIconMode="clear_text">
 
@@ -102,7 +103,7 @@
         <Button
             android:id="@+id/timeButton"
             android:onClick="popTimePicker"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/distancia_campos_registro"
             android:gravity="center_horizontal|center_vertical"
@@ -122,6 +123,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/porcentajeRestriccion"
+            android:layout_marginTop="@dimen/distancia_campos_registro"
             app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText

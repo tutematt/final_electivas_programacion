@@ -10,33 +10,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/white">
+        android:background="@drawable/fondo_avion">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/fondo_avion"
             android:padding="12dp">
 
             <TextView
-                android:id="@+id/id_vueloFV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="10dp"
-                android:icon="@drawable/flight_icon"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/id_vueloFV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:icon="@drawable/flight_icon"
+            android:textColor="#000"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textViewNombreVueloMT"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="366dp"
+                android:layout_height="67dp"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="10dp"
-                android:text=""
-                android:textSize="20dp"
                 android:fontFamily="@font/lato_bold"
+                android:text=""
                 android:textColor="#000"
+                android:textSize="20dp"
                 app:layout_constraintStart_toEndOf="@+id/id_vueloFV"
                 app:layout_constraintTop_toTopOf="@+id/id_vueloFV" />
 

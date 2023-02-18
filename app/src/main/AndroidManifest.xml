@@ -24,7 +24,7 @@
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".AdminActivity"></activity>
         <activity android:name=".ABM_Vuelo"></activity>
-        <activity android:name=".AgregarVuelo"></activity>
+        <activity android:name=".PantallaVuelos"></activity>
         <activity android:name=".PantallaRecuperarContrasenia"></activity>
         <activity android:name=".fragment_config"></activity>
         <activity android:name=".fragment_reserva"></activity>
