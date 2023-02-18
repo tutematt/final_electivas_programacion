@@ -19,8 +19,8 @@ public class ABM_Vuelo extends AppCompatActivity {
     RecyclerView recyclerView;
     FloatingActionButton add_vuelo,volver;
     DataBase db;
-    ArrayList<String> opciones_id, opciones_codigo;
-    AdapterVuelo customAdapter;
+    ArrayList<String> ids_vuelos, codigos_vuelos, fechasDestino_vuelos, fechasOrigen_vuelos, horasDestino_vuelos, horasOrigen_vuelos, precios_vuelos;
+    AdapterVueloAdmin customAdapter;
     int i =0;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,7 +29,7 @@ public class ABM_Vuelo extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycleViewABMvuelos);
         add_vuelo = findViewById(R.id.floatingButtonAddVuelo);
         add_vuelo.setOnClickListener((View.OnClickListener) view -> {
-            Intent i = new Intent(ABM_Vuelo.this, AgregarVuelo.class);
+            Intent i = new Intent(ABM_Vuelo.this, PantallaVuelos.class);
             startActivity(i);
         });
 
@@ -40,12 +40,17 @@ public class ABM_Vuelo extends AppCompatActivity {
         });
 
         db = new DataBase(ABM_Vuelo.this);
-        opciones_id = new ArrayList<>();
-        opciones_codigo = new ArrayList<>();
+        ids_vuelos = new ArrayList<>();
+        codigos_vuelos = new ArrayList<>();
+        fechasDestino_vuelos = new ArrayList<>();
+        fechasOrigen_vuelos = new ArrayList<>();
+        horasDestino_vuelos = new ArrayList<>();
+        horasOrigen_vuelos = new ArrayList<>();
+        precios_vuelos = new ArrayList<>();
 
         mostrarVuelos();
 
-        customAdapter = new AdapterVuelo(ABM_Vuelo.this, opciones_codigo, opciones_id);
+        customAdapter = new AdapterVueloAdmin(ABM_Vuelo.this, this, codigos_vuelos, ids_vuelos, "admin");
         recyclerView.setAdapter(customAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(ABM_Vuelo.this));
     }
@@ -59,9 +64,8 @@ public class ABM_Vuelo extends AppCompatActivity {
             while(cursor.moveToNext())
             {
                 i++;
-                opciones_id.add(String.valueOf(i));
-                opciones_codigo.add(cursor.getString(0));
-
+                ids_vuelos.add(String.valueOf(i));
+                codigos_vuelos.add(cursor.getString(0));
             }
         }
 

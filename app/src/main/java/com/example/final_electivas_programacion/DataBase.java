@@ -34,7 +34,6 @@ public class DataBase extends SQLiteOpenHelper {
         dataBase.execSQL("CREATE TABLE PERSONA(ID_PERSONA int primary key, DNI int, NAME text, SURNAME text, USERNAME text, PASSWORD text, IS_ADMIN boolean)");
         // tabla intermedia para asociar las reservas a la persona
         dataBase.execSQL("CREATE TABLE TICKET(ID_TICKET int primary key, ID_VUELO int, ID_PERSONA int, ISVALID boolean)");
-        crearUserAdmin();
     }
 
     @Override
@@ -49,9 +48,9 @@ public class DataBase extends SQLiteOpenHelper {
         onCreate(dataBase);
     }
 
-    public void crearUserAdmin() {
+    public void validarUsuariosAdmin() {
         try {
-            SQLiteDatabase dataBase = this.getWritableDatabase();
+            /*SQLiteDatabase dataBase = this.getWritableDatabase();
             ContentValues campos = new ContentValues();
             campos.put("DNI", 99999999);        // 1
             campos.put("USERNAME", "admin");    // 2
@@ -59,8 +58,13 @@ public class DataBase extends SQLiteOpenHelper {
             campos.put("NAME", "User");         // 4
             campos.put("SURNAME", "Admin");     // 5
             campos.put("IS_ADMIN", true);       // 6
-            dataBase.insert("PERSONA", null, campos);
-            dataBase.close();
+            db.insertWithOnConflict("PERSONA", null, campos, SQLiteDatabase.CONFLICT_IGNORE);
+            dataBase.close();*/
+            SQLiteDatabase dataBase = this.getWritableDatabase();
+            //String q = "INSERT OR IGNORE INTO PERSONA(DNI, USERNAME, PASSWORD, SURNAME, IS_ADMIN) VALUES (9999, 'admin', '1234', 'user', 'admin', true)";
+            String q = "INSERT INTO PERSONA(DNI, USERNAME, PASSWORD, SURNAME, IS_ADMIN) SELECT * FROM (SELECT 9999 AS dni, 'admin' as username, '1234' as password, 'user' as surname, true as is_admin) AS X WHERE NOT EXISTS (SELECT * FROM PERSONA WHERE DNI=X.dni)";
+            dataBase.execSQL( q );
+
         } catch (Exception exception) {
             exception.getMessage();
         }
@@ -172,6 +176,19 @@ public class DataBase extends SQLiteOpenHelper {
         campos.put("RESTRICTION", restriction); // 6
         dataBase.insert("VUELO", null, campos);
         dataBase.close();
+    }
+
+    public Cursor buscarVuelo(String codigo_vuelo) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor data = database.rawQuery("SELECT RESTRICTION, DATE FROM VUELO WHERE CODE="+"'"+codigo_vuelo+"'", null);
+        return data;
+    }
+
+    public void actualizarVuelo(String fechaYHora, String codigo_vuelo) {
+        SQLiteDatabase dataBase = this.getWritableDatabase();
+        //String q = "INSERT OR IGNORE INTO PERSONA(DNI, USERNAME, PASSWORD, SURNAME, IS_ADMIN) VALUES (9999, 'admin', '1234', 'user', 'admin', true)";
+        String q = "UPDATE VUELO SET DATE="+"'"+fechaYHora+"' WHERE CODE="+"'"+codigo_vuelo+"'";
+        dataBase.execSQL( q );
     }
 
    /*
