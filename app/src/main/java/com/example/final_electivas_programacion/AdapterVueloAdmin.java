@@ -50,9 +50,11 @@ public class AdapterVueloAdmin extends RecyclerView.Adapter<AdapterVueloAdmin.My
     public void onBindViewHolder(@NonNull AdapterVueloAdmin.MyViewHolder holder, int position) {
         if(modoUso.equals("user"))
         {
-            Intent intent = new Intent(context, MainActivity.class);
-            intent.putExtra("editar_vuelo", true);
-            activity.startActivityForResult(intent, 1);
+            holder.searchLayout.setOnClickListener(view -> {
+                Intent intent = new Intent(context, PantallaReservarVuelo.class);
+                intent.putExtra("editar_vuelo", true);
+                activity.startActivityForResult(intent, 1);
+            });
         }
         else
         {

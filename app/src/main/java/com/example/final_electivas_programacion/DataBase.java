@@ -8,13 +8,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-
 public class DataBase extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ELECTIVA_FINAL.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 4;
 
     public DataBase(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -25,7 +22,7 @@ public class DataBase extends SQLiteOpenHelper {
         // IF NOT EXIST CREATE DATABASE
         dataBase.execSQL("CREATE TABLE TARIFA(ID_TARIFA int primary key, CODE text, NAME text, PRICE float)");
         dataBase.execSQL("CREATE TABLE PAGO(ID_PAGO int primary key, DateTime DATE, ID_TARIFA int, DISCOUNT float, NUMBER_PASSENGERS int, TOTAL_AMOUNT float /*, PAYMENT_TYPE text*/ )");
-        dataBase.execSQL("CREATE TABLE VUELO(ID_VUELO int primary key, CODE text, ORIGIN text, ARRIVAL text, DATE dateTime, CAPABILITY int, RESTRICTION double)");
+        dataBase.execSQL("CREATE TABLE VUELO(ID_VUELO int primary key, CODE text, ORIGIN text, ARRIVAL text, DATE_ORIGIN text, DATE_ARRIVAL text, CAPABILITY int, RESTRICTION double, AVION text)");
         // FALTA tabla intermedia para asociar asientos al vuelo ASIENTOS_X_VUELO
         dataBase.execSQL("CREATE TABLE ASIENTO(ID_ASIENTO int primary key, LINE text, NUMBER int, STATUS int, ID_TARIFA int)");
         dataBase.execSQL("CREATE TABLE RESERVA(ID_RESERVA int primary key, ID_VUELO int, ID_PAGO int, IS_CANCEL boolean, ID_PASAJERO int)");
@@ -50,21 +47,10 @@ public class DataBase extends SQLiteOpenHelper {
 
     public void validarUsuariosAdmin() {
         try {
-            /*SQLiteDatabase dataBase = this.getWritableDatabase();
-            ContentValues campos = new ContentValues();
-            campos.put("DNI", 99999999);        // 1
-            campos.put("USERNAME", "admin");    // 2
-            campos.put("PASSWORD", 1234);       // 3
-            campos.put("NAME", "User");         // 4
-            campos.put("SURNAME", "Admin");     // 5
-            campos.put("IS_ADMIN", true);       // 6
-            db.insertWithOnConflict("PERSONA", null, campos, SQLiteDatabase.CONFLICT_IGNORE);
-            dataBase.close();*/
-            SQLiteDatabase dataBase = this.getWritableDatabase();
-            //String q = "INSERT OR IGNORE INTO PERSONA(DNI, USERNAME, PASSWORD, SURNAME, IS_ADMIN) VALUES (9999, 'admin', '1234', 'user', 'admin', true)";
-            String q = "INSERT INTO PERSONA(DNI, USERNAME, PASSWORD, SURNAME, IS_ADMIN) SELECT * FROM (SELECT 0000 AS dni, 'admin' as username, '1234' as password, 'user' as surname, 1 as is_admin) AS X WHERE NOT EXISTS (SELECT * FROM PERSONA WHERE DNI=X.dni)";
-            dataBase.execSQL( q );
 
+            SQLiteDatabase dataBase = this.getWritableDatabase();
+            String q = "INSERT INTO PERSONA(DNI, USERNAME, PASSWORD, SURNAME, IS_ADMIN) SELECT * FROM (SELECT 9999 AS dni, 'admin' as username, '1234' as password, 'user' as surname, 1 as is_admin) AS X WHERE NOT EXISTS (SELECT * FROM PERSONA WHERE DNI=X.dni)";
+            dataBase.execSQL( q );
         } catch (Exception exception) {
             exception.getMessage();
         }
@@ -158,7 +144,7 @@ public class DataBase extends SQLiteOpenHelper {
 
     public void actualizarPersona(Integer dni, String username, String pass, String name, String surname) {
         SQLiteDatabase dataBase = this.getWritableDatabase();
-        Cursor query = dataBase.rawQuery("UPDATE PERSONA SET USERNMAE = " + "'" + username + "', PASSWORD = " + "'" + pass + "', NAME = " + "'" + name + "', SURNAME = " + "'" + surname + "' WHERE DNI = " + dni + ";", null);
+        dataBase.execSQL("UPDATE PERSONA SET USERNMAE = " + "'" + username + "', PASSWORD = " + "'" + pass + "', NAME = " + "'" + name + "', SURNAME = " + "'" + surname + "' WHERE DNI = " + dni + ";", null);
     }
 
     // endregion
@@ -170,30 +156,37 @@ public class DataBase extends SQLiteOpenHelper {
         return data;
     }
 
-    public void crearVuelo(String code, String origin, String arrival, String date, int capability, double restriction) {
+    public void crearVuelo(String code, String origin, String arrival, String date, int capability, double restriction, String avion, String fechaYHoraDestino) {
         SQLiteDatabase dataBase = this.getWritableDatabase();
         ContentValues campos = new ContentValues();
         campos.put("CODE", code);               // 1
         campos.put("ORIGIN", origin);           // 2
         campos.put("ARRIVAL", arrival);         // 3
-        campos.put("DATE", date);               // 4
+        campos.put("DATE_ORIGIN", date);               // 4
         campos.put("CAPABILITY", capability);   // 5
         campos.put("RESTRICTION", restriction); // 6
+        campos.put("AVION", avion);
+        campos.put("DATE_ARRIVAL", fechaYHoraDestino);
         dataBase.insert("VUELO", null, campos);
         dataBase.close();
     }
 
     public Cursor buscarVuelo(String codigo_vuelo) {
         SQLiteDatabase database = this.getWritableDatabase();
-        Cursor data = database.rawQuery("SELECT RESTRICTION, DATE FROM VUELO WHERE CODE="+"'"+codigo_vuelo+"'", null);
+        Cursor data = database.rawQuery("SELECT RESTRICTION, DATE_ORIGIN, DATE_ARRIVAL FROM VUELO WHERE CODE="+"'"+codigo_vuelo+"'", null);
         return data;
     }
 
-    public void actualizarVuelo(String fechaYHora, String codigo_vuelo) {
+    public void actualizarVuelo(String fechaYHora, String codigo_vuelo, String fechayHoraDestino) {
         SQLiteDatabase dataBase = this.getWritableDatabase();
-        //String q = "INSERT OR IGNORE INTO PERSONA(DNI, USERNAME, PASSWORD, SURNAME, IS_ADMIN) VALUES (9999, 'admin', '1234', 'user', 'admin', true)";
-        String q = "UPDATE VUELO SET DATE="+"'"+fechaYHora+"' WHERE CODE="+"'"+codigo_vuelo+"'";
+        String q = "UPDATE VUELO SET DATE_ORIGIN="+"'"+fechaYHora+"', DATE_ARRIVAL="+"'"+fechayHoraDestino+"' WHERE CODE="+"'"+codigo_vuelo+"'";
         dataBase.execSQL( q );
+    }
+
+    public Cursor traerVuelosxFecha(String fechaDesde, String fechaHasta) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor data = database.rawQuery("SELECT CODE, DATE_ORIGIN, DATE_ARRIVAL  FROM VUELO WHERE date(substr(DATE_ORIGIN, 7,4) || '-' || substr(DATE_ORIGIN,4,2) || '-' || substr(DATE_ORIGIN,1,2)) ="+"'"+fechaDesde+"' AND date(substr(DATE_ARRIVAL, 7,4) || '-' || substr(DATE_ARRIVAL,4,2) || '-' || substr(DATE_ARRIVAL,1,2))="+"'"+fechaHasta+"'", null);
+        return data;
     }
 
    /*

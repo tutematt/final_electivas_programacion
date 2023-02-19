@@ -11,15 +11,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class PantallaVuelos extends AppCompatActivity {
@@ -28,11 +31,11 @@ public class PantallaVuelos extends AppCompatActivity {
     private static final String[] origen = {"Aeropuerto Internacional Ezeiza (EZE)"};
     private static final String[] destino = {"Aeropuerto Internacional Roma (ROM)"};
     AutoCompleteTextView autoCompleteAvion, autoCompleteOrigen, autoCompleteDestino;
-    Button seleccionarFecha, btnEnviar, btnVolver;
+    Button seleccionarFechaIda, seleccionarFechaVuelta, btnEnviar, btnVolver;
     TextInputLayout layoutCodigo, layoutAvion, layoutOrigen, layoutDestino, layoutPorcRestriccion;
-    String avionStr, codigoStr, origenStr, destinoStr, horaStr, restriccionStr;
+    String avionStr, codigoStr, origenStr, destinoStr, horaStr, restriccionStr, horaDesStr;
 
-    Button timeButton;
+    Button timeButton, timeButtonVuelta;
     int hour, minute;
 
     @Override
@@ -42,6 +45,7 @@ public class PantallaVuelos extends AppCompatActivity {
         admin = new DataBase(PantallaVuelos.this);
         setearBotones();
         completarDatePicker();
+        completarDatePickerDestino();
         completarComboAviones();
         completarComboOrigen();
         completarComboDestino();
@@ -53,6 +57,11 @@ public class PantallaVuelos extends AppCompatActivity {
             }
         });
 
+        layoutPorcRestriccion.getEditText().setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                hideKeyboard(v);
+            }
+        });
 
         btnEnviar.setOnClickListener(view -> {
             if(getIntent().hasExtra("editar"))
@@ -70,10 +79,19 @@ public class PantallaVuelos extends AppCompatActivity {
 
     private void actualizarVuelo() {
         try{
-            if(this.validar()){
+            String fechaOrigen = seleccionarFechaIda.getText().toString();
+            String horarioOrigen = timeButton.getText().toString();
+            String fechaDestino = seleccionarFechaVuelta.getText().toString();
+            String horarioDestino = timeButtonVuelta.getText().toString();
+            if((fechaOrigen.isEmpty() || horarioOrigen.isEmpty()) && (fechaDestino.isEmpty() || horarioDestino.isEmpty()))
+                Toast.makeText(this, "Hubo un error, vuelva a intentar más tarde.", Toast.LENGTH_SHORT).show();
+            else
+            {
                 // FALTA validar que no se de de alta el mismo avion en el misma fecha
-                String fechaYHora = seleccionarFecha.getText().toString() + " " + horaStr;
-                admin.actualizarVuelo(fechaYHora, getIntent().getStringExtra("codigo_vuelo"));
+
+                String fechaYHora = fechaOrigen+" "+horarioOrigen;
+                String fechaYHoraDestino = fechaDestino+" "+horarioDestino;
+                admin.actualizarVuelo(fechaYHora, getIntent().getStringExtra("codigo_vuelo"), fechaYHoraDestino);
                 Toast.makeText(this, "Vuelo actualizado correctamente.", Toast.LENGTH_SHORT).show();
                 this.volver();
             }
@@ -91,11 +109,21 @@ public class PantallaVuelos extends AppCompatActivity {
             Cursor cursor = admin.buscarVuelo(getIntent().getStringExtra("codigo_vuelo"));
             if(cursor.getCount()!=0)
             {
-                int cant = cursor.getCount();
-                //layoutPorcRestriccion.getEditText().setText(String.valueOf(cursor.getInt(0)));
-                //seleccionarFecha.setText(DateFormat.format("yyyy.MM.dd", ).toString() );
-                //timeButton.setText(cursor.getString(2));
-                String valor = cursor.getColumnName(0);
+                if(cursor.moveToFirst())
+                {
+                    int cant = cursor.getCount();
+                    int cantRestriccion = cursor.getInt(0);
+                    String fechaOrigen = cursor.getString(1);
+                    String fechaDestino = cursor.getString(2);
+                    String[] partesFecha = fechaOrigen.split(" ");
+                    layoutPorcRestriccion.getEditText().setText(String.valueOf(cantRestriccion));
+                    seleccionarFechaIda.setText(partesFecha[0]);
+                    timeButton.setText(partesFecha[1]);
+                    partesFecha = fechaDestino.split(" ");
+                    seleccionarFechaVuelta.setText(partesFecha[0]);
+                    timeButtonVuelta.setText(partesFecha[1]);
+                }
+
             }
             btnEnviar.setText("Actualizar");
         }
@@ -111,22 +139,33 @@ public class PantallaVuelos extends AppCompatActivity {
 
     public void popTimePicker(View view)
     {
-        TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener()
-        {
-            @Override
-            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute)
-            {
-                hour = selectedHour;
-                minute = selectedMinute;
-                timeButton.setText(String.format(Locale.getDefault(), "%02d:%02d",hour, minute));
-            }
+        TimePickerDialog.OnTimeSetListener onTimeSetListener = (timePicker, selectedHour, selectedMinute) -> {
+            hour = selectedHour;
+            minute = selectedMinute;
+            timeButton.setText(String.format(Locale.getDefault(), "%02d:%02d",hour, minute));
         };
 
         // int style = AlertDialog.THEME_HOLO_DARK;
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(this, /*style,*/ onTimeSetListener, hour, minute, true);
 
-        timePickerDialog.setTitle("Horario de Vuelo:");
+        timePickerDialog.setTitle("Horario de Salida:");
+        timePickerDialog.show();
+    }
+
+    public void popTimePickerDestino(View view)
+    {
+        TimePickerDialog.OnTimeSetListener onTimeSetListener = (timePicker, selectedHour, selectedMinute) -> {
+            hour = selectedHour;
+            minute = selectedMinute;
+            timeButtonVuelta.setText(String.format(Locale.getDefault(), "%02d:%02d",hour, minute));
+        };
+
+        // int style = AlertDialog.THEME_HOLO_DARK;
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, /*style,*/ onTimeSetListener, hour, minute, true);
+
+        timePickerDialog.setTitle("Horario de Llegada:");
         timePickerDialog.show();
     }
 
@@ -139,8 +178,10 @@ public class PantallaVuelos extends AppCompatActivity {
         autoCompleteAvion = findViewById(R.id.autoCompleteAvionAV);
         autoCompleteOrigen = findViewById(R.id.autoCompleteOrigenAV);
         autoCompleteDestino = findViewById(R.id.autoCompleteDestinoAV);
-        seleccionarFecha = findViewById(R.id.buttonFechaVueloAV);
+        seleccionarFechaIda = findViewById(R.id.buttonFechaVueloAV);
+        seleccionarFechaVuelta = findViewById(R.id.buttonFechaVueloDestinoAV);
         timeButton = findViewById(R.id.timeButton);
+        timeButtonVuelta = findViewById(R.id.timeButtonDestinoAV);
         btnEnviar = (Button) findViewById(R.id.buttonConfirmAV);
     }
 
@@ -186,10 +227,32 @@ public class PantallaVuelos extends AppCompatActivity {
     }
 
     void completarDatePicker(){
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         MaterialDatePicker datePicker = MaterialDatePicker.Builder.datePicker().setTitleText ("Seleccionar Fecha de Vuelo") .setSelection(MaterialDatePicker.todayInUtcMilliseconds()).build();
-        seleccionarFecha.setOnClickListener(view -> {
+        seleccionarFechaIda.setOnClickListener(view -> {
             datePicker.show(getSupportFragmentManager(), "Material_Date_Picker");
-            datePicker.addOnPositiveButtonClickListener(selection -> seleccionarFecha.setText(datePicker.getHeaderText()));
+            datePicker.addOnPositiveButtonClickListener((MaterialPickerOnPositiveButtonClickListener<Long>) selection -> {
+                calendar.setTimeInMillis(selection);
+                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+                String formattedDate  = format.format(calendar.getTime());
+                seleccionarFechaIda.setText(formattedDate);
+            });
+        });
+
+    }
+
+    void completarDatePickerDestino()
+    {
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        MaterialDatePicker datePickerD = MaterialDatePicker.Builder.datePicker().setTitleText ("Seleccionar Fecha de Vuelo") .setSelection(MaterialDatePicker.todayInUtcMilliseconds()).build();
+        seleccionarFechaVuelta.setOnClickListener(view -> {
+            datePickerD.show(getSupportFragmentManager(), "Material_Date_Picker");
+            datePickerD.addOnPositiveButtonClickListener((MaterialPickerOnPositiveButtonClickListener<Long>) selection -> {
+                calendar.setTimeInMillis(selection);
+                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+                String formattedDate  = format.format(calendar.getTime());
+                seleccionarFechaVuelta.setText(formattedDate);
+            });
         });
     }
 
@@ -202,9 +265,11 @@ public class PantallaVuelos extends AppCompatActivity {
         try{
             if(this.validar()){
                 // FALTA validar que no se de de alta el mismo avion en el misma fecha
-                String fechaYHora = seleccionarFecha.getText().toString() + " " + horaStr;
+                String fechaYHora = seleccionarFechaIda.getText().toString() + " " + horaStr;
+                String fechaYHoraDestino = seleccionarFechaVuelta.getText().toString() + " " + horaDesStr;
                 int capacidad  = this.calcularCapacidad();
-                admin.crearVuelo(codigoStr, origenStr, destinoStr, fechaYHora, capacidad, Double.parseDouble(restriccionStr));
+                String avion = autoCompleteAvion.getText().toString();
+                admin.crearVuelo(codigoStr, origenStr, destinoStr, fechaYHora, capacidad, Double.parseDouble(restriccionStr), avion, fechaYHoraDestino);
                 Toast.makeText(this, "Vuelo creado correctamente.", Toast.LENGTH_SHORT).show();
                 this.volver();
             }
@@ -220,11 +285,13 @@ public class PantallaVuelos extends AppCompatActivity {
         origenStr = layoutOrigen.getEditText().getText().toString();
         destinoStr =  layoutDestino.getEditText().getText().toString();
         horaStr = timeButton.getText().toString();
+        horaDesStr = timeButtonVuelta.getText().toString();
         restriccionStr = layoutPorcRestriccion.getEditText().getText().toString();
-        String fecha  = seleccionarFecha.getText().toString();
+        String fechaO  = seleccionarFechaIda.getText().toString();
+        String fechaD  = seleccionarFechaVuelta.getText().toString();
         if(avionStr.isEmpty() || codigoStr.isEmpty() || origenStr.isEmpty() || destinoStr.isEmpty()
-                && (horaStr.isEmpty() || horaStr != "Horario Partida") || restriccionStr.isEmpty()
-                && (fecha.isEmpty() || fecha != "Fecha")){
+                && (horaStr.isEmpty() || horaStr.equals( "Partida")) && (horaDesStr.isEmpty() || horaDesStr != "Destino") || restriccionStr.isEmpty()
+                && (fechaO.isEmpty() || fechaO != "Fecha") && (fechaD.isEmpty() || fechaD != "Fecha")){
             Toast.makeText(this, "Por favor, complete todos los campos.", Toast.LENGTH_LONG).show();
             return false;
         }

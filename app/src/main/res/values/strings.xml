@@ -24,7 +24,8 @@
     <string name="fecha_partida">Fecha Partida</string>
     <string name="fecha_llegada">Fecha Llegada</string>
     <string name="codigo">Codigo</string>
-    <string name="horario_partida">Horario Partida</string>
+    <string name="horario_partida">Partida</string>
+    <string name="horario_destino">Destino</string>
     <string name="reserva">Reserva</string>
     <string name="buscar">Buscar</string>
     <string name="nro_reserva">Número de Reserva</string>

@@ -84,38 +84,81 @@
                 android:textColor="#000000" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/buttonFechaVueloAV"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/distancia_campos_registro"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="@string/fecha"
-            android:textColor="#000000"
-            android:fontFamily="@font/lato_bold"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/formulario_registro"
-            app:icon="@drawable/image_calendar"
-            app:iconGravity="end"/>
+            android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/timeButton"
-            android:onClick="popTimePicker"
+            <Button
+                android:id="@+id/buttonFechaVueloAV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/distancia_campos_registro"
+                android:text="@string/fecha"
+                android:textColor="#000000"
+                android:fontFamily="@font/lato_bold"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/timeButton"
+
+                app:icon="@drawable/image_calendar"
+                app:iconGravity="end"/>
+
+            <Button
+                android:id="@+id/timeButton"
+                android:onClick="popTimePicker"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/distancia_campos_registro"
+                android:text="@string/horario_partida"
+                android:textColor="#000000"
+                android:fontFamily="@font/lato_bold"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:layout_constraintStart_toEndOf="@+id/buttonFechaVueloAV"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:icon="@drawable/baseline_access_time_24"
+                app:iconGravity="end" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/distancia_campos_registro"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="@string/horario_partida"
-            android:textColor="#000000"
-            android:fontFamily="@font/lato_bold"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/formulario_registro"
-            app:icon="@drawable/baseline_access_time_24"
-            app:iconGravity="end" />
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/buttonFechaVueloDestinoAV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/distancia_campos_registro"
+                android:text="@string/fecha"
+                android:textColor="#000000"
+                android:fontFamily="@font/lato_bold"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/timeButtonDestinoAV"
+
+                app:icon="@drawable/image_calendar"
+                app:iconGravity="end"/>
+
+            <Button
+                android:id="@+id/timeButtonDestinoAV"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/distancia_campos_registro"
+                android:fontFamily="@font/lato_bold"
+                android:onClick="popTimePickerDestino"
+                android:text="@string/horario_destino"
+                android:textColor="#000000"
+                app:icon="@drawable/baseline_access_time_24"
+                app:iconGravity="end"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/buttonFechaVueloDestinoAV"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutPorcentRestriccionAV"

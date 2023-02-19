@@ -29,8 +29,17 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(0).setIcon(R.drawable.flight_icon);
         tabLayout.getTabAt(1).setIcon(R.drawable.travel_icon);
         tabLayout.getTabAt(2).setIcon(R.drawable.settings_icon);
+        setearTabDefault();
 
 
 
+
+    }
+
+    private void setearTabDefault() {
+        if(getIntent().hasExtra("editar_vuelo"))
+        {
+            tabLayout.selectTab(tabLayout.getTabAt(1));
+        }
     }
 }

@@ -29,6 +29,7 @@
         <activity android:name=".fragment_config"></activity>
         <activity android:name=".fragment_reserva"></activity>
         <activity android:name=".fragment_vuelo"></activity>
+        <activity android:name=".PantallaReservarVuelo"></activity>
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

@@ -22,11 +22,15 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Objects;
+import java.util.TimeZone;
 
 public class fragment_vuelo extends Fragment {
     private static final String[] origen = {"Aeropuerto Internacional Ezeiza (EZE)"};
@@ -41,6 +45,7 @@ public class fragment_vuelo extends Fragment {
     ArrayList<String> ids_vuelos, codigos_vuelos, fechasDestino_vuelos, fechasOrigen_vuelos, horasDestino_vuelos, horasOrigen_vuelos, precios_vuelos;
     AdapterVueloAdmin customAdapter;
     int i =0;
+    String fechaDesde ="", fechaHasta ="";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,15 +57,20 @@ public class fragment_vuelo extends Fragment {
         completarComboOrigen();
         completarComboDestino();
         completarDatePicker();
+        completarDatePickerDestino();
+        db = new DataBase(getActivity());
 
 
         btnBuscar.setOnClickListener(view -> {
-            LinearLayout fragmento = inflatedView.findViewById(R.id.linearLayoutFV);
+
+            /*LinearLayout fragmento = inflatedView.findViewById(R.id.linearLayoutFV);
             getActivity().overridePendingTransition(R.anim.slide_out_left, R.anim.slide_in_left);
-            fragmento.setVisibility(View.GONE);
+            fragmento.setVisibility(View.GONE);*/
+            buscarVuelo();
+            /*
                 Fragment secondFrag = new fragment_reserva();
                 FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction() ;
-                fm.replace(R.id.PantallaMenuPrincipal,secondFrag).commit();
+                fm.replace(R.id.PantallaMenuPrincipal,secondFrag).commit();*/
 
         });
 
@@ -101,8 +111,8 @@ public class fragment_vuelo extends Fragment {
     }
 
     private void mostrarVuelos() {
-        db = new DataBase(getActivity());
-        Cursor cursor = db.traerVuelos();
+
+        Cursor cursor = db.traerVuelosxFecha(fechaDesde, fechaHasta);
         if(cursor.getCount() == 0)
             Toast.makeText(getActivity(), "No hay vuelos para mostrar.", Toast.LENGTH_SHORT).show();
         else
@@ -112,6 +122,9 @@ public class fragment_vuelo extends Fragment {
                 i++;
                 ids_vuelos.add(String.valueOf(i));
                 codigos_vuelos.add(cursor.getString(0));
+                fechasOrigen_vuelos.add(cursor.getString(1));
+                fechasDestino_vuelos.add(cursor.getString(2));
+                //precios_vuelos.add(cursor.getString(3));
             }
         }
     }
@@ -141,40 +154,51 @@ public class fragment_vuelo extends Fragment {
     }
 
     void completarDatePicker(){
-        MaterialDatePicker datePicker = MaterialDatePicker.Builder.datePicker().setTitleText ("Seleccionar Fecha") .setSelection(MaterialDatePicker.todayInUtcMilliseconds()).build();
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        MaterialDatePicker datePicker = MaterialDatePicker.Builder.datePicker().setTitleText("Seleccionar Fecha").setSelection(MaterialDatePicker.todayInUtcMilliseconds()).build();
         seleccionarFechaIda.setOnClickListener(view -> {
             datePicker.show(getFragmentManager(), "Material_Date_Picker");
-            datePicker.addOnPositiveButtonClickListener(selection -> seleccionarFechaIda.setText(datePicker.getHeaderText()));
+            datePicker.addOnPositiveButtonClickListener((MaterialPickerOnPositiveButtonClickListener<Long>) selection -> {
+                calendar.setTimeInMillis(selection);
+                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat formatDB = new SimpleDateFormat("yyyy-MM-dd");
+                String formattedDate  = format.format(calendar.getTime());
+                seleccionarFechaIda.setText(formattedDate);
+                fechaDesde = formatDB.format(calendar.getTime());
+            });
+
         });
         seleccionarFechaVuelta.setOnClickListener(view -> {
             datePicker.show(getFragmentManager(), "Material_Date_Picker");
-            datePicker.addOnPositiveButtonClickListener(selection -> seleccionarFechaVuelta.setText(datePicker.getHeaderText()));
+            datePicker.addOnPositiveButtonClickListener((MaterialPickerOnPositiveButtonClickListener<Long>) selection -> {
+                calendar.setTimeInMillis(selection);
+                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat formatDB = new SimpleDateFormat("yyyy-MM-dd");
+                String formattedDate  = format.format(calendar.getTime());
+                seleccionarFechaVuelta.setText(formattedDate);
+                fechaHasta = formatDB.format(calendar.getTime());
+                });
+
         });
     }
 
-/*
-    private void completarComboOrigen() {
-        ArrayAdapter<String> itemAdapter = new ArrayAdapter<String>(fragment_vuelo.this, R.layout.activity_items_list, origen);
-        autoCompleteOrigen.setAdapter(itemAdapter);
-        autoCompleteOrigen.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                adapterView.getItemAtPosition(i).toString();
-                //layoutTrivias.getEditText().setText((String)adapterView.getItemAtPosition(i));
-            }
+    void completarDatePickerDestino(){
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        MaterialDatePicker datePickerDestino = MaterialDatePicker.Builder.datePicker().setTitleText("Seleccionar Fecha").setSelection(MaterialDatePicker.todayInUtcMilliseconds()).build();
+        seleccionarFechaVuelta.setOnClickListener(view -> {
+            datePickerDestino.show(getFragmentManager(), "Material_Date_Picker");
+            datePickerDestino.addOnPositiveButtonClickListener((MaterialPickerOnPositiveButtonClickListener<Long>) selection -> {
+                calendar.setTimeInMillis(selection);
+                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat formatDB = new SimpleDateFormat("yyyy-MM-dd");
+                String formattedDate  = format.format(calendar.getTime());
+                seleccionarFechaVuelta.setText(formattedDate);
+                fechaHasta = formatDB.format(calendar.getTime());
+            });
+
         });
     }
 
-    private void completarComboDestino() {
-        ArrayAdapter<String> itemAdapter = new ArrayAdapter<String>(AgregarVuelo.this, R.layout.activity_items_list, destino);
-        autoCompleteDestino.setAdapter(itemAdapter);
-        autoCompleteDestino.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                adapterView.getItemAtPosition(i).toString();
-                //layoutTrivias.getEditText().setText((String)adapterView.getItemAtPosition(i));
-            }
-        });
-    }*/
+
 
 }
