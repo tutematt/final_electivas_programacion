@@ -53,6 +53,7 @@ public class AdapterVueloAdmin extends RecyclerView.Adapter<AdapterVueloAdmin.My
             holder.searchLayout.setOnClickListener(view -> {
                 Intent intent = new Intent(context, PantallaReservarVuelo.class);
                 intent.putExtra("editar_vuelo", true);
+                intent.putExtra("codigo_vuelo", String.valueOf(nombres.get(position)));
                 activity.startActivityForResult(intent, 1);
             });
         }
