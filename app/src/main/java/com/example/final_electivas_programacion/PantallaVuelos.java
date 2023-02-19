@@ -34,7 +34,6 @@ public class PantallaVuelos extends AppCompatActivity {
     Button seleccionarFechaIda, seleccionarFechaVuelta, btnEnviar, btnVolver;
     TextInputLayout layoutCodigo, layoutAvion, layoutOrigen, layoutDestino, layoutPorcRestriccion;
     String avionStr, codigoStr, origenStr, destinoStr, horaStr, restriccionStr, horaDesStr;
-
     Button timeButton, timeButtonVuelta;
     int hour, minute;
 
@@ -102,10 +101,10 @@ public class PantallaVuelos extends AppCompatActivity {
     }
 
     private void editarVuelo() {
-        if(getIntent().hasExtra("editar"))
+        if(getIntent().hasExtra("editar")) //para saber si te llego un parametro con ese nombre
         {
             inhabilitarCampos();
-            layoutCodigo.getEditText().setText(getIntent().getStringExtra("codigo_vuelo"));
+            layoutCodigo.getEditText().setText(getIntent().getStringExtra("codigo_vuelo")); //para obtener el valor
             Cursor cursor = admin.buscarVuelo(getIntent().getStringExtra("codigo_vuelo"));
             if(cursor.getCount()!=0)
             {

@@ -238,13 +238,11 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
                     android:paddingLeft="10dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
                         android:focusable="false"
                         android:minWidth="250dp"
                         android:text="Ituzaingo" />
@@ -280,13 +278,13 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/LineaLayoutDestinoPSV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:paddingLeft="10dp"
                     >
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/LineaLayoutDestinoPSV"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Ezeiza"
@@ -324,13 +322,13 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/LinearLayoutVueloPRV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:paddingLeft="10dp"
                     >
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/LinearLayoutVueloPRV"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="AAA111"
@@ -376,13 +374,13 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/LinearLayoutFechaIdaPRV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:paddingLeft="10dp"
                         >
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/LinearLayoutFechaIdaPRV"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="22-22-2222"
@@ -416,29 +414,24 @@
                             android:fontFamily="@font/lato"
                             android:minWidth="130dp"
                             android:focusable="false"
-
-
                             />
 
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/LinearLayoutHorarioIdaPRV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:layout_margin="0dp"
                         android:paddingLeft="10dp"
-
                         >
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/LinearLayoutHorarioIdaPRV"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:text="15:40 Hs"
                             android:fontFamily="@font/lato"
                             android:minWidth="250dp"
                             android:focusable="false"
-
-
                             />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
@@ -472,24 +465,22 @@
                             android:fontFamily="@font/lato"
                             android:minWidth="130dp"
                             android:focusable="false"
-
                             />
 
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/LinearLayoutFechaVueltaPRV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:paddingLeft="10dp"
                         >
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/LinearLayoutFechaVueltaPRV"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="22-22-2222"
                             android:minWidth="250dp"
                             android:focusable="false"
-
                             />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -517,11 +508,11 @@
                             android:fontFamily="@font/lato"
                             android:minWidth="130dp"
                             android:focusable="false"
-
                             />
 
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/LinearLayoutHorarioVueltaPRV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -530,14 +521,12 @@
 
                         >
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/LinearLayoutHorarioVueltaPPV"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:text="15:40 Hs"
                             android:fontFamily="@font/lato"
                             android:minWidth="250dp"
                             android:focusable="false"
-
                             />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
@@ -570,13 +559,13 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/LinearLayoutPasajerosPRV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:paddingLeft="10dp"
                     >
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/LinearLayoutPasajerosPRV"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="2"
@@ -585,6 +574,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/ButtonRegistrarPasajerosPRV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -594,7 +584,6 @@
                     https://www.codingninjas.com/codestudio/library/popup-window-in-android
                     -->
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/ButtonRegistrarPasajerosPRV"
                         style="@style/Widget.Material3.Button.IconButton.Filled"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -607,7 +596,6 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
             </LinearLayout>
-
             <LinearLayout
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
@@ -653,13 +641,13 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/LinearLayoutPrecioTotalPRV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:paddingLeft="10dp"
                         >
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/LinearLayoutPrecioTotalPRV"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="$ Precio sin descuento"
@@ -687,18 +675,17 @@
                             android:fontFamily="@font/lato"
                             android:minWidth="130dp"
                             android:focusable="false"
-
                             />
 
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/LinearLayoutDescuentoPRV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:paddingLeft="10dp"
                         >
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/LinearLayoutDescuentoPRV"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="$ Descuento"
@@ -726,18 +713,17 @@
                             android:fontFamily="@font/lato"
                             android:minWidth="130dp"
                             android:focusable="false"
-
                             />
 
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/LinearLayoutPrecioaPagarPRV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:paddingLeft="10dp"
                         >
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/LinearLayoutPrecioaPagarPRV"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="$ Precio total - descuento"
@@ -768,7 +754,6 @@
                     android:textSize="20dp"
                     android:textAlignment="center"
                     android:layout_gravity="center_horizontal"
-
                     >
 
                 </com.google.android.material.textview.MaterialTextView>
@@ -791,14 +776,15 @@
                         android:fontFamily="@font/lato"
                         android:minWidth="130dp"
                         android:focusable="false"
-
                         />
 
                 </com.google.android.material.textfield.TextInputLayout>
+
                 <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:hint="Seleccione metodo"
                     >
                     <AutoCompleteTextView
                         android:id="@+id/autoCompleteMetodoPagoPRV"
@@ -807,7 +793,7 @@
                         android:fontFamily="@font/lato_bold"
                         android:inputType="none"
                         android:textColor="#000000"
-                        android:text="drop con Tarjeta / Efectivo"/>
+                        />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -824,7 +810,8 @@
                 android:layout_marginTop="30sp"
                 android:fontFamily="@font/lato"
                 android:text="Reservar"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                tools:ignore="HardcodedText" />
             <Button
                 android:id="@+id/ButtonCancelarReservaPRV"
                 style="@style/Widget.Material3.Button.IconButton.Filled"
@@ -837,8 +824,5 @@
                 android:text="Cancelar Reserva"
                 android:textSize="20sp" />
         </GridLayout>
-
-
     </LinearLayout>
-
 </ScrollView>
