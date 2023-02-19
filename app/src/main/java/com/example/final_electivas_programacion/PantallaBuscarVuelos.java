@@ -44,7 +44,7 @@ public class PantallaBuscarVuelos extends AppCompatActivity {
 
         mostrarVuelos();
 
-        customAdapter = new AdapterVueloAdmin(PantallaBuscarVuelos.this, this, opciones_codigo, opciones_id, "user");
+        customAdapter = new AdapterVueloAdmin(PantallaBuscarVuelos.this, this, opciones_codigo, opciones_id, "user", "");
         recyclerView.setAdapter(customAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(PantallaBuscarVuelos.this));
     }

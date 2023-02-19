@@ -68,6 +68,14 @@
             android:gravity="center_horizontal|center_vertical"
             android:text="@string/fecha_hasta" />
 
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/sin_fecha">
+        </com.google.android.material.switchmaterial.SwitchMaterial>
+
+
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutCantidadPasajerosPPV"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -84,6 +92,22 @@
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <RadioGroup
+            android:id="@+id/radioGroupClaseTicket"
+            android:checkedButton="@+id/radio_button_turista"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/radio_button_turista"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/turista"/>
+            <RadioButton
+                android:id="@+id/radio_button_primera"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/primera"/>
+        </RadioGroup>
 
         <Button
             android:id="@+id/ButtonBuscarPPV"
@@ -116,7 +140,7 @@
             android:text="Seleccione una opción del listado para editarla. Sume una nueva desde el '+'."
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="12dp"
+            android:textSize="12sp"
             android:textStyle="italic"
             />
 

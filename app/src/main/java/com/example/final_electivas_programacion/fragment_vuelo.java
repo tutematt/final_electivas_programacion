@@ -102,7 +102,7 @@ public class fragment_vuelo extends Fragment {
         horasOrigen_vuelos = new ArrayList<>();
         precios_vuelos = new ArrayList<>();
         mostrarVuelos();
-        customAdapter = new AdapterVueloAdmin(getActivity(), getActivity(), codigos_vuelos, ids_vuelos, "user");
+        customAdapter = new AdapterVueloAdmin(getActivity(), getActivity(), codigos_vuelos, ids_vuelos, "user", cantPasajeros.getEditText().getText().toString());
         recyclerView.setAdapter(customAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         LinearLayout fragmento2 = inflatedView.findViewById(R.id.layouBusquedaVuelo);

@@ -21,16 +21,17 @@ public class AdapterVueloAdmin extends RecyclerView.Adapter<AdapterVueloAdmin.My
     private Context context;
     private ArrayList nombres, ids;
     private Activity activity;
-    private String modoUso;
+    private String modoUso, cantPasajeros;
 
 
-    AdapterVueloAdmin(Activity activity, Context context, ArrayList codigo, ArrayList ids, String modoUso)
+    AdapterVueloAdmin(Activity activity, Context context, ArrayList codigo, ArrayList ids, String modoUso, String cantPasajeros)
     {
         this.activity = activity;
         this.context = context;
         this.nombres = codigo;
         this.ids = ids;
         this.modoUso = modoUso;
+        this.cantPasajeros = cantPasajeros;
 
     }
     @NonNull
@@ -52,8 +53,9 @@ public class AdapterVueloAdmin extends RecyclerView.Adapter<AdapterVueloAdmin.My
         {
             holder.searchLayout.setOnClickListener(view -> {
                 Intent intent = new Intent(context, PantallaReservarVuelo.class);
-                intent.putExtra("editar_vuelo", true);
+                intent.putExtra("reservar_vuelo", true);
                 intent.putExtra("codigo_vuelo", String.valueOf(nombres.get(position)));
+                intent.putExtra("cant_pasajeros", cantPasajeros);
                 activity.startActivityForResult(intent, 1);
             });
         }

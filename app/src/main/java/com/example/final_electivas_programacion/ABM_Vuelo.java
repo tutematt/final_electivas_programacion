@@ -50,7 +50,7 @@ public class ABM_Vuelo extends AppCompatActivity {
 
         mostrarVuelos();
 
-        customAdapter = new AdapterVueloAdmin(ABM_Vuelo.this, this, codigos_vuelos, ids_vuelos, "admin");
+        customAdapter = new AdapterVueloAdmin(ABM_Vuelo.this, this, codigos_vuelos, ids_vuelos, "admin", "");
         recyclerView.setAdapter(customAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(ABM_Vuelo.this));
     }

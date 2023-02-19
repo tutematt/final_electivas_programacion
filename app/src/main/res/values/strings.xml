@@ -36,4 +36,7 @@
     <string name="salir">Salir</string>
     <string name="porcentajeRestriccion">Porcentaje de Restricción</string>
     <string name="avion">Avion</string>
+    <string name="sin_fecha">Aún no he decidido la fecha</string>
+    <string name="turista">Turista</string>
+    <string name="primera">Primera Clase</string>
 </resources>
