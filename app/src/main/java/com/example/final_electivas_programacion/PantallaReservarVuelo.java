@@ -1,40 +1,49 @@
 package com.example.final_electivas_programacion;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-
+import androidx.appcompat.app.AppCompatActivity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.text.InputType;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.Bundle;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.textview.MaterialTextView;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 public class PantallaReservarVuelo extends AppCompatActivity {
     private static final String[] metodoDePago = {"Tarjeta", "Efectivo"};
-    Button realizarReserva, cancelarReserva;
+    Button realizarReserva, cancelarReserva, popupRegistrarPasajero;
     AutoCompleteTextView autoCompleteMetodoDePago;
+    MaterialTextView numeroPasajero;
     TextInputLayout registrarPasajeros, layoutVuelo, layoutOrigen, layoutDestino, layoutFechaIda, layoutFechaVuelta, layoutHoraIda,
             layoutHoraVuelta, layoutDescuento,layoutPrecioAPagar, layoutPrecioTotal, layoutCantPasajeros;
-    int hour, minute, cantPasajeros;
-    float precio;
-    float precioDescuento = 0;
-
+    int cantPasajeros, pasajeroDni;
+    int cantPasajerosRegistradosRestantes = -1;
+    float precio, precioDescuento = 0;
     boolean reservar_vuelo = false;
     String codigoVuelo = "";
+    String pasajeroNombre, pasajeroApellido;
+
     DataBase db;
 
     @Override
@@ -45,6 +54,7 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         reservar_vuelo = getIntent().getBooleanExtra("reservar_vuelo", false);
         codigoVuelo = getIntent().getStringExtra("codigo_vuelo");
         precio = Float.parseFloat(getIntent().getStringExtra("precio_vuelo"));
+        cantPasajeros = Integer.parseInt(getIntent().getStringExtra("cant_pasajeros"));
 
         setearBotones();
         setearSeleccionUsuario();
@@ -54,12 +64,27 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         realizarReserva.setOnClickListener(view -> {
             pago();
         });
+        popupRegistrarPasajero.setOnClickListener(view -> {
+            registrarPasajero();
+        });
     }
 
     private void pago() {
-        Intent i = new Intent(this, PantallaPago.class);
-        startActivity(i);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        String metodPag = autoCompleteMetodoDePago.getText().toString();
+        if (metodPag.equals("Tarjeta") || metodPag.equals("Efectivo")){
+            if (cantPasajerosRegistradosRestantes == 0) {
+                buscarPasajeros();
+                Intent i = new Intent(this, PantallaPago.class);
+                startActivity(i);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                db.agregarPersonaxReserva(pasajeros);
+            } else {
+                Toast.makeText(this, "Registre todos los pasajeros por favor.", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else{
+            Toast.makeText(this, "Seleccione un metodo de pago.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setearSeleccionUsuario() {
@@ -90,7 +115,7 @@ public class PantallaReservarVuelo extends AppCompatActivity {
                 partesFecha = fechaDestino.split(" ");
                 layoutFechaVuelta.getEditText().setText(partesFecha[0]);
                 layoutHoraVuelta.getEditText().setText(partesFecha[1]);
-                layoutCantPasajeros.getEditText().setText(getIntent().getStringExtra("cant_pasajeros"));
+                layoutCantPasajeros.getEditText().setText(String.valueOf(cantPasajeros));
                 layoutPrecioTotal.getEditText().setText("$ "+String.valueOf(precio));
                 layoutDescuento.getEditText().setText("$ "+String.valueOf(precioDescuento));
                 layoutPrecioAPagar.getEditText().setText("$ "+String.valueOf(precio-precioDescuento));
@@ -131,7 +156,8 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         layoutPrecioTotal= findViewById(R.id.LinearLayoutPrecioTotalPRV);
         layoutDescuento= findViewById(R.id.LinearLayoutDescuentoPRV);
         layoutPrecioAPagar= findViewById(R.id.LinearLayoutPrecioaPagarPRV);
-
+        //*************************
+        popupRegistrarPasajero =(Button)findViewById(R.id.popupRegistrarPasajero);
     }
     private void completarComboMetodoDePago() {
         ArrayAdapter<String> itemAdapter = new ArrayAdapter<String>(PantallaReservarVuelo.this, R.layout.activity_items_list, metodoDePago);
@@ -203,4 +229,84 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         return sdf.format(date);
     }
 
+    final Context context = this; //para el popup
+    private List<Persona> pasajeros = new ArrayList<>();
+    private void registrarPasajero(){
+        cantPasajerosRegistradosRestantes = cantPasajeros;
+        popupRegistrarPasajero.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                if(cantPasajerosRegistradosRestantes>0) {
+                    // get prompts.xml view
+                    LayoutInflater li = LayoutInflater.from(context);
+                    View promptsView = li.inflate(R.layout.popup_registrar_pasajero, null);
+
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                            context);
+
+                    // set prompts.xml to alertdialog builder
+                    alertDialogBuilder.setView(promptsView);
+                    MaterialTextView numeroPasajero = (MaterialTextView) promptsView
+                            .findViewById(R.id.MaterialTextViewNumeroPasajeroPopupRP);
+                    numeroPasajero.setText(String.valueOf(cantPasajerosRegistradosRestantes));
+                    final EditText nombreCargado = (EditText) promptsView
+                            .findViewById(R.id.EditTextNombrePopupRP);
+                    final EditText apellidoCargado = (EditText) promptsView
+                            .findViewById(R.id.EditTextApellidoPopupRP);
+                    final EditText dniCargado = (EditText) promptsView
+                            .findViewById(R.id.EditTextDNIPopupRP);
+
+                    // set dialog message
+                    alertDialogBuilder
+                            .setCancelable(false)
+                            .setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            // get user input and set it to result
+                                            // edit text
+                                            pasajeroNombre = nombreCargado.getText().toString();
+                                            pasajeroApellido = apellidoCargado.getText().toString();
+                                            pasajeroDni = Integer.parseInt(dniCargado.getText().toString());
+                                            cantPasajerosRegistradosRestantes--;
+                                            Persona pasajero = new Persona (pasajeroDni,pasajeroNombre, pasajeroApellido, null, null, false );
+                                            pasajeros.add(pasajero);        //creo un array de pasajeros para despues agregarlos/buscarlos
+
+                                        }
+                                    })
+                            .setNegativeButton("Cancel",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+
+                    // create alert dialog
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+
+                    // show it
+                    alertDialog.show();
+                }
+            }
+        });
+
+    }
+    private void buscarPasajeros(){
+        for (Persona pasajero : pasajeros){ //recorro los pasajeros creados
+            pasajeroNombre = pasajero.getNombre();
+            pasajeroApellido = pasajero.getApellido();
+            pasajeroDni = pasajero.getDni();
+            if(buscarPasajeroPorDNI(pasajero.getDni()) == false){//false = no existe registro
+                db.crearPersona((pasajeroNombre+pasajeroApellido+pasajeroDni), String.valueOf(pasajeroDni), pasajeroNombre, pasajeroApellido, pasajeroDni);
+            }
+        }
+    }
+    private boolean buscarPasajeroPorDNI(int dni){
+        Persona pasajero = db.buscarPersonaPorDni(dni);
+        if (pasajero == null)
+                return false; //no existe
+        else
+            return true; //ya existe uno con ese dni
+
+
+    }
 }
