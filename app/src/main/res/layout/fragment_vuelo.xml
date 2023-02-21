@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -69,11 +70,10 @@
             android:text="@string/fecha_hasta" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_fechas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/sin_fecha">
-        </com.google.android.material.switchmaterial.SwitchMaterial>
-
+            android:hint="@string/sin_fecha"></com.google.android.material.switchmaterial.SwitchMaterial>
 
 
         <com.google.android.material.textfield.TextInputLayout
@@ -94,19 +94,21 @@
 
         <RadioGroup
             android:id="@+id/radioGroupClaseTicket"
-            android:checkedButton="@+id/radio_button_turista"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:checkedButton="@+id/radio_button_turista">
+
             <RadioButton
                 android:id="@+id/radio_button_turista"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/turista"/>
+                android:text="@string/turista" />
+
             <RadioButton
                 android:id="@+id/radio_button_primera"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/primera"/>
+                android:text="@string/primera" />
         </RadioGroup>
 
         <Button
@@ -123,9 +125,9 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layouBusquedaVuelo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/layouBusquedaVuelo"
         android:orientation="vertical"
         android:visibility="gone">
 
@@ -134,33 +136,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:fontFamily="@font/lato_bold"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:fontFamily="@font/lato_bold"
             android:text="Seleccione una opción del listado para editarla. Sume una nueva desde el '+'."
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="12sp"
-            android:textStyle="italic"
-            />
+            android:textStyle="italic" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycleViewResultadoVuelos"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
-           >
+            android:layout_height="600dp">
 
         </androidx.recyclerview.widget.RecyclerView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingButtonAddVuelo"
-            android:layout_width="wrap_content"
+            android:id="@+id/floatingButtonVolver"
+            android:layout_width="129dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="24dp"
             android:clickable="true"
+            android:contentDescription="@string/avion"
             android:focusable="true"
-            />
+            android:src="@drawable/flight_icon"
+            app:backgroundTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/recycleViewResultadoVuelos" />
 
     </LinearLayout>
 

@@ -1,5 +1,7 @@
 package com.example.final_electivas_programacion;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.time.LocalDate;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -31,8 +35,10 @@ public class LoginActivity extends AppCompatActivity {
 
         DataBase admin = new DataBase(LoginActivity.this);
         admin.validarUsuariosAdmin();
+        admin.crearAsientos(340);
         //this.databaseExists();
         setearBotones();
+
 
         layoutUser.getEditText().setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {

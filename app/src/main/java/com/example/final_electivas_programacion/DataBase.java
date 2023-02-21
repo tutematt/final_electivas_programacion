@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 public class DataBase extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ELECTIVA_FINAL.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 7;
 
     public DataBase(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -20,17 +20,17 @@ public class DataBase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase dataBase) {
         // IF NOT EXIST CREATE DATABASE
-        dataBase.execSQL("CREATE TABLE TARIFA(ID_TARIFA int primary key, CODE text, NAME text, PRICE float)");
-        dataBase.execSQL("CREATE TABLE PAGO(ID_PAGO int primary key, DateTime DATE, ID_TARIFA int, DISCOUNT float, NUMBER_PASSENGERS int, TOTAL_AMOUNT float /*, PAYMENT_TYPE text*/ )");
-        dataBase.execSQL("CREATE TABLE VUELO(ID_VUELO int primary key, CODE text, ORIGIN text, ARRIVAL text, DATE_ORIGIN text, DATE_ARRIVAL text, CAPABILITY int, RESTRICTION double, AVION text)");
-        // FALTA tabla intermedia para asociar asientos al vuelo ASIENTOS_X_VUELO
-        dataBase.execSQL("CREATE TABLE ASIENTO(ID_ASIENTO int primary key, LINE text, NUMBER int, STATUS int, ID_TARIFA int)");
-        dataBase.execSQL("CREATE TABLE RESERVA(ID_RESERVA int primary key, ID_VUELO int, ID_PAGO int, IS_CANCEL boolean, ID_PASAJERO int)");
+        dataBase.execSQL("CREATE TABLE TARIFA(ID_TARIFA INTEGER PRIMARY KEY AUTOINCREMENT, CODE text, NAME text, PRICE float)");
+        dataBase.execSQL("CREATE TABLE PAGO(ID_PAGO INTEGER PRIMARY KEY AUTOINCREMENT, DateTime DATE, ID_TARIFA int, DISCOUNT float, NUMBER_PASSENGERS int, TOTAL_AMOUNT float /*, PAYMENT_TYPE text*/ )");
+        dataBase.execSQL("CREATE TABLE VUELO(ID_VUELO INTEGER PRIMARY KEY AUTOINCREMENT, CODE text, ORIGIN text, ARRIVAL text, DATE_ORIGIN text, DATE_ARRIVAL text, CAPABILITY int, RESTRICTION double, AVION text)");
+        dataBase.execSQL("CREATE TABLE IF NOT EXISTS ASIENTO_VUELO(ID_ASIENTO_VUELO INTEGER PRIMARY KEY AUTOINCREMENT, ID_VUELO int, ID_ASIENTO int, ESTADO text)");
+        dataBase.execSQL("CREATE TABLE ASIENTO(ID_ASIENTO INTEGER PRIMARY KEY AUTOINCREMENT, LINE text, NUMBER int, STATUS int, ID_TARIFA int)");
+        dataBase.execSQL("CREATE TABLE RESERVA(ID_RESERVA INTEGER PRIMARY KEY AUTOINCREMENT, ID_VUELO int, ID_PAGO int, IS_CANCEL boolean, ID_PASAJERO int)");
         //tabla intermedia entre los la reserva y los tickets
         //dataBase.execSQL("CREATE TABLE ASIENTOS_RESERVAS(id int primary key, id_reserva int, id_asiento int)");
-        dataBase.execSQL("CREATE TABLE PERSONA(ID_PERSONA int primary key, DNI int, NAME text, SURNAME text, USERNAME text, PASSWORD text, IS_ADMIN boolean)");
+        dataBase.execSQL("CREATE TABLE PERSONA(ID_PERSONA INTEGER PRIMARY KEY AUTOINCREMENT, DNI int, NAME text, SURNAME text, USERNAME text, PASSWORD text, IS_ADMIN boolean)");
         // tabla intermedia para asociar las reservas a la persona
-        dataBase.execSQL("CREATE TABLE TICKET(ID_TICKET int primary key, ID_VUELO int, ID_PERSONA int, ISVALID boolean)");
+        dataBase.execSQL("CREATE TABLE TICKET(ID_TICKET INTEGER PRIMARY KEY AUTOINCREMENT, CODE text, ID_PERSONA int, ISVALID boolean)");
     }
 
     @Override
@@ -55,6 +55,26 @@ public class DataBase extends SQLiteOpenHelper {
             exception.getMessage();
         }
     }
+
+    //region tarifas
+    boolean crearTarifa(String code, String name, float price)
+    {
+        try {
+            SQLiteDatabase dataBase = this.getWritableDatabase();
+            ContentValues campos = new ContentValues();
+            campos.put("CODE", code);
+            campos.put("NAME", name);
+            campos.put("PRICE", price);
+            dataBase.insert("TARIFA", null, campos);
+            dataBase.close();
+            return true;
+        } catch (Exception exception) {
+            exception.getMessage();
+            return false;
+        }
+    }
+
+    //endregion
 
     // region Personas
     public void crearPersona(String user, String pass, String name, String surname, Integer dni) {
@@ -152,7 +172,7 @@ public class DataBase extends SQLiteOpenHelper {
     // region Vuelos
     public Cursor traerVuelos() {
         SQLiteDatabase database = this.getWritableDatabase();
-        Cursor data = database.rawQuery("SELECT CODE FROM VUELO", null);
+        Cursor data = database.rawQuery("SELECT CODE, DATE_ORIGIN, DATE_ARRIVAL FROM VUELO", null);
         return data;
     }
 
@@ -173,7 +193,7 @@ public class DataBase extends SQLiteOpenHelper {
 
     public Cursor buscarVuelo(String codigo_vuelo) {
         SQLiteDatabase database = this.getWritableDatabase();
-        Cursor data = database.rawQuery("SELECT RESTRICTION, DATE_ORIGIN, DATE_ARRIVAL FROM VUELO WHERE CODE="+"'"+codigo_vuelo+"'", null);
+        Cursor data = database.rawQuery("SELECT RESTRICTION, DATE_ORIGIN, DATE_ARRIVAL, ID_VUELO FROM VUELO WHERE CODE="+"'"+codigo_vuelo+"'", null);
         return data;
     }
 
@@ -183,10 +203,69 @@ public class DataBase extends SQLiteOpenHelper {
         dataBase.execSQL( q );
     }
 
-    public Cursor traerVuelosxFecha(String fechaDesde, String fechaHasta) {
+    public Cursor traerVuelosxFecha(String fechaDesde, String fechaHasta, String tarifa) {
         SQLiteDatabase database = this.getWritableDatabase();
-        Cursor data = database.rawQuery("SELECT CODE, DATE_ORIGIN, DATE_ARRIVAL  FROM VUELO WHERE date(substr(DATE_ORIGIN, 7,4) || '-' || substr(DATE_ORIGIN,4,2) || '-' || substr(DATE_ORIGIN,1,2)) ="+"'"+fechaDesde+"' AND date(substr(DATE_ARRIVAL, 7,4) || '-' || substr(DATE_ARRIVAL,4,2) || '-' || substr(DATE_ARRIVAL,1,2))="+"'"+fechaHasta+"'", null);
+        Cursor data = database.rawQuery("SELECT V.CODE, COUNT(AV.ESTADO) AS ASIENTOS_DISPONIBLES, T.PRICE, V.DATE_ORIGIN, V.DATE_ARRIVAL " +
+                "FROM VUELO AS V " +
+                "JOIN ASIENTO_VUELO AS AV ON V.ID_VUELO=AV.ID_VUELO " +
+                "JOIN ASIENTO AS A ON A.ID_ASIENTO=AV.ID_ASIENTO " +
+                "JOIN TARIFA AS T ON T.ID_TARIFA=A.ID_TARIFA " +
+                "WHERE date(substr(V.DATE_ORIGIN, 7,4) || '-' || substr(V.DATE_ORIGIN,4,2) || '-' || substr(V.DATE_ORIGIN,1,2)) ="+"'"+fechaDesde+"' " +
+                "AND date(substr(V.DATE_ARRIVAL, 7,4) || '-' || substr(V.DATE_ARRIVAL,4,2) || '-' || substr(V.DATE_ARRIVAL,1,2))="+"'"+fechaHasta+"'" +
+                "AND V.CAPABILITY>0 AND AV.ESTADO='Disponible' AND T.NAME="+"'"+tarifa+"' " +
+                "GROUP BY V.CODE, V.DATE_ORIGIN, V.DATE_ARRIVAL, AV.ESTADO, T.PRICE " +
+                "ORDER BY V.CODE", null);
         return data;
+    }
+
+
+
+    public void crearAsientos(int cant) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String q = "INSERT INTO ASIENTO(LINE,NUMBER,ID_TARIFA) SELECT * FROM ( ";
+        String values = "";
+        int porcentajePrimera = cant*10/100;
+        int porcentajeTurista = cant*90/100;
+        for(int i=0;i<porcentajePrimera;i++)
+        {
+            values+="SELECT"+"'"+i+"'AS LINE,"+"'"+i+"' AS NUMBER, 1 AS ID_TARIFA\n UNION\n ";
+        }
+        q+=values;
+        values="";
+        for(int i=0;i<porcentajeTurista;i++)
+        {
+            if(porcentajeTurista-1==i)
+                values+="SELECT"+"'"+i+"'AS LINE,"+"'"+i+"' AS NUMBER, 2 AS ID_TARIFA\n";
+            else
+                values+="SELECT"+"'"+i+"'AS LINE,"+"'"+i+"' AS NUMBER, 2 AS ID_TARIFA\n UNION\n ";
+        }
+        q+=values;
+        q+=") AS T WHERE NOT EXISTS (SELECT * FROM ASIENTO WHERE T.LINE=LINE AND T.NUMBER=NUMBER AND T.ID_TARIFA=ID_TARIFA)";
+        db.execSQL(q);
+    }
+
+    public void crearAsientosxVuelo(int cant, int id_vuelo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String q = "INSERT INTO ASIENTO_VUELO(ID_VUELO,ID_ASIENTO,ESTADO) SELECT * FROM ( ";
+        String values = "";
+        int porcentajePrimera = cant*10/100;
+        int porcentajeTurista = cant*90/100;
+        for(int i=1;i<=porcentajePrimera;i++)
+        {
+            values+="SELECT"+"'"+id_vuelo+"'AS ID_VUELO,"+"'P"+i+"' AS ID_ASIENTO, 'Disponible' AS ESTADO\n UNION\n ";
+        }
+        q+=values;
+        values="";
+        for(int i=0;i<=porcentajeTurista;i++)
+        {
+            if(porcentajeTurista==i)
+                values+="SELECT"+"'"+id_vuelo+"'AS ID_VUELO,"+"'T"+i+"' AS ID_ASIENTO, 'Disponible' AS ESTADO\n";
+            else
+                values+="SELECT"+"'"+id_vuelo+"'AS ID_VUELO,"+"'T"+i+"' AS ID_ASIENTO, 'Disponible' AS ESTADO\n UNION\n ";
+        }
+        q+=values;
+        q+=") AS T WHERE NOT EXISTS (SELECT * FROM ASIENTO_VUELO WHERE ID_VUELO=T.ID_VUELO AND ID_ASIENTO=T.ID_ASIENTO)";
+        db.execSQL(q);
     }
 
    /*

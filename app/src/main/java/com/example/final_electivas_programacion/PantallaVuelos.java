@@ -269,15 +269,29 @@ public class PantallaVuelos extends AppCompatActivity {
                 int capacidad  = this.calcularCapacidad();
                 String avion = autoCompleteAvion.getText().toString();
                 admin.crearVuelo(codigoStr, origenStr, destinoStr, fechaYHora, capacidad, Double.parseDouble(restriccionStr), avion, fechaYHoraDestino);
+                buscaridVuelo(capacidad);
                 Toast.makeText(this, "Vuelo creado correctamente.", Toast.LENGTH_SHORT).show();
                 this.volver();
             }
         }
         catch (Exception ex){
             Toast.makeText(this, "Hubo un error, vuelva a intentar más tarde.", Toast.LENGTH_SHORT).show();
+            ex.getMessage();
         }
 
     }
+
+    private void buscaridVuelo(int capacidad) {
+        Cursor cursor = admin.buscarVuelo(codigoStr);
+        if(cursor.getCount()>0)
+        {
+            if (cursor.moveToFirst())
+            {
+                admin.crearAsientosxVuelo(capacidad, cursor.getInt(3));
+            }
+        }
+    }
+
     private boolean validar(){
         avionStr = layoutAvion.getEditText().getText().toString();
         codigoStr = layoutCodigo.getEditText().getText().toString();

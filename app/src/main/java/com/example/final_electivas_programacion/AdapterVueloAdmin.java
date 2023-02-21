@@ -19,12 +19,12 @@ import java.util.ArrayList;
 
 public class AdapterVueloAdmin extends RecyclerView.Adapter<AdapterVueloAdmin.MyViewHolder>{
     private Context context;
-    private ArrayList nombres, ids;
+    private ArrayList nombres, ids, fechaOrigen, fechaDestino, precioVuelos;
     private Activity activity;
     private String modoUso, cantPasajeros;
 
 
-    AdapterVueloAdmin(Activity activity, Context context, ArrayList codigo, ArrayList ids, String modoUso, String cantPasajeros)
+    AdapterVueloAdmin(Activity activity, Context context, ArrayList codigo, ArrayList ids, String modoUso, String cantPasajeros, ArrayList fechaOrigen, ArrayList fechaDestino, ArrayList precioVuelos)
     {
         this.activity = activity;
         this.context = context;
@@ -32,6 +32,9 @@ public class AdapterVueloAdmin extends RecyclerView.Adapter<AdapterVueloAdmin.My
         this.ids = ids;
         this.modoUso = modoUso;
         this.cantPasajeros = cantPasajeros;
+        this.fechaOrigen = fechaOrigen;
+        this.fechaDestino = fechaDestino;
+        this.precioVuelos = precioVuelos;
 
     }
     @NonNull
@@ -51,11 +54,20 @@ public class AdapterVueloAdmin extends RecyclerView.Adapter<AdapterVueloAdmin.My
     public void onBindViewHolder(@NonNull AdapterVueloAdmin.MyViewHolder holder, int position) {
         if(modoUso.equals("user"))
         {
+            String[] partesFecha = fechaOrigen.get(position).toString().split(" ");
+            holder.fechaOrigen.setText(partesFecha[0]);
+            holder.horaOrigen.setText(partesFecha[1]);
+            partesFecha = fechaDestino.get(position).toString().split(" ");
+            holder.fechaDestino.setText(partesFecha[0]);
+            holder.horaDestino.setText(partesFecha[1]);
+            holder.precioVuelo.setText("$ "+precioVuelos.get(position));
+
             holder.searchLayout.setOnClickListener(view -> {
                 Intent intent = new Intent(context, PantallaReservarVuelo.class);
                 intent.putExtra("reservar_vuelo", true);
                 intent.putExtra("codigo_vuelo", String.valueOf(nombres.get(position)));
                 intent.putExtra("cant_pasajeros", cantPasajeros);
+                intent.putExtra("precio_vuelo", String.valueOf(precioVuelos.get(position)));
                 activity.startActivityForResult(intent, 1);
             });
         }

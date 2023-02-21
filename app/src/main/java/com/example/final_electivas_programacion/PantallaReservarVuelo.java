@@ -1,5 +1,7 @@
 package com.example.final_electivas_programacion;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +15,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
 public class PantallaReservarVuelo extends AppCompatActivity {
     private static final String[] metodoDePago = {"Tarjeta", "Efectivo"};
     Button realizarReserva, cancelarReserva;
@@ -20,6 +29,8 @@ public class PantallaReservarVuelo extends AppCompatActivity {
     TextInputLayout registrarPasajeros, layoutVuelo, layoutOrigen, layoutDestino, layoutFechaIda, layoutFechaVuelta, layoutHoraIda,
             layoutHoraVuelta, layoutDescuento,layoutPrecioAPagar, layoutPrecioTotal, layoutCantPasajeros;
     int hour, minute, cantPasajeros;
+    float precio;
+    float precioDescuento = 0;
 
     boolean reservar_vuelo = false;
     String codigoVuelo = "";
@@ -32,7 +43,8 @@ public class PantallaReservarVuelo extends AppCompatActivity {
 
         reservar_vuelo = getIntent().getBooleanExtra("reservar_vuelo", false);
         codigoVuelo = getIntent().getStringExtra("codigo_vuelo");
-        cantPasajeros = getIntent().getIntExtra("cant_pasajeros",0);
+        precio = Float.parseFloat(getIntent().getStringExtra("precio_vuelo"));
+
         setearBotones();
         setearSeleccionUsuario();
         completarComboMetodoDePago();
@@ -58,21 +70,30 @@ public class PantallaReservarVuelo extends AppCompatActivity {
                 layoutOrigen.getEditText().setText("EZEIZA");
                 layoutVuelo.getEditText().setText(codigoVuelo);
 
-
                 String fechaOrigen = cursor.getString(1);
                 String[] partesFecha = fechaOrigen.split(" ");
+                int diasDiferencia = calcularFecha(partesFecha[0]);
+                calcularDescuento(diasDiferencia);
                 layoutFechaIda.getEditText().setText(partesFecha[0]);
                 layoutHoraIda.getEditText().setText(partesFecha[1]);
                 String fechaDestino = cursor.getString(2);
                 partesFecha = fechaDestino.split(" ");
                 layoutFechaVuelta.getEditText().setText(partesFecha[0]);
                 layoutHoraVuelta.getEditText().setText(partesFecha[1]);
-
-                layoutCantPasajeros.getEditText().setText(String.valueOf(cantPasajeros) );
-                layoutPrecioTotal.getEditText().setText("XXX");
-                layoutDescuento.getEditText().setText("XYY");
-                layoutPrecioAPagar.getEditText().setText("YYY");
+                layoutCantPasajeros.getEditText().setText(getIntent().getStringExtra("cant_pasajeros"));
+                layoutPrecioTotal.getEditText().setText("$ "+String.valueOf(precio));
+                layoutDescuento.getEditText().setText("$ "+String.valueOf(precioDescuento));
+                layoutPrecioAPagar.getEditText().setText("$ "+String.valueOf(precio-precioDescuento));
             }
+        }
+    }
+
+    private void calcularDescuento(int diasDiferencia) {
+        if(diasDiferencia >= 150)
+            precioDescuento = diasDiferencia-(diasDiferencia*75/100);
+        else
+        {
+            precioDescuento = (float) (diasDiferencia*(precio*0.5/100));
         }
     }
 
@@ -114,6 +135,62 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         });
         if(getIntent().hasExtra("Seleccionar Metodo de Pago"))
             autoCompleteMetodoDePago.setText(itemAdapter.getItem(0));
+    }
+
+    public String getDiferencia(Date fechaInicial, Date fechaFinal){
+
+        long diferencia = fechaFinal.getTime() - fechaInicial.getTime();
+
+        long segsMilli = 1000;
+        long minsMilli = segsMilli * 60;
+        long horasMilli = minsMilli * 60;
+        long diasMilli = horasMilli * 24;
+
+        long diasTranscurridos = diferencia / diasMilli;
+        diferencia = diferencia % diasMilli;
+
+        long horasTranscurridos = diferencia / horasMilli;
+        diferencia = diferencia % horasMilli;
+
+        long minutosTranscurridos = diferencia / minsMilli;
+        diferencia = diferencia % minsMilli;
+
+        long segsTranscurridos = diferencia / segsMilli;
+
+        return "diasTranscurridos: " + diasTranscurridos + " , horasTranscurridos: " + horasTranscurridos +
+                " , minutosTranscurridos: " + minutosTranscurridos + " , segsTranscurridos: " + segsTranscurridos;
+
+
+    }
+
+    public int calcularFecha(String s) {
+        int dias=0;
+        try {
+            //usamos SimpleDateFormat
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            //creamos una variable date con la fecha inicial
+            Date fechaInicial = dateFormat.parse(obtenerFechaConFormato("dd-MM-yyyy", "GMT-3"));
+            //variable date con la fecha final
+            Date fechaFinal = dateFormat.parse(s);
+            //calculamos los días restando la inicial de la final y dividiendolo entre los milisegundos que tiene un día y almacenamos el resultado en la variable entera
+            dias = (int) ((fechaFinal.getTime() - fechaInicial.getTime()) / 86400000);
+            //se imprime el resultado
+            System.out.println("Hay " + dias + " dias de diferencia");
+
+        }catch(Exception e)
+        {
+
+        }
+        return dias;
+    }
+
+    public static String obtenerFechaConFormato(String formato, String zonaHoraria) {
+        Calendar calendar = Calendar.getInstance();
+        Date date = calendar.getTime();
+        SimpleDateFormat sdf;
+        sdf = new SimpleDateFormat(formato);
+        sdf.setTimeZone(TimeZone.getTimeZone(zonaHoraria));
+        return sdf.format(date);
     }
 
 }

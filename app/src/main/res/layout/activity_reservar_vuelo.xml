@@ -19,9 +19,6 @@
 
             >
             <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
                 android:orientation="vertical" android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_column="0"
@@ -66,7 +63,7 @@
                                 android:text="UM-AIRLANES"
                                 android:textAlignment="center"
                                 android:textColor="#000"
-                                android:textSize="15sp"
+                                android:textSize="10sp"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/textViewImagenBV"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -100,6 +97,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="12dp"
+                                android:layout_marginEnd="10dp"
                                 android:fontFamily="@font/lato"
                                 android:text="ROM"
                                 android:textAlignment="center"
@@ -111,26 +109,13 @@
 
                             <TextView
                                 android:id="@+id/textViewFechaOrigenBV"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_width="206dp"
+                                android:layout_height="44dp"
                                 android:layout_marginTop="60dp"
-                                android:text="Fecha DD/MM/YYYY"
+                                android:text="Aeropuerto Ezeiza, Argentina"
                                 android:textAlignment="center"
                                 android:textColor="#000"
-                                android:textSize="15sp"
-                                app:layout_constraintEnd_toStartOf="@+id/textViewFechaDestinoBV"
-                                app:layout_constraintStart_toStartOf="@id/textViewOrigenBV"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                            <TextView
-                                android:id="@+id/textViewhoraOrigenBV"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="80dp"
-                                android:text="Hora HH:MM"
-                                android:textAlignment="center"
-                                android:textColor="#000"
-                                android:textSize="15sp"
+                                android:textSize="17sp"
                                 app:layout_constraintEnd_toStartOf="@+id/textViewFechaDestinoBV"
                                 app:layout_constraintStart_toStartOf="@id/textViewOrigenBV"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -141,42 +126,15 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="60dp"
                                 android:fontFamily="@font/lato_bold"
-                                android:text="Fecha DD/MM/YYYY"
+                                android:text="Aeropuerto Roma, Italia"
                                 android:textAlignment="center"
                                 android:textColor="#000"
-                                android:textSize="15sp"
-                                app:layout_constraintEnd_toEndOf="@id/textViewDestinoBV"
-                                app:layout_constraintStart_toEndOf="@+id/textViewFechaOrigenBV"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                            <TextView
-                                android:id="@+id/textViewHoraDestinoBV"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="80dp"
-                                android:fontFamily="@font/lato"
-                                android:text="Hora HH:MM"
-                                android:textAlignment="center"
-                                android:textColor="#000"
-                                android:textSize="15sp"
+                                android:textSize="20sp"
                                 app:layout_constraintEnd_toEndOf="@id/textViewDestinoBV"
                                 app:layout_constraintStart_toEndOf="@+id/textViewFechaOrigenBV"
                                 app:layout_constraintTop_toTopOf="parent" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <TextView
-                            android:id="@+id/textViewPrecioBV"
-                            android:layout_width="408dp"
-                            android:layout_height="21dp"
-                            android:fontFamily="@font/lato_bold"
-                            android:text="$ PRECIO,00"
-                            android:textAlignment="center"
-                            android:textColor="#000"
-                            android:textSize="15sp"
-                            app:layout_constraintBottom_toBottomOf="@+id/constraintLayout2"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -532,7 +490,6 @@
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -565,12 +522,12 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:paddingLeft="10dp"
                     >
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="2"
                         android:focusable="false"
-                        />
+                        android:text="-1" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -763,22 +720,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 >
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_height="wrap_content"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                    android:layout_width="wrap_content"
-                    >
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Seleccione metodo de pago:"
-                        android:fontFamily="@font/lato"
-                        android:minWidth="130dp"
-                        android:focusable="false"
-                        />
-
-                </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"

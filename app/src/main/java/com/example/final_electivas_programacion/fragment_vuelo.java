@@ -1,35 +1,37 @@
 package com.example.final_electivas_programacion;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.internal.MaterialCheckable;
+import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Objects;
 import java.util.TimeZone;
 
 public class fragment_vuelo extends Fragment {
@@ -45,7 +47,10 @@ public class fragment_vuelo extends Fragment {
     ArrayList<String> ids_vuelos, codigos_vuelos, fechasDestino_vuelos, fechasOrigen_vuelos, horasDestino_vuelos, horasOrigen_vuelos, precios_vuelos;
     AdapterVueloAdmin customAdapter;
     int i =0;
-    String fechaDesde ="", fechaHasta ="";
+    String fechaDesde ="", fechaHasta ="", tarifa="Turista";
+    SwitchMaterial materialSwitch;
+    boolean seleccionoFecha = true;
+    RadioGroup radioTipoTarifa;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,22 +65,64 @@ public class fragment_vuelo extends Fragment {
         completarDatePickerDestino();
         db = new DataBase(getActivity());
 
+        cantPasajeros.getEditText().setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                hideKeyboard(v);
+            }
+        });
+
 
         btnBuscar.setOnClickListener(view -> {
-
-            /*LinearLayout fragmento = inflatedView.findViewById(R.id.linearLayoutFV);
-            getActivity().overridePendingTransition(R.anim.slide_out_left, R.anim.slide_in_left);
-            fragmento.setVisibility(View.GONE);*/
-            buscarVuelo();
-            /*
-                Fragment secondFrag = new fragment_reserva();
-                FragmentTransaction fm = getActivity().getSupportFragmentManager().beginTransaction() ;
-                fm.replace(R.id.PantallaMenuPrincipal,secondFrag).commit();*/
+            if(validarCampos())
+                buscarVuelo();
 
         });
 
-        // Inflate the layout for this fragment
+        materialSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            //get boolean value from parameter.
+
+            boolean on = isChecked;
+            if(on)
+            {
+                seleccionarFechaIda.setVisibility(View.GONE);
+                seleccionarFechaVuelta.setVisibility(View.GONE);
+                seleccionoFecha = false;
+            }
+            else
+            {
+                seleccionarFechaIda.setVisibility(View.VISIBLE);
+                seleccionarFechaVuelta.setVisibility(View.VISIBLE);
+                seleccionoFecha = true;
+            }
+
+        });
+
+        radioTipoTarifa = inflatedView.findViewById(R.id.radioGroupClaseTicket);
+        radioTipoTarifa.setOnCheckedChangeListener((radioGroup, i) -> {
+            RadioButton rb=inflatedView.findViewById(i);
+            tarifa= rb.getText().toString();
+        });
         return inflatedView;
+    }
+
+    private boolean validarCampos() {
+        if(autoCompleteOrigen.getText().toString().isEmpty() || autoCompleteDestino.getText().toString().isEmpty() || cantPasajeros.getEditText().getText().toString().isEmpty())
+        {
+            Toast.makeText(getActivity(), "Por favor, complete todos los campos.", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        else if(seleccionarFechaVuelta.isShown() && seleccionarFechaIda.isShown())
+        {
+            if(seleccionarFechaIda.getText().toString().isEmpty() || seleccionarFechaIda.getText().toString().equals( "DESDE") || (seleccionarFechaVuelta.getText().toString().isEmpty() || seleccionarFechaVuelta.getText().toString().equals( "HASTA")))
+                Toast.makeText(getActivity(), "Por favor, complete campos de FECHA.", Toast.LENGTH_LONG).show();
+        }
+
+        return true;
+    }
+
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     private void setearBotones() {
@@ -86,13 +133,37 @@ public class fragment_vuelo extends Fragment {
         seleccionarFechaIda = inflatedView.findViewById(R.id.buttonFechaDesdePPV);
         seleccionarFechaVuelta = inflatedView.findViewById(R.id.buttonFechaHastaPPV);
         btnBuscar = inflatedView.findViewById(R.id.ButtonBuscarPPV);
+        materialSwitch = inflatedView.findViewById(R.id.switch_fechas);
     }
 
 
-    void buscarVuelo() {
+    void buscarVuelo()
+    {
+        cambiarLayout();
+        iniciarListadoVuelos();
+        mostrarVuelos();
+
+        iniciarAdapter();
+
+        LinearLayout fragmento2 = inflatedView.findViewById(R.id.layouBusquedaVuelo);
+        fragmento2.setVisibility(View.VISIBLE);
+
+    }
+
+    private void iniciarAdapter() {
+        String cantidad_pasajeros = cantPasajeros.getEditText().getText().toString();
+        customAdapter = new AdapterVueloAdmin(getActivity(), getActivity(), codigos_vuelos, ids_vuelos, "user", cantidad_pasajeros, fechasOrigen_vuelos, fechasDestino_vuelos, precios_vuelos);
+        recyclerView.setAdapter(customAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    private void cambiarLayout() {
         LinearLayout fragmento = inflatedView.findViewById(R.id.linearLayoutFV);
         getActivity().overridePendingTransition(R.anim.slide_out_left, R.anim.slide_in_left);
         fragmento.setVisibility(View.GONE);
+    }
+
+    private void iniciarListadoVuelos(){
         recyclerView = inflatedView.findViewById(R.id.recycleViewResultadoVuelos);
         ids_vuelos = new ArrayList<>();
         codigos_vuelos = new ArrayList<>();
@@ -101,30 +172,31 @@ public class fragment_vuelo extends Fragment {
         horasDestino_vuelos = new ArrayList<>();
         horasOrigen_vuelos = new ArrayList<>();
         precios_vuelos = new ArrayList<>();
-        mostrarVuelos();
-        customAdapter = new AdapterVueloAdmin(getActivity(), getActivity(), codigos_vuelos, ids_vuelos, "user", cantPasajeros.getEditText().getText().toString());
-        recyclerView.setAdapter(customAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        LinearLayout fragmento2 = inflatedView.findViewById(R.id.layouBusquedaVuelo);
-        fragmento2.setVisibility(View.VISIBLE);
-
     }
 
     private void mostrarVuelos() {
 
-        Cursor cursor = db.traerVuelosxFecha(fechaDesde, fechaHasta);
+        Cursor cursor;
+        if(seleccionoFecha)
+            cursor = db.traerVuelosxFecha(fechaDesde, fechaHasta, tarifa);
+        else
+            cursor = db.traerVuelos();
         if(cursor.getCount() == 0)
             Toast.makeText(getActivity(), "No hay vuelos para mostrar.", Toast.LENGTH_SHORT).show();
         else
         {
             while(cursor.moveToNext())
             {
-                i++;
-                ids_vuelos.add(String.valueOf(i));
-                codigos_vuelos.add(cursor.getString(0));
-                fechasOrigen_vuelos.add(cursor.getString(1));
-                fechasDestino_vuelos.add(cursor.getString(2));
-                //precios_vuelos.add(cursor.getString(3));
+                if(cursor.getInt(1) >= Integer.parseInt(cantPasajeros.getEditText().getText().toString()))
+                {
+                    i++;
+                    ids_vuelos.add(String.valueOf(i));
+                    codigos_vuelos.add(cursor.getString(0));
+                    fechasOrigen_vuelos.add(cursor.getString(3));
+                    fechasDestino_vuelos.add(cursor.getString(4));
+                    precios_vuelos.add(cursor.getString(2));
+                }
+
             }
         }
     }

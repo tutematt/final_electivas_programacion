@@ -39,4 +39,7 @@
     <string name="sin_fecha">Aún no he decidido la fecha</string>
     <string name="turista">Turista</string>
     <string name="primera">Primera Clase</string>
+    <string name="tarifas">Tarifa</string>
+    <string name="monto">$ (Valor en Pesos)</string>
+    <string name="enviar">Enviar</string>
 </resources>
