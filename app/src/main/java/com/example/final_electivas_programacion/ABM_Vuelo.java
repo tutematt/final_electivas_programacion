@@ -33,7 +33,7 @@ public class ABM_Vuelo extends AppCompatActivity {
             startActivity(i);
         });
 
-        volver = findViewById(R.id.floatingButtonTriviaVuelo);
+        volver = findViewById(R.id.floatingButtonVuelosVolver);
         volver.setOnClickListener((View.OnClickListener) view -> {
             Intent i = new Intent(ABM_Vuelo.this, AdminActivity.class);
             startActivity(i);

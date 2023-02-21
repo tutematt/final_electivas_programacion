@@ -1,6 +1,7 @@
 package com.example.final_electivas_programacion;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 
@@ -24,6 +25,7 @@ import android.widget.Toast;
 
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.internal.MaterialCheckable;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -40,6 +42,7 @@ public class fragment_vuelo extends Fragment {
     AutoCompleteTextView autoCompleteOrigen, autoCompleteDestino;
 
     Button seleccionarFechaIda, seleccionarFechaVuelta, btnBuscar;
+    FloatingActionButton btnVolver;
     View inflatedView = null;
     TextInputLayout cantPasajeros;
     RecyclerView recyclerView;
@@ -78,6 +81,10 @@ public class fragment_vuelo extends Fragment {
 
         });
 
+        btnVolver.setOnClickListener(view -> {
+            volver();
+        });
+
         materialSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             //get boolean value from parameter.
 
@@ -103,6 +110,11 @@ public class fragment_vuelo extends Fragment {
             tarifa= rb.getText().toString();
         });
         return inflatedView;
+    }
+
+    private void volver() {
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        startActivity(intent);
     }
 
     private boolean validarCampos() {
@@ -134,6 +146,7 @@ public class fragment_vuelo extends Fragment {
         seleccionarFechaVuelta = inflatedView.findViewById(R.id.buttonFechaHastaPPV);
         btnBuscar = inflatedView.findViewById(R.id.ButtonBuscarPPV);
         materialSwitch = inflatedView.findViewById(R.id.switch_fechas);
+        btnVolver = inflatedView.findViewById(R.id.floatingButtonVolverFV);
     }
 
 

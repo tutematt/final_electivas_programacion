@@ -28,7 +28,7 @@ public class PantallaBuscarVuelos extends AppCompatActivity {
         setContentView(R.layout.activity_pantalla_search_vuelos);
         recyclerView = findViewById(R.id.recycleViewABMvuelos);
 
-        volver = findViewById(R.id.floatingButtonTriviaVuelo);
+        volver = findViewById(R.id.floatingButtonVuelosVolver);
         volver.setOnClickListener((View.OnClickListener) view -> {
             Intent i = new Intent(PantallaBuscarVuelos.this, MainActivity.class);
             startActivity(i);

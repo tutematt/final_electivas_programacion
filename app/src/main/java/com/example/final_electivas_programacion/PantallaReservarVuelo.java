@@ -2,6 +2,7 @@ package com.example.final_electivas_programacion;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
@@ -50,6 +51,15 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         completarComboMetodoDePago();
         db = new DataBase(PantallaReservarVuelo.this);
         buscarVuelo();
+        realizarReserva.setOnClickListener(view -> {
+            pago();
+        });
+    }
+
+    private void pago() {
+        Intent i = new Intent(this, PantallaPago.class);
+        startActivity(i);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     private void setearSeleccionUsuario() {

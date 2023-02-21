@@ -42,4 +42,6 @@
     <string name="tarifas">Tarifa</string>
     <string name="monto">$ (Valor en Pesos)</string>
     <string name="enviar">Enviar</string>
+    <string name="pago">Pago</string>
+    <string name="aclaracion">Escanee el código QR para proseguir con el pago y luego de confirmarlo será redirigdo al menu principal.</string>
 </resources>

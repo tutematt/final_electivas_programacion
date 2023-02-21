@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 public class DataBase extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ELECTIVA_FINAL.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 9;
 
     public DataBase(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -23,8 +23,8 @@ public class DataBase extends SQLiteOpenHelper {
         dataBase.execSQL("CREATE TABLE TARIFA(ID_TARIFA INTEGER PRIMARY KEY AUTOINCREMENT, CODE text, NAME text, PRICE float)");
         dataBase.execSQL("CREATE TABLE PAGO(ID_PAGO INTEGER PRIMARY KEY AUTOINCREMENT, DateTime DATE, ID_TARIFA int, DISCOUNT float, NUMBER_PASSENGERS int, TOTAL_AMOUNT float /*, PAYMENT_TYPE text*/ )");
         dataBase.execSQL("CREATE TABLE VUELO(ID_VUELO INTEGER PRIMARY KEY AUTOINCREMENT, CODE text, ORIGIN text, ARRIVAL text, DATE_ORIGIN text, DATE_ARRIVAL text, CAPABILITY int, RESTRICTION double, AVION text)");
-        dataBase.execSQL("CREATE TABLE IF NOT EXISTS ASIENTO_VUELO(ID_ASIENTO_VUELO INTEGER PRIMARY KEY AUTOINCREMENT, ID_VUELO int, ID_ASIENTO int, ESTADO text)");
-        dataBase.execSQL("CREATE TABLE ASIENTO(ID_ASIENTO INTEGER PRIMARY KEY AUTOINCREMENT, LINE text, NUMBER int, STATUS int, ID_TARIFA int)");
+        dataBase.execSQL("CREATE TABLE ASIENTO_VUELO(ID_ASIENTO_VUELO INTEGER PRIMARY KEY AUTOINCREMENT, ID_VUELO int, CODE_ASIENTO text, ESTADO text)");
+        dataBase.execSQL("CREATE TABLE ASIENTO(ID_ASIENTO INTEGER PRIMARY KEY AUTOINCREMENT, LINE text, NUMBER int, CODE text, ID_TARIFA int)");
         dataBase.execSQL("CREATE TABLE RESERVA(ID_RESERVA INTEGER PRIMARY KEY AUTOINCREMENT, ID_VUELO int, ID_PAGO int, IS_CANCEL boolean, ID_PASAJERO int)");
         //tabla intermedia entre los la reserva y los tickets
         //dataBase.execSQL("CREATE TABLE ASIENTOS_RESERVAS(id int primary key, id_reserva int, id_asiento int)");
@@ -42,6 +42,7 @@ public class DataBase extends SQLiteOpenHelper {
         dataBase.execSQL("DROP TABLE IF EXISTS PERSONA");
         dataBase.execSQL("DROP TABLE IF EXISTS TICKET");
         dataBase.execSQL("DROP TABLE IF EXISTS ASIENTO");
+        dataBase.execSQL("DROP TABLE IF EXISTS ASIENTO_VUELO");
         onCreate(dataBase);
     }
 
@@ -208,7 +209,7 @@ public class DataBase extends SQLiteOpenHelper {
         Cursor data = database.rawQuery("SELECT V.CODE, COUNT(AV.ESTADO) AS ASIENTOS_DISPONIBLES, T.PRICE, V.DATE_ORIGIN, V.DATE_ARRIVAL " +
                 "FROM VUELO AS V " +
                 "JOIN ASIENTO_VUELO AS AV ON V.ID_VUELO=AV.ID_VUELO " +
-                "JOIN ASIENTO AS A ON A.ID_ASIENTO=AV.ID_ASIENTO " +
+                "JOIN ASIENTO AS A ON A.CODE=AV.CODE_ASIENTO " +
                 "JOIN TARIFA AS T ON T.ID_TARIFA=A.ID_TARIFA " +
                 "WHERE date(substr(V.DATE_ORIGIN, 7,4) || '-' || substr(V.DATE_ORIGIN,4,2) || '-' || substr(V.DATE_ORIGIN,1,2)) ="+"'"+fechaDesde+"' " +
                 "AND date(substr(V.DATE_ARRIVAL, 7,4) || '-' || substr(V.DATE_ARRIVAL,4,2) || '-' || substr(V.DATE_ARRIVAL,1,2))="+"'"+fechaHasta+"'" +
@@ -222,49 +223,49 @@ public class DataBase extends SQLiteOpenHelper {
 
     public void crearAsientos(int cant) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String q = "INSERT INTO ASIENTO(LINE,NUMBER,ID_TARIFA) SELECT * FROM ( ";
+        String q = "INSERT INTO ASIENTO(LINE,NUMBER,CODE,ID_TARIFA) SELECT * FROM ( ";
         String values = "";
         int porcentajePrimera = cant*10/100;
         int porcentajeTurista = cant*90/100;
         for(int i=0;i<porcentajePrimera;i++)
         {
-            values+="SELECT"+"'"+i+"'AS LINE,"+"'"+i+"' AS NUMBER, 1 AS ID_TARIFA\n UNION\n ";
+            values+="SELECT"+"'"+i+"'AS LINE,"+"'"+i+"' AS NUMBER, "+"'P"+i+"' AS CODE, 1 AS ID_TARIFA\n UNION\n ";
         }
         q+=values;
         values="";
         for(int i=0;i<porcentajeTurista;i++)
         {
             if(porcentajeTurista-1==i)
-                values+="SELECT"+"'"+i+"'AS LINE,"+"'"+i+"' AS NUMBER, 2 AS ID_TARIFA\n";
+                values+="SELECT"+"'"+i+"'AS LINE,"+"'"+i+"' AS NUMBER,"+"'T"+i+"' AS CODE, 2 AS ID_TARIFA\n";
             else
-                values+="SELECT"+"'"+i+"'AS LINE,"+"'"+i+"' AS NUMBER, 2 AS ID_TARIFA\n UNION\n ";
+                values+="SELECT"+"'"+i+"'AS LINE,"+"'"+i+"' AS NUMBER,"+"'T"+i+"' AS CODE, 2 AS ID_TARIFA\n UNION\n ";
         }
         q+=values;
-        q+=") AS T WHERE NOT EXISTS (SELECT * FROM ASIENTO WHERE T.LINE=LINE AND T.NUMBER=NUMBER AND T.ID_TARIFA=ID_TARIFA)";
+        q+=") AS T WHERE NOT EXISTS (SELECT * FROM ASIENTO WHERE T.CODE=CODE AND T.ID_TARIFA=ID_TARIFA)";
         db.execSQL(q);
     }
 
     public void crearAsientosxVuelo(int cant, int id_vuelo) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String q = "INSERT INTO ASIENTO_VUELO(ID_VUELO,ID_ASIENTO,ESTADO) SELECT * FROM ( ";
+        String q = "INSERT INTO ASIENTO_VUELO(ID_VUELO,CODE_ASIENTO,ESTADO) SELECT * FROM ( ";
         String values = "";
         int porcentajePrimera = cant*10/100;
         int porcentajeTurista = cant*90/100;
         for(int i=1;i<=porcentajePrimera;i++)
         {
-            values+="SELECT"+"'"+id_vuelo+"'AS ID_VUELO,"+"'P"+i+"' AS ID_ASIENTO, 'Disponible' AS ESTADO\n UNION\n ";
+            values+="SELECT"+"'"+id_vuelo+"'AS ID_VUELO,"+"'P"+i+"' AS CODE_ASIENTO, 'Disponible' AS ESTADO\n UNION\n ";
         }
         q+=values;
         values="";
         for(int i=0;i<=porcentajeTurista;i++)
         {
             if(porcentajeTurista==i)
-                values+="SELECT"+"'"+id_vuelo+"'AS ID_VUELO,"+"'T"+i+"' AS ID_ASIENTO, 'Disponible' AS ESTADO\n";
+                values+="SELECT"+"'"+id_vuelo+"'AS ID_VUELO,"+"'T"+i+"' AS CODE_ASIENTO, 'Disponible' AS ESTADO\n";
             else
-                values+="SELECT"+"'"+id_vuelo+"'AS ID_VUELO,"+"'T"+i+"' AS ID_ASIENTO, 'Disponible' AS ESTADO\n UNION\n ";
+                values+="SELECT"+"'"+id_vuelo+"'AS ID_VUELO,"+"'T"+i+"' AS CODE_ASIENTO, 'Disponible' AS ESTADO\n UNION\n ";
         }
         q+=values;
-        q+=") AS T WHERE NOT EXISTS (SELECT * FROM ASIENTO_VUELO WHERE ID_VUELO=T.ID_VUELO AND ID_ASIENTO=T.ID_ASIENTO)";
+        q+=") AS T WHERE NOT EXISTS (SELECT * FROM ASIENTO_VUELO WHERE ID_VUELO=T.ID_VUELO AND CODE_ASIENTO=T.CODE_ASIENTO)";
         db.execSQL(q);
     }
 
