@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+
 public class DataBase extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ELECTIVA_FINAL.db";
@@ -21,13 +23,14 @@ public class DataBase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase dataBase) {
         // IF NOT EXIST CREATE DATABASE
         dataBase.execSQL("CREATE TABLE TARIFA(ID_TARIFA INTEGER PRIMARY KEY AUTOINCREMENT, CODE text, NAME text, PRICE float)");
-        dataBase.execSQL("CREATE TABLE PAGO(ID_PAGO INTEGER PRIMARY KEY AUTOINCREMENT, DateTime DATE, ID_TARIFA int, DISCOUNT float, NUMBER_PASSENGERS int, TOTAL_AMOUNT float /*, PAYMENT_TYPE text*/ )");
+        dataBase.execSQL("CREATE TABLE PAGO(ID_PAGO INTEGER PRIMARY KEY AUTOINCREMENT, DateTime DATE, ID_TARIFA int, DISCOUNT float, NUMBER_PASSENGERS int, TOTAL_AMOUNT float, PAYMENT_TYPE text, NUMBER_CONFIRM int)");
         dataBase.execSQL("CREATE TABLE VUELO(ID_VUELO INTEGER PRIMARY KEY AUTOINCREMENT, CODE text, ORIGIN text, ARRIVAL text, DATE_ORIGIN text, DATE_ARRIVAL text, CAPABILITY int, RESTRICTION double, AVION text)");
         dataBase.execSQL("CREATE TABLE ASIENTO_VUELO(ID_ASIENTO_VUELO INTEGER PRIMARY KEY AUTOINCREMENT, ID_VUELO int, CODE_ASIENTO text, ESTADO text)");
         dataBase.execSQL("CREATE TABLE ASIENTO(ID_ASIENTO INTEGER PRIMARY KEY AUTOINCREMENT, LINE text, NUMBER int, CODE text, ID_TARIFA int)");
-        dataBase.execSQL("CREATE TABLE RESERVA(ID_RESERVA INTEGER PRIMARY KEY AUTOINCREMENT, ID_VUELO int, ID_PAGO int, IS_CANCEL boolean, ID_PASAJERO int)");
+        dataBase.execSQL("CREATE TABLE RESERVA(ID_RESERVA INTEGER PRIMARY KEY AUTOINCREMENT, CODE text, ID_VUELO int, ID_PAGO int, IS_CANCEL boolean, ID_PASAJERO int)");
         //tabla intermedia entre los la reserva y los tickets
         //dataBase.execSQL("CREATE TABLE ASIENTOS_RESERVAS(id int primary key, id_reserva int, id_asiento int)");
+        dataBase.execSQL("CREATE TABLE RESERVA_PERSONA(ID_RESERVA_PERSONA PRIMARY KEY AUTOINCREMENT, CODE_RESERVA, DNI_PERSONA)");
         dataBase.execSQL("CREATE TABLE PERSONA(ID_PERSONA INTEGER PRIMARY KEY AUTOINCREMENT, DNI int, NAME text, SURNAME text, USERNAME text, PASSWORD text, IS_ADMIN boolean)");
         // tabla intermedia para asociar las reservas a la persona
         dataBase.execSQL("CREATE TABLE TICKET(ID_TICKET INTEGER PRIMARY KEY AUTOINCREMENT, CODE text, ID_PERSONA int, ISVALID boolean)");
@@ -43,6 +46,7 @@ public class DataBase extends SQLiteOpenHelper {
         dataBase.execSQL("DROP TABLE IF EXISTS TICKET");
         dataBase.execSQL("DROP TABLE IF EXISTS ASIENTO");
         dataBase.execSQL("DROP TABLE IF EXISTS ASIENTO_VUELO");
+        dataBase.execSQL("DROP TABLE IF EXISTS RESERVA_PERSONA");
         onCreate(dataBase);
     }
 
@@ -268,6 +272,60 @@ public class DataBase extends SQLiteOpenHelper {
         q+=") AS T WHERE NOT EXISTS (SELECT * FROM ASIENTO_VUELO WHERE ID_VUELO=T.ID_VUELO AND CODE_ASIENTO=T.CODE_ASIENTO)";
         db.execSQL(q);
     }
+
+    //region reserva
+    public Cursor traerReservas() {
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor data = database.rawQuery("SELECT CODE FROM RESERVA", null);
+        return data;
+    }
+
+    public int guardarReserva(String code, int idVuelo, boolean cancel, int idPasajero)
+    {
+        SQLiteDatabase dataBase = this.getWritableDatabase();
+        ContentValues campos = new ContentValues();
+        campos.put("CODE", code);
+        campos.put("ID_VUELO", idVuelo);
+        campos.put("IS_CANCEL", cancel);
+        campos.put("ID_PASAJERO", idPasajero);
+        long insertID = dataBase.insert("RESERVA", null, campos);
+        dataBase.close();
+        return (int) insertID;
+    }
+
+    public void actualizarReservaPago(int idPago, int idReserva)
+    {
+        SQLiteDatabase db= this.getWritableDatabase();
+        ContentValues registro = new ContentValues();
+        registro.put("ID_PAGO", idPago);
+
+        db.update("RESERVA", registro, "ID_RESERVA =?",new String[]{String.valueOf(idReserva)});
+    }
+
+    public agregarPersonaxReserva(ArrayList<Persona> pasajeros)
+    {
+
+    }
+
+    //endregion
+
+    //region pago
+    public int guardarPago(int idTarifa, float discount, int cantPasajeros, float totalPrice, String payment, int nroConfirm)
+    {
+        SQLiteDatabase dataBase = this.getWritableDatabase();
+        ContentValues campos = new ContentValues();
+        //campos.put("DATE", );
+        campos.put("ID_TARIFA", idTarifa);
+        campos.put("DISCOUNT", discount);
+        campos.put("NUMBER_PASSENGERS", cantPasajeros);
+        campos.put("TOTAL_AMOUNT", totalPrice);
+        campos.put("PAYMENT_TYPE", payment);
+        campos.put("NUMBER_CONFIRM", nroConfirm);
+        long insertID = dataBase.insert("PAGO", null, campos);
+        dataBase.close();
+        return (int) insertID;
+    }
+    //endregion
 
    /*
     public Vuelo buscarVueloPorAvionYFecha(String username) {
