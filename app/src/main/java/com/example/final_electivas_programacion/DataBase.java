@@ -302,7 +302,12 @@ public class DataBase extends SQLiteOpenHelper {
 
         db.update("RESERVA", registro, "ID_RESERVA =?",new String[]{String.valueOf(idReserva)});
     }
-
+    public Cursor buscarReserva(int idReserva) { //Busco la reserva con el IdReserva
+        //ERROR     Caused by: android.database.sqlite.SQLiteException: no such column: Reserva.idReserva (code 1 SQLITE_ERROR): , while compiling: SELECT CODE, CODE_VUELO, ID_PASAJERO FROM RESERVA WHERE Reserva.idReserva = idReserva
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor data = database.rawQuery("SELECT CODE, CODE_VUELO, ID_PASAJERO FROM RESERVA WHERE Reserva.idReserva = idReserva", null);
+        return data;
+    }
     public void agregarPersonaxReserva(List<Persona> pasajeros)
     {
 
