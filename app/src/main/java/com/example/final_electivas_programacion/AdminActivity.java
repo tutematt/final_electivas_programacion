@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AdminActivity extends AppCompatActivity {
-    Button btnVuelos, btnSalir, btnTarifas;
+    Button btnVuelos, btnSalir, btnTarifas, btnReservas;
     String nombre;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -21,12 +21,21 @@ public class AdminActivity extends AppCompatActivity {
         btnVuelos.setOnClickListener(view -> {
             abmVuelos();
         });
+        btnReservas.setOnClickListener(view -> {
+            abmReservas();
+        });
         btnTarifas.setOnClickListener(view -> {
             abmTarifas();
         });
         btnSalir.setOnClickListener(view -> {
             salir();
         });
+    }
+
+    private void abmReservas() {
+        Intent i = new Intent(this, ABM_Reserva.class);
+        startActivity(i);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     private void abmVuelos() {
@@ -51,5 +60,6 @@ public class AdminActivity extends AppCompatActivity {
         btnVuelos = findViewById(R.id.buttonVuelosPA);
         btnSalir = findViewById(R.id.buttonSalirPMP);
         btnTarifas = findViewById(R.id.buttonTarifasPA);
+        btnReservas = findViewById(R.id.buttonReservaPA);
     }
 }

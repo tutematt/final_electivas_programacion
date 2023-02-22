@@ -10,8 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -104,7 +102,7 @@ public class AdapterVueloAdmin extends RecyclerView.Adapter<AdapterVueloAdmin.My
                 fechaDestino = itemView.findViewById(R.id.textViewFechaDestinoBV);
                 horaOrigen = itemView.findViewById(R.id.textViewhoraOrigenBV);
                 horaDestino = itemView.findViewById(R.id.textViewHoraDestinoBV);
-                precioVuelo = itemView.findViewById(R.id.textViewPrecioBV);
+                precioVuelo = itemView.findViewById(R.id.textViewCodigoReservaBV);
                 searchLayout = itemView.findViewById(R.id.searchLayout);
             }
             {

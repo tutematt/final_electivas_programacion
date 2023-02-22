@@ -1,6 +1,7 @@
 package com.example.final_electivas_programacion;
 
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
@@ -13,8 +14,9 @@ import com.google.android.material.textfield.TextInputLayout;
 
 public class ABM_Tarifas extends AppCompatActivity {
     Button btnEnviar, btnPrimera, btnTurista;
-    TextInputLayout nombreTarifa, precioTarifa;
-    float precio;
+    TextInputLayout precioTarifa;
+    String nombreTarifa="";
+    float precio, precioTurista, precioPrimera;
     DataBase bd;
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -22,22 +24,56 @@ public class ABM_Tarifas extends AppCompatActivity {
         setContentView(R.layout.activity_pantalla_tarifas);
 
         bd = new DataBase(ABM_Tarifas.this);
+        cargarTarifas();
 
         btnEnviar = findViewById(R.id.ButtonEnviarPT);
         btnTurista = findViewById(R.id.ButtonTuristaPT);
+        btnTurista.setOnClickListener(view -> {
+            nombreTarifa=btnTurista.getText().toString();
+            precioTarifa.getEditText().setText(String.valueOf(precioPrimera));
+
+        });
         btnPrimera = findViewById(R.id.ButtonPrimeraPT);
-        nombreTarifa = findViewById(R.id.layoutNombrePT);
+        btnPrimera.setOnClickListener(view -> {
+            nombreTarifa=btnPrimera.getText().toString();
+            precioTarifa.getEditText().setText((int) precioPrimera);
+        });
         precioTarifa = findViewById(R.id.layoutPrecioPT);
         btnEnviar.setOnClickListener(view -> {
-            enviarTarifa();
+            if(nombreTarifa.equals(""))
+            {
+                Toast.makeText(this, "Debe seleccionar un tipo de tarifa para continuar.", Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                enviarTarifa();
+            }
+
+
         });
 
+
+
+    }
+
+    private void cargarTarifas()
+    {
+        Cursor cursor = bd.cargarTarfias();
+        if(cursor.getCount()>0)
+        {
+            while(cursor.moveToNext())
+            {
+                if(cursor.getString(0)=="Turista")
+                    precioTurista = cursor.getFloat(1);
+                else
+                    precioPrimera = cursor.getFloat(1);
+            }
+        }
     }
 
     private void enviarTarifa() {
         precio = Float.parseFloat(precioTarifa.getEditText().getText().toString().replace(",", "."));
-        if(bd.crearTarifa(nombreTarifa.getEditText().getText().toString(), nombreTarifa.getEditText().getText().toString(), precio))
+        if(bd.crearTarifa(nombreTarifa, nombreTarifa, precio))
             Toast.makeText(this, "Tarifa creada correctamente", Toast.LENGTH_LONG).show();
-
     }
 }

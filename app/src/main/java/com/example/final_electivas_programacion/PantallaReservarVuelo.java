@@ -5,10 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.content.Intent;
@@ -16,7 +14,6 @@ import android.database.Cursor;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -28,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.TimeZone;
 
 public class PantallaReservarVuelo extends AppCompatActivity {
@@ -74,10 +72,14 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         if (metodPag.equals("Tarjeta") || metodPag.equals("Efectivo")){
             if (cantPasajerosRegistradosRestantes == 0) {
                 buscarPasajeros();
+                String codigo_reserva = generarCodigoReserva();
+                db.guardarReserva(codigo_reserva, codigoVuelo, false, 1);
+                db.agregarPersonaxReserva(pasajeros);
+                db.ocuparAsientoxVuelo(codigoVuelo, "Turista");
                 Intent i = new Intent(this, PantallaPago.class);
                 startActivity(i);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                db.agregarPersonaxReserva(pasajeros);
+
             } else {
                 Toast.makeText(this, "Registre todos los pasajeros por favor.", Toast.LENGTH_SHORT).show();
             }
@@ -85,6 +87,14 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         else{
             Toast.makeText(this, "Seleccione un metodo de pago.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private String generarCodigoReserva() {
+        Random generadorAleatorios = new Random();
+
+        int numeroAleatorio = 1+generadorAleatorios.nextInt();
+
+        return "REV-"+numeroAleatorio;
     }
 
     private void setearSeleccionUsuario() {
@@ -290,6 +300,7 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         });
 
     }
+
     private void buscarPasajeros(){
         for (Persona pasajero : pasajeros){ //recorro los pasajeros creados
             pasajeroNombre = pasajero.getNombre();
