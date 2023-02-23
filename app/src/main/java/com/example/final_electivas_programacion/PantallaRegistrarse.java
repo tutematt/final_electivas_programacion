@@ -83,7 +83,6 @@ public class PantallaRegistrarse extends AppCompatActivity {
 
     public void crearUsuario() {
         Boolean ok = validarCampos();
-        int prueba = Integer.parseInt(docStr);
         if(ok){
             Persona p = admin.buscarPersonaPorDni(Integer.parseInt(docStr));
             try{
