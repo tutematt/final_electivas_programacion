@@ -39,7 +39,7 @@ public class fragment_reserva extends Fragment {
 
         mostrarReservas();
 
-        customAdapter = new AdapterReservaAdmin(getActivity(), getActivity(), ids_reserva, codigos_reserva);
+        customAdapter = new AdapterReservaAdmin(getActivity(), getActivity(), ids_reserva, codigos_reserva, "User");
         recyclerView.setAdapter(customAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
