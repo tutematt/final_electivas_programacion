@@ -161,10 +161,10 @@ public class PantallaReservarVuelo extends AppCompatActivity {
 
     private void calcularDescuento(int diasDiferencia) {
         if(diasDiferencia >= 150)
-            precioDescuento = diasDiferencia-(diasDiferencia*75/100);
+            precioDescuento = precio-(precio*75/100);
         else
         {
-            precioDescuento = (float) (diasDiferencia*(precio*0.5/100));
+            precioDescuento = (float) (precio*(precio*0.5/100));
         }
     }
 
