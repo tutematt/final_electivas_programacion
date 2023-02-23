@@ -14,7 +14,10 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
+import java.time.Instant;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -266,6 +269,7 @@ public class PantallaVuelos extends AppCompatActivity {
                 // FALTA validar que no se de de alta el mismo avion en el misma fecha
                 String fechaYHora = seleccionarFechaIda.getText().toString() + " " + horaStr;
                 String fechaYHoraDestino = seleccionarFechaVuelta.getText().toString() + " " + horaDesStr;
+
                 int capacidad  = this.calcularCapacidad();
                 String avion = autoCompleteAvion.getText().toString();
                 admin.crearVuelo(codigoStr, origenStr, destinoStr, fechaYHora, capacidad, Double.parseDouble(restriccionStr), avion, fechaYHoraDestino);
@@ -308,6 +312,25 @@ public class PantallaVuelos extends AppCompatActivity {
             Toast.makeText(this, "Por favor, complete todos los campos.", Toast.LENGTH_LONG).show();
             return false;
         }
+        else{
+            if (verificarFechaHoy(fechaO)==false) {
+                int difDias = calcularDiferenciaFecha(fechaO, fechaD);
+                if (difDias < 0) {
+                    Toast.makeText(this, "Por favor, ingrese fechas correctas.", Toast.LENGTH_LONG).show();
+                    return false;
+                } else if (difDias == 0) {
+                    String[] a = horaStr.split(":");
+                    int horaOrigen = Integer.parseInt(a[0]);
+                    String[] b = horaDesStr.split(":");
+                    int horaDestino = Integer.parseInt(b[0]);
+
+                    if (horaDestino - horaOrigen < 1) {
+                        Toast.makeText(this, "Por favor, ingrese horarios correctos.", Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                }
+            }
+        }
 
         // FALTA: Validar que la fecha seleccionada sea mayor a hoy
 
@@ -324,6 +347,47 @@ public class PantallaVuelos extends AppCompatActivity {
     private void volver() {
         Intent i = new Intent(PantallaVuelos.this, ABM_Vuelo.class);
         startActivity(i);
+    }
+    private boolean verificarFechaHoy(String fechaOrigen){
+        boolean respuesta = false;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            Date strDate = sdf.parse(fechaOrigen);
+            if (System.currentTimeMillis() > strDate.getTime()) {
+                respuesta = true;
+                Toast.makeText(this, "Por favor, ingrese fechas actuales.", Toast.LENGTH_LONG).show();
+
+            }
+             else {
+                //your_date_is_outdated = false;
+                respuesta = false;
+            }
+        }
+        catch(Exception e)
+        {
+            e.getMessage();
+        }
+        return respuesta;
+    }
+    public int calcularDiferenciaFecha (String origenFecha, String destinoFecha){
+        int dias=0;
+        try {
+            //usamos SimpleDateFormat
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            //creamos una variable date con la fecha inicial
+            Date fechaOrigen = dateFormat.parse(origenFecha);
+            //variable date con la fecha final
+            Date fechaDestino = dateFormat.parse(destinoFecha);          // Alta vuelo, buscar vuelo
+            //calculamos los días restando la inicial de la final y dividiendolo entre los milisegundos que tiene un día y almacenamos el resultado en la variable entera
+            dias = (int) ((fechaDestino.getTime() - fechaOrigen.getTime()) / 86400000);
+            //se imprime el resultado
+            System.out.println("Hay " + dias + " dias de diferencia");
+
+        }catch(Exception e)
+        {
+            e.getMessage();
+        }
+        return dias;
     }
 
 }
