@@ -211,7 +211,7 @@ public class DataBase extends SQLiteOpenHelper {
 
     public Cursor buscarVuelo(String codigo_vuelo) {
         SQLiteDatabase database = this.getWritableDatabase();
-        Cursor data = database.rawQuery("SELECT RESTRICTION, DATE_ORIGIN, DATE_ARRIVAL, ID_VUELO FROM VUELO WHERE CODE="+"'"+codigo_vuelo+"'", null);
+        Cursor data = database.rawQuery("SELECT RESTRICTION, DATE_ORIGIN, DATE_ARRIVAL, ID_VUELO, AVION FROM VUELO WHERE CODE="+"'"+codigo_vuelo+"'", null);
         return data;
     }
 
