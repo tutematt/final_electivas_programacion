@@ -96,6 +96,21 @@ public class DataBase extends SQLiteOpenHelper {
         }
     }
 
+    public void crearPasajero(String name, String surname, Integer dni) {
+        try {
+            SQLiteDatabase dataBase = this.getWritableDatabase();
+            ContentValues campos = new ContentValues();
+            campos.put("DNI", dni);             // 1
+            campos.put("NAME", name);           // 4
+            campos.put("SURNAME", surname);     // 5
+            campos.put("IS_ADMIN", false);      // 6
+            dataBase.insert("PERSONA", null, campos);
+            dataBase.close();
+        } catch (Exception exception) {
+            exception.getMessage();
+        }
+    }
+
     public Persona buscarPersona(String username, String password) {
         SQLiteDatabase db = this.getWritableDatabase();
         Persona p = null;
@@ -273,7 +288,7 @@ public class DataBase extends SQLiteOpenHelper {
     //region reserva
     public Cursor traerReservas() {
         SQLiteDatabase database = this.getWritableDatabase();
-        Cursor data = database.rawQuery("SELECT CODE FROM RESERVA", null);
+        Cursor data = database.rawQuery("SELECT ID_RESERVA, CODE FROM RESERVA", null);
         return data;
     }
 

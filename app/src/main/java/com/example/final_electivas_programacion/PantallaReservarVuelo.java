@@ -306,8 +306,8 @@ public class PantallaReservarVuelo extends AppCompatActivity {
             pasajeroNombre = pasajero.getNombre();
             pasajeroApellido = pasajero.getApellido();
             pasajeroDni = pasajero.getDni();
-            if(buscarPasajeroPorDNI(pasajero.getDni()) == false){//false = no existe registro
-                db.crearPersona((pasajeroNombre+pasajeroApellido+pasajeroDni), String.valueOf(pasajeroDni), pasajeroNombre, pasajeroApellido, pasajeroDni);
+            if(buscarPasajeroPorDNI(pasajero.getDni()) == false){   //false = no existe registro
+                db.crearPasajero(pasajeroNombre, pasajeroApellido, pasajeroDni);
             }
         }
     }
