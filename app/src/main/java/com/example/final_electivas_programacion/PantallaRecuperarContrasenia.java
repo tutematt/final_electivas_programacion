@@ -127,7 +127,7 @@ public class PantallaRecuperarContrasenia extends AppCompatActivity {
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(clsActivity);
         stackBuilder.addNextIntent(intent);
-        pendingIntent = stackBuilder.getPendingIntent(1, PendingIntent.FLAG_CANCEL_CURRENT);
+        pendingIntent = stackBuilder.getPendingIntent(1, PendingIntent.FLAG_IMMUTABLE);
     }
 
     public void volver() {
