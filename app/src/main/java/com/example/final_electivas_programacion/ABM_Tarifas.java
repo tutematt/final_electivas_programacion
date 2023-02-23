@@ -32,6 +32,7 @@ public class ABM_Tarifas extends AppCompatActivity {
         btnVolver.setOnClickListener(view -> {
             volver();
         });
+
         btnTurista = findViewById(R.id.ButtonTuristaPT);
         btnTurista.setOnClickListener(view -> {
             nombreTarifa=btnTurista.getText().toString();
@@ -41,7 +42,7 @@ public class ABM_Tarifas extends AppCompatActivity {
         btnPrimera = findViewById(R.id.ButtonPrimeraPT);
         btnPrimera.setOnClickListener(view -> {
             nombreTarifa=btnPrimera.getText().toString();
-            precioTarifa.getEditText().setText((int) precioPrimera);
+            precioTarifa.getEditText().setText(String.valueOf(precioPrimera));
         });
         precioTarifa = findViewById(R.id.layoutPrecioPT);
         btnEnviar.setOnClickListener(view -> {
