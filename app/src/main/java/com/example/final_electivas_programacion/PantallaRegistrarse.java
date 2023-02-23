@@ -88,7 +88,7 @@ public class PantallaRegistrarse extends AppCompatActivity {
             try{
                 if(p != null){
                     String user = p.getUsuario();
-                    if(user != ""){
+                    if(user != null){
                         Toast.makeText(this, "Ya existe un usuario con ese DNI.", Toast.LENGTH_SHORT).show();
                     }
                     else{  // estaba en el padron pero no se registró en la app

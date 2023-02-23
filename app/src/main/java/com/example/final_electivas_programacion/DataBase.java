@@ -181,7 +181,8 @@ public class DataBase extends SQLiteOpenHelper {
 
     public void actualizarPersona(Integer dni, String username, String pass, String name, String surname) {
         SQLiteDatabase dataBase = this.getWritableDatabase();
-        dataBase.execSQL("UPDATE PERSONA SET USERNMAE = " + "'" + username + "', PASSWORD = " + "'" + pass + "', NAME = " + "'" + name + "', SURNAME = " + "'" + surname + "' WHERE DNI = " + dni + ";", null);
+        String q = "UPDATE PERSONA SET USERNAME = " + "'" + username + "', PASSWORD = " + "'" + pass + "', NAME = " + "'" + name + "', SURNAME = " + "'" + surname + "' WHERE DNI = " + dni + ";";
+        dataBase.execSQL( q );
     }
 
     // endregion
