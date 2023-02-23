@@ -1,5 +1,6 @@
 package com.example.final_electivas_programacion;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -13,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class ABM_Tarifas extends AppCompatActivity {
-    Button btnEnviar, btnPrimera, btnTurista;
+    Button btnEnviar, btnPrimera, btnTurista, btnVolver;
     TextInputLayout precioTarifa;
     String nombreTarifa="";
     float precio, precioTurista, precioPrimera;
@@ -27,6 +28,10 @@ public class ABM_Tarifas extends AppCompatActivity {
         cargarTarifas();
 
         btnEnviar = findViewById(R.id.ButtonEnviarPT);
+        btnVolver = findViewById(R.id.buttonVolverPT);
+        btnVolver.setOnClickListener(view -> {
+            volver();
+        });
         btnTurista = findViewById(R.id.ButtonTuristaPT);
         btnTurista.setOnClickListener(view -> {
             nombreTarifa=btnTurista.getText().toString();
@@ -75,5 +80,11 @@ public class ABM_Tarifas extends AppCompatActivity {
         precio = Float.parseFloat(precioTarifa.getEditText().getText().toString().replace(",", "."));
         if(bd.crearTarifa(nombreTarifa, nombreTarifa, precio))
             Toast.makeText(this, "Tarifa creada correctamente", Toast.LENGTH_LONG).show();
+    }
+
+    public void volver() {
+        Intent intent = new Intent(this, AdminActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 }

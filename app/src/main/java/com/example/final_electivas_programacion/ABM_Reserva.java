@@ -32,8 +32,7 @@ public class ABM_Reserva extends AppCompatActivity {
 
         volver = findViewById(R.id.floatingButtonReservaVolver);
         volver.setOnClickListener((View.OnClickListener) view -> {
-            Intent i = new Intent(ABM_Reserva.this, AdminActivity.class);
-            startActivity(i);
+            volver();
         });
 
         db = new DataBase(ABM_Reserva.this);
@@ -66,5 +65,11 @@ public class ABM_Reserva extends AppCompatActivity {
                 codigos_reserva.add(cursor.getString(0));
             }
         }
+    }
+
+    public void volver() {
+        Intent intent = new Intent(this, AdminActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 }
