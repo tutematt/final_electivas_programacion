@@ -27,6 +27,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
 
 public class fragment_vuelo extends Fragment {
@@ -117,11 +118,75 @@ public class fragment_vuelo extends Fragment {
         {
             if(seleccionarFechaIda.getText().toString().isEmpty() || seleccionarFechaIda.getText().toString().equals( "DESDE") || (seleccionarFechaVuelta.getText().toString().isEmpty() || seleccionarFechaVuelta.getText().toString().equals( "HASTA")))
                 Toast.makeText(getActivity(), "Por favor, complete campos de FECHA.", Toast.LENGTH_LONG).show();
+            else {
+                String fechaOrigen = seleccionarFechaIda.getText().toString();
+                String fechaDestino = seleccionarFechaVuelta.getText().toString();
+
+                if (verificarFechaHoy(fechaOrigen) >= 0) {
+                    int difDias = calcularDiferenciaFecha(fechaOrigen, fechaDestino);
+                    if (difDias < 0) {
+                        Toast.makeText(getContext(), "Por favor, ingrese fechas correctas.", Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                }
+                else{
+                    return false;
+                }
+            }
+
         }
 
         return true;
     }
+    public int verificarFechaHoy(String s) {
+        int dias=0;
+        try {
+            //usamos SimpleDateFormat
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            //creamos una variable date con la fecha inicial
+            Date fechaInicial = dateFormat.parse(obtenerFechaConFormato("dd-MM-yyyy", "GMT-3"));
+            //variable date con la fecha final
+            Date fechaFinal = dateFormat.parse(s);
+            //calculamos los días restando la inicial de la final y dividiendolo entre los milisegundos que tiene un día y almacenamos el resultado en la variable entera
+            dias = (int) ((fechaFinal.getTime() - fechaInicial.getTime()) / 86400000);
+            //se imprime el resultado
 
+        }catch(Exception e)
+        {
+            e.getMessage();
+        }
+        if (dias<0)
+            Toast.makeText(getContext(), "Por favor, ingrese fechas actuales o futuras.", Toast.LENGTH_LONG).show();
+        return dias;
+    }
+    public int calcularDiferenciaFecha (String origenFecha, String destinoFecha){
+        int dias=0;
+        try {
+            //usamos SimpleDateFormat
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            //creamos una variable date con la fecha inicial
+            Date fechaOrigen = dateFormat.parse(origenFecha);
+            //variable date con la fecha final
+            Date fechaDestino = dateFormat.parse(destinoFecha);          // Alta vuelo, buscar vuelo
+            //calculamos los días restando la inicial de la final y dividiendolo entre los milisegundos que tiene un día y almacenamos el resultado en la variable entera
+            dias = (int) ((fechaDestino.getTime() - fechaOrigen.getTime()) / 86400000);
+            //se imprime el resultado
+            System.out.println("Hay " + dias + " dias de diferencia con hoy");
+
+        }catch(Exception e)
+        {
+            e.getMessage();
+        }
+        return dias;
+    }
+    public static String obtenerFechaConFormato(String formato, String zonaHoraria) {
+        Calendar calendar = Calendar.getInstance();
+        Date date = calendar.getTime();
+        SimpleDateFormat sdf;
+        sdf = new SimpleDateFormat(formato);
+        sdf.setTimeZone(TimeZone.getTimeZone(zonaHoraria));
+        return sdf.format(date);
+    }
     public void hideKeyboard(View view) {
         InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);

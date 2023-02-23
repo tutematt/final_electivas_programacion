@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Toast;
+
 import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
 import java.time.Instant;
@@ -19,8 +20,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.TextInputLayout;
@@ -77,24 +80,29 @@ public class PantallaVuelos extends AppCompatActivity {
     }
 
     private void actualizarVuelo() {
-        try{
-            String fechaOrigen = seleccionarFechaIda.getText().toString();
-            String horarioOrigen = timeButton.getText().toString();
-            String fechaDestino = seleccionarFechaVuelta.getText().toString();
-            String horarioDestino = timeButtonVuelta.getText().toString();
-            if((fechaOrigen.isEmpty() || horarioOrigen.isEmpty()) && (fechaDestino.isEmpty() || horarioDestino.isEmpty()))
-                Toast.makeText(this, "Hubo un error, vuelva a intentar más tarde.", Toast.LENGTH_SHORT).show();
-            else
-            {
-                String fechaYHora = fechaOrigen+" "+horarioOrigen;
-                String fechaYHoraDestino = fechaDestino+" "+horarioDestino;
-                admin.actualizarVuelo(fechaYHora, getIntent().getStringExtra("codigo_vuelo"), fechaYHoraDestino);
-                Toast.makeText(this, "Vuelo actualizado correctamente.", Toast.LENGTH_SHORT).show();
-                this.volver();
+        if(this.validar()){
+
+            try{
+                String fechaOrigen = seleccionarFechaIda.getText().toString();
+                String horarioOrigen = timeButton.getText().toString();
+                String fechaDestino = seleccionarFechaVuelta.getText().toString();
+                String horarioDestino = timeButtonVuelta.getText().toString();
+                if((fechaOrigen.isEmpty() || horarioOrigen.isEmpty()) && (fechaDestino.isEmpty() || horarioDestino.isEmpty()))
+                    Toast.makeText(this, "Hubo un error, vuelva a intentar más tarde.", Toast.LENGTH_SHORT).show();
+                else
+                {
+                    // FALTA validar que no se de de alta el mismo avion en el misma fecha
+
+                    String fechaYHora = fechaOrigen+" "+horarioOrigen;
+                    String fechaYHoraDestino = fechaDestino+" "+horarioDestino;
+                    admin.actualizarVuelo(fechaYHora, getIntent().getStringExtra("codigo_vuelo"), fechaYHoraDestino);
+                    Toast.makeText(this, "Vuelo actualizado correctamente.", Toast.LENGTH_SHORT).show();
+                    this.volver();
+                }
             }
-        }
-        catch (Exception ex){
-            Toast.makeText(this, "Hubo un error, vuelva a intentar más tarde.", Toast.LENGTH_SHORT).show();
+            catch (Exception ex){
+                Toast.makeText(this, "Hubo un error, vuelva a intentar más tarde.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -119,8 +127,9 @@ public class PantallaVuelos extends AppCompatActivity {
                     partesFecha = fechaDestino.split(" ");
                     seleccionarFechaVuelta.setText(partesFecha[0]);
                     timeButtonVuelta.setText(partesFecha[1]);
-                    autoCompleteAvion.setText(cursor.getString(4));
+                    layoutAvion.getEditText().setText(cursor.getString(4));
                 }
+
             }
             btnEnviar.setText("Actualizar");
         }
@@ -189,6 +198,7 @@ public class PantallaVuelos extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 adapterView.getItemAtPosition(i).toString();
+                //layoutTrivias.getEditText().setText((String)adapterView.getItemAtPosition(i));
             }
         });
 
@@ -201,6 +211,7 @@ public class PantallaVuelos extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 adapterView.getItemAtPosition(i).toString();
+                //layoutTrivias.getEditText().setText((String)adapterView.getItemAtPosition(i));
             }
         });
         if(getIntent().hasExtra("editar"))
@@ -306,7 +317,7 @@ public class PantallaVuelos extends AppCompatActivity {
             return false;
         }
         else{
-            if (verificarFechaHoy(fechaO)==false) {
+            if (verificarFechaHoy(fechaO)>=0) {
                 int difDias = calcularDiferenciaFecha(fechaO, fechaD);
                 if (difDias < 0) {
                     Toast.makeText(this, "Por favor, ingrese fechas correctas.", Toast.LENGTH_LONG).show();
@@ -322,6 +333,9 @@ public class PantallaVuelos extends AppCompatActivity {
                         return false;
                     }
                 }
+            }
+            else {
+                return false;
             }
         }
 
@@ -341,26 +355,27 @@ public class PantallaVuelos extends AppCompatActivity {
         Intent i = new Intent(PantallaVuelos.this, ABM_Vuelo.class);
         startActivity(i);
     }
-    private boolean verificarFechaHoy(String fechaOrigen){
-        boolean respuesta = false;
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            Date strDate = sdf.parse(fechaOrigen);
-            if (System.currentTimeMillis() > strDate.getTime()) {
-                respuesta = true;
-                Toast.makeText(this, "Por favor, ingrese fechas actuales.", Toast.LENGTH_LONG).show();
 
-            }
-             else {
-                //your_date_is_outdated = false;
-                respuesta = false;
-            }
-        }
-        catch(Exception e)
+    public int verificarFechaHoy(String s) {
+        int dias=0;
+        try {
+            //usamos SimpleDateFormat
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            //creamos una variable date con la fecha inicial
+            Date fechaInicial = dateFormat.parse(obtenerFechaConFormato("dd-MM-yyyy", "GMT-3"));
+            //variable date con la fecha final
+            Date fechaFinal = dateFormat.parse(s);
+            //calculamos los días restando la inicial de la final y dividiendolo entre los milisegundos que tiene un día y almacenamos el resultado en la variable entera
+            dias = (int) ((fechaFinal.getTime() - fechaInicial.getTime()) / 86400000);
+            //se imprime el resultado
+
+        }catch(Exception e)
         {
             e.getMessage();
         }
-        return respuesta;
+        if (dias<0)
+            Toast.makeText(this, "Por favor, ingrese fechas actuales o futuras.", Toast.LENGTH_LONG).show();
+        return dias;
     }
     public int calcularDiferenciaFecha (String origenFecha, String destinoFecha){
         int dias=0;
@@ -374,7 +389,7 @@ public class PantallaVuelos extends AppCompatActivity {
             //calculamos los días restando la inicial de la final y dividiendolo entre los milisegundos que tiene un día y almacenamos el resultado en la variable entera
             dias = (int) ((fechaDestino.getTime() - fechaOrigen.getTime()) / 86400000);
             //se imprime el resultado
-            System.out.println("Hay " + dias + " dias de diferencia");
+            System.out.println("Hay " + dias + " dias de diferencia con hoy");
 
         }catch(Exception e)
         {
@@ -382,5 +397,12 @@ public class PantallaVuelos extends AppCompatActivity {
         }
         return dias;
     }
-
+    public static String obtenerFechaConFormato(String formato, String zonaHoraria) {
+        Calendar calendar = Calendar.getInstance();
+        Date date = calendar.getTime();
+        SimpleDateFormat sdf;
+        sdf = new SimpleDateFormat(formato);
+        sdf.setTimeZone(TimeZone.getTimeZone(zonaHoraria));
+        return sdf.format(date);
+    }
 }
