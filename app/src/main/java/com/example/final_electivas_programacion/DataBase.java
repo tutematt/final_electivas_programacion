@@ -14,7 +14,7 @@ import java.util.List;
 public class DataBase extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ELECTIVA_FINAL.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
 
     public DataBase(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -314,7 +314,8 @@ public class DataBase extends SQLiteOpenHelper {
     }
 
     //region asiento_vuelos
-    public void ocuparAsientoxVuelo(String codeVuelo, String tipoTarifa)
+    //region asiento_vuelos
+    public void ocuparAsientoxVuelo(String codeVuelo, String tipoTarifa, int cantPasajeros)
     {
         try
         {
@@ -322,9 +323,9 @@ public class DataBase extends SQLiteOpenHelper {
             String q = "UPDATE ASIENTO_VUELO SET ESTADO='Ocupado' " +
                     "WHERE ID_ASIENTO_VUELO IN (SELECT ID_ASIENTO_VUELO FROM VUELO AS V " +
                     "JOIN ASIENTO_VUELO AS AV ON V.ID_VUELO=AV.ID_VUELO " +
-                    "JOIN ASIENTO AS A ON A.CODE_ASIENTO=AV.CODE " +
+                    "JOIN ASIENTO AS A ON AV.CODE_ASIENTO=A.CODE " +
                     "JOIN TARIFA AS T ON T.ID_TARIFA=A.ID_TARIFA " +
-                    "WHERE V.CODE="+"'"+codeVuelo+"'  AND T.NAME="+"'"+tipoTarifa+"'  AND AV.ESTADO='Disponible') ";
+                    "WHERE V.CODE="+"'"+codeVuelo+"'  AND T.NAME="+"'"+tipoTarifa+"'  AND AV.ESTADO='Disponible' LIMIT "+""+cantPasajeros+" ) ";
             dataBase.execSQL( q );
         }catch (Exception exception) {
             exception.getMessage();
@@ -335,20 +336,13 @@ public class DataBase extends SQLiteOpenHelper {
     //endregion
 
     //region pago
-    public int guardarPago(int idTarifa, float discount, int cantPasajeros, float totalPrice, String payment, int nroConfirm)
+    public void guardarPago(String code, float discount, int cantPasajeros, float totalPrice, String payment, int nroConfirm)
     {
         SQLiteDatabase dataBase = this.getWritableDatabase();
-        ContentValues campos = new ContentValues();
-        //campos.put("DATE", );
-        campos.put("ID_TARIFA", idTarifa);
-        campos.put("DISCOUNT", discount);
-        campos.put("NUMBER_PASSENGERS", cantPasajeros);
-        campos.put("TOTAL_AMOUNT", totalPrice);
-        campos.put("PAYMENT_TYPE", payment);
-        campos.put("NUMBER_CONFIRM", nroConfirm);
-        long insertID = dataBase.insert("PAGO", null, campos);
-        dataBase.close();
-        return (int) insertID;
+        String q = "INSERT INTO PAGO(ID_TARIFA, DISCOUNT, NUMBER_PASSENGERS, TOTAL_AMOUNT, PAYMENT_TYPE, NUMBER_CONFIRM)" +
+                "SELECT * FROM ( SELECT T.ID_TARIFA,"+"'"+discount+"',"+"'"+cantPasajeros+"',"+"'"+totalPrice+"',"+"'"+payment+"',"+"'"+nroConfirm+"'  " +
+                "FROM TARIFA WHERE CODE="+"'"+code+"'";
+        dataBase.execSQL( q );
     }
 
 

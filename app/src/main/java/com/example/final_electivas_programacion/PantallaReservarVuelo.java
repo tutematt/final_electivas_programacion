@@ -35,12 +35,11 @@ public class PantallaReservarVuelo extends AppCompatActivity {
     MaterialTextView numeroPasajero;
     TextInputLayout registrarPasajeros, layoutVuelo, layoutOrigen, layoutDestino, layoutFechaIda, layoutFechaVuelta, layoutHoraIda,
             layoutHoraVuelta, layoutDescuento,layoutPrecioAPagar, layoutPrecioTotal, layoutCantPasajeros;
-    int cantPasajeros, pasajeroDni, codigoReserva;
+    int cantPasajeros, pasajeroDni;
     int cantPasajerosRegistradosRestantes = -1;
     float precio, precioDescuento = 0;
     boolean reservar_vuelo = false;
-    boolean editar = false;
-    String codigoVuelo = "";
+    String codigoVuelo = "", tipoTarifa ="";
     String pasajeroNombre, pasajeroApellido;
 
     DataBase db;
@@ -52,44 +51,29 @@ public class PantallaReservarVuelo extends AppCompatActivity {
 
         reservar_vuelo = getIntent().getBooleanExtra("reservar_vuelo", false);
         codigoVuelo = getIntent().getStringExtra("codigo_vuelo");
-        db = new DataBase(PantallaReservarVuelo.this);
-        editar = getIntent().getBooleanExtra("editar", false);
+        precio = Float.parseFloat(getIntent().getStringExtra("precio_vuelo"));
+        cantPasajeros = Integer.parseInt(getIntent().getStringExtra("cant_pasajeros"));
+        tipoTarifa = getIntent().getStringExtra("tarifa");
+
         setearBotones();
         setearSeleccionUsuario();
         completarComboMetodoDePago();
-
-
-        if (editar == true) { //true = vengo de AdapterReservaAdmin
-            codigoReserva = getIntent().getIntExtra("codigo_reserva",0);
-            buscarReserva(codigoReserva);
-        }else{
-            precio = Float.parseFloat(getIntent().getStringExtra("precio_vuelo"));
-            cantPasajeros = Integer.parseInt(getIntent().getStringExtra("cant_pasajeros"));
-            buscarVuelo();
-        }
-
-
+        db = new DataBase(PantallaReservarVuelo.this);
+        buscarVuelo();
         realizarReserva.setOnClickListener(view -> {
-            pago();
+            reservarPasaje();
         });
         popupRegistrarPasajero.setOnClickListener(view -> {
             registrarPasajero();
         });
     }
 
-    private void pago() {
+    private void reservarPasaje() {
         String metodPag = autoCompleteMetodoDePago.getText().toString();
         if (metodPag.equals("Tarjeta") || metodPag.equals("Efectivo")){
             if (cantPasajerosRegistradosRestantes == 0) {
                 buscarPasajeros();
-                String codigo_reserva = generarCodigoReserva();
-                db.guardarReserva(codigo_reserva, codigoVuelo, false, 1);
-                db.agregarPersonaxReserva(pasajeros);
-                db.ocuparAsientoxVuelo(codigoVuelo, "Turista");
-                Intent i = new Intent(this, PantallaPago.class);
-                startActivity(i);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-
+                guardarReserva();
             } else {
                 Toast.makeText(this, "Registre todos los pasajeros por favor.", Toast.LENGTH_SHORT).show();
             }
@@ -97,6 +81,38 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         else{
             Toast.makeText(this, "Seleccione un metodo de pago.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    boolean guardarReserva()
+    {
+        String codigo_reserva = generarCodigoReserva();
+        try
+        {
+            db.guardarReserva(codigo_reserva, codigoVuelo, false, 1);
+            db.agregarPersonaxReserva(pasajeros);
+            db.ocuparAsientoxVuelo(codigoVuelo, tipoTarifa, cantPasajeros);
+            pasarApagar(codigo_reserva);
+        }
+        catch(Exception e)
+        {
+            e.getMessage();
+            Toast.makeText(this, "No se pudo completar el proceso de reserva.", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
+    }
+
+    void pasarApagar(String codigo_reserva)
+    {
+        Intent i = new Intent(this, PantallaPago.class);
+        i.putExtra("codigo_reserva", codigo_reserva);
+        i.putExtra("codigo_tarifa", tipoTarifa);
+        i.putExtra("descuento", precioDescuento);
+        i.putExtra("cant_pasajeros", cantPasajeros);
+        i.putExtra("total", precio-precioDescuento);
+        startActivity(i);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     private String generarCodigoReserva() {
@@ -111,7 +127,7 @@ public class PantallaReservarVuelo extends AppCompatActivity {
     }
 
     private void buscarVuelo(){
-        db.buscarVuelo(codigoVuelo);    //vo a buscar el codigo de vuelo y completo las pantallas
+        db.buscarVuelo(codigoVuelo);
 
 
         Cursor cursor = db.buscarVuelo(codigoVuelo);
@@ -193,32 +209,6 @@ public class PantallaReservarVuelo extends AppCompatActivity {
             autoCompleteMetodoDePago.setText(itemAdapter.getItem(0));
     }
 
-    public String getDiferencia(Date fechaInicial, Date fechaFinal){
-
-        long diferencia = fechaFinal.getTime() - fechaInicial.getTime();
-
-        long segsMilli = 1000;
-        long minsMilli = segsMilli * 60;
-        long horasMilli = minsMilli * 60;
-        long diasMilli = horasMilli * 24;
-
-        long diasTranscurridos = diferencia / diasMilli;
-        diferencia = diferencia % diasMilli;
-
-        long horasTranscurridos = diferencia / horasMilli;
-        diferencia = diferencia % horasMilli;
-
-        long minutosTranscurridos = diferencia / minsMilli;
-        diferencia = diferencia % minsMilli;
-
-        long segsTranscurridos = diferencia / segsMilli;
-
-        return "diasTranscurridos: " + diasTranscurridos + " , horasTranscurridos: " + horasTranscurridos +
-                " , minutosTranscurridos: " + minutosTranscurridos + " , segsTranscurridos: " + segsTranscurridos;
-
-
-    }
-
     public int calcularFecha(String s) {
         int dias=0;
         try {
@@ -235,7 +225,7 @@ public class PantallaReservarVuelo extends AppCompatActivity {
 
         }catch(Exception e)
         {
-
+            e.getMessage();
         }
         return dias;
     }
@@ -324,23 +314,10 @@ public class PantallaReservarVuelo extends AppCompatActivity {
     private boolean buscarPasajeroPorDNI(int dni){
         Persona pasajero = db.buscarPersonaPorDni(dni);
         if (pasajero == null)
-                return false; //no existe
+            return false; //no existe
         else
             return true; //ya existe uno con ese dni
-    }
 
-    private void buscarReserva(int id_Reserva) {
-        Cursor cursor = db.buscarReserva(id_Reserva);
 
-        if (cursor.getCount() != 0) {
-            if (cursor.moveToFirst()) {
-                int cant = cursor.getCount();
-                int idReserva = cursor.getInt(0);
-                codigoVuelo = cursor.getString(1);      //obtengo el codigo de vuelo para buscarlo
-                int ID_PASAJERO = cursor.getInt(2);
-
-                buscarVuelo();
-            }
-        }
     }
 }

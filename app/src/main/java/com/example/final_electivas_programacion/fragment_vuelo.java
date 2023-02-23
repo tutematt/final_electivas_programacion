@@ -165,7 +165,7 @@ public class fragment_vuelo extends Fragment {
 
     private void iniciarAdapter() {
         String cantidad_pasajeros = cantPasajeros.getEditText().getText().toString();
-        customAdapter = new AdapterVueloAdmin(getActivity(), getActivity(), codigos_vuelos, ids_vuelos, "user", cantidad_pasajeros, fechasOrigen_vuelos, fechasDestino_vuelos, precios_vuelos);
+        customAdapter = new AdapterVueloAdmin(getActivity(), getActivity(), codigos_vuelos, ids_vuelos, "user", cantidad_pasajeros, fechasOrigen_vuelos, fechasDestino_vuelos, precios_vuelos, tarifa);
         recyclerView.setAdapter(customAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }

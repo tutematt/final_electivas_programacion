@@ -19,10 +19,10 @@ public class AdapterVueloAdmin extends RecyclerView.Adapter<AdapterVueloAdmin.My
     private Context context;
     private ArrayList nombres, ids, fechaOrigen, fechaDestino, precioVuelos;
     private Activity activity;
-    private String modoUso, cantPasajeros;
+    private String modoUso, cantPasajeros, tarifa;
 
 
-    AdapterVueloAdmin(Activity activity, Context context, ArrayList codigo, ArrayList ids, String modoUso, String cantPasajeros, ArrayList fechaOrigen, ArrayList fechaDestino, ArrayList precioVuelos)
+    AdapterVueloAdmin(Activity activity, Context context, ArrayList codigo, ArrayList ids, String modoUso, String cantPasajeros, ArrayList fechaOrigen, ArrayList fechaDestino, ArrayList precioVuelos, String tarifa)
     {
         this.activity = activity;
         this.context = context;
@@ -33,6 +33,7 @@ public class AdapterVueloAdmin extends RecyclerView.Adapter<AdapterVueloAdmin.My
         this.fechaOrigen = fechaOrigen;
         this.fechaDestino = fechaDestino;
         this.precioVuelos = precioVuelos;
+        this.tarifa = tarifa;
 
     }
     @NonNull
@@ -66,6 +67,7 @@ public class AdapterVueloAdmin extends RecyclerView.Adapter<AdapterVueloAdmin.My
                 intent.putExtra("codigo_vuelo", String.valueOf(nombres.get(position)));
                 intent.putExtra("cant_pasajeros", cantPasajeros);
                 intent.putExtra("precio_vuelo", String.valueOf(precioVuelos.get(position)));
+                intent.putExtra("tarifa", tarifa);
                 activity.startActivityForResult(intent, 1);
             });
         }

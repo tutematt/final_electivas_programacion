@@ -17,24 +17,46 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.TaskStackBuilder;
 
+import java.util.Random;
+
 public class PantallaPago extends AppCompatActivity {
     private static final String CHANNEL_ID = "canal";
     private PendingIntent pendingIntent;
+    String codigo_reserva, codigo_tarifa;
+            Float descuento, total;
+    int cantPasajeros;
+    DataBase bd;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pantalla_pago);
 
+        codigo_reserva = getIntent().getStringExtra("codigo_reserva");
+        codigo_tarifa = getIntent().getStringExtra("codigo_tarifa");
+        descuento = Float.parseFloat(getIntent().getStringExtra("descuento"));
+        cantPasajeros = Integer.parseInt(getIntent().getStringExtra("cant_pasajeros"));
+        total = Float.parseFloat(getIntent().getStringExtra("total"));
+        bd = new DataBase(PantallaPago.this);
+
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    enviarNotificacion("Gracias por volar con UM-AIRLINES. Ya tienes disponible tu reserva.");
+                try {
+                    Random generadorAleatorios = new Random();
+                    int numeroAleatorio = 1+generadorAleatorios.nextInt();
+                    bd.guardarPago(codigo_reserva, descuento, cantPasajeros, total, "efectivo", numeroAleatorio);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        enviarNotificacion("Gracias por volar con UM-AIRLINES. Ya tienes disponible tu código de reserva es "+ codigo_reserva);
+                    }
+                    Toast.makeText(PantallaPago.this, "Se ha corfirmado el pago. Muchas gracias por volar con nosotros.", Toast.LENGTH_LONG).show();
+                    Intent i = new Intent(PantallaPago.this, MainActivity.class);
+                    startActivity(i);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 }
-                Toast.makeText(PantallaPago.this, "Se ha corfirmado el pago. Muchas gracias por volar con nosotros.", Toast.LENGTH_LONG).show();
-                Intent i = new Intent(PantallaPago.this, MainActivity.class);
-                startActivity(i);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                catch (Exception e)
+                {
+                    e.getMessage();
+                }
             }
         }, 5000);   //5 seconds
 
