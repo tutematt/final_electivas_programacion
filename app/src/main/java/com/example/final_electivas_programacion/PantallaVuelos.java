@@ -121,6 +121,7 @@ public class PantallaVuelos extends AppCompatActivity {
                     partesFecha = fechaDestino.split(" ");
                     seleccionarFechaVuelta.setText(partesFecha[0]);
                     timeButtonVuelta.setText(partesFecha[1]);
+                    autoCompleteAvion.setText(cursor.getString(4));
                 }
 
             }
