@@ -1,23 +1,19 @@
 package com.example.final_electivas_programacion;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.textfield.TextInputLayout;
 
 public class ABM_Tarifas extends AppCompatActivity {
     Button btnEnviar, btnPrimera, btnTurista, btnVolver;
     TextInputLayout precioTarifa;
     String nombreTarifa="";
-    float precio, precioTurista, precioPrimera;
+    float precioTurista, precioPrimera;
     DataBase bd;
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,12 +46,6 @@ public class ABM_Tarifas extends AppCompatActivity {
             {
                 Toast.makeText(this, "Debe seleccionar un tipo de tarifa para continuar.", Toast.LENGTH_LONG).show();
             }
-            else
-            {
-                //enviarTarifa();
-            }
-
-
         });
 
 

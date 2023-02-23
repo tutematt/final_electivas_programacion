@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Toast;
-
 import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
 import java.time.Instant;
@@ -20,10 +19,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.TextInputLayout;
@@ -89,8 +86,6 @@ public class PantallaVuelos extends AppCompatActivity {
                 Toast.makeText(this, "Hubo un error, vuelva a intentar más tarde.", Toast.LENGTH_SHORT).show();
             else
             {
-                // FALTA validar que no se de de alta el mismo avion en el misma fecha
-
                 String fechaYHora = fechaOrigen+" "+horarioOrigen;
                 String fechaYHoraDestino = fechaDestino+" "+horarioDestino;
                 admin.actualizarVuelo(fechaYHora, getIntent().getStringExtra("codigo_vuelo"), fechaYHoraDestino);
@@ -124,8 +119,8 @@ public class PantallaVuelos extends AppCompatActivity {
                     partesFecha = fechaDestino.split(" ");
                     seleccionarFechaVuelta.setText(partesFecha[0]);
                     timeButtonVuelta.setText(partesFecha[1]);
+                    autoCompleteAvion.setText(cursor.getString(4));
                 }
-
             }
             btnEnviar.setText("Actualizar");
         }
@@ -194,7 +189,6 @@ public class PantallaVuelos extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 adapterView.getItemAtPosition(i).toString();
-                //layoutTrivias.getEditText().setText((String)adapterView.getItemAtPosition(i));
             }
         });
 
@@ -207,7 +201,6 @@ public class PantallaVuelos extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 adapterView.getItemAtPosition(i).toString();
-                //layoutTrivias.getEditText().setText((String)adapterView.getItemAtPosition(i));
             }
         });
         if(getIntent().hasExtra("editar"))

@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,20 +15,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.internal.MaterialCheckable;
-import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -86,8 +79,6 @@ public class fragment_vuelo extends Fragment {
         });
 
         materialSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            //get boolean value from parameter.
-
             boolean on = isChecked;
             if(on)
             {
@@ -101,7 +92,6 @@ public class fragment_vuelo extends Fragment {
                 seleccionarFechaVuelta.setVisibility(View.VISIBLE);
                 seleccionoFecha = true;
             }
-
         });
 
         radioTipoTarifa = inflatedView.findViewById(R.id.radioGroupClaseTicket);
@@ -155,9 +145,7 @@ public class fragment_vuelo extends Fragment {
         cambiarLayout();
         iniciarListadoVuelos();
         mostrarVuelos();
-
         iniciarAdapter();
-
         LinearLayout fragmento2 = inflatedView.findViewById(R.id.layouBusquedaVuelo);
         fragmento2.setVisibility(View.VISIBLE);
 
@@ -193,7 +181,7 @@ public class fragment_vuelo extends Fragment {
         if(seleccionoFecha)
             cursor = db.traerVuelosxFecha(fechaDesde, fechaHasta, tarifa);
         else
-            cursor = db.traerVuelos();
+            cursor = db.traerVuelossinFecha(tarifa);
         if(cursor.getCount() == 0)
             Toast.makeText(getActivity(), "No hay vuelos para mostrar.", Toast.LENGTH_SHORT).show();
         else
@@ -221,7 +209,6 @@ public class fragment_vuelo extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 adapterView.getItemAtPosition(i).toString();
-                //layoutTrivias.getEditText().setText((String)adapterView.getItemAtPosition(i));
             }
         });
     }
@@ -233,7 +220,6 @@ public class fragment_vuelo extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 adapterView.getItemAtPosition(i).toString();
-                //layoutTrivias.getEditText().setText((String)adapterView.getItemAtPosition(i));
             }
         });
     }
@@ -251,7 +237,6 @@ public class fragment_vuelo extends Fragment {
                 seleccionarFechaIda.setText(formattedDate);
                 fechaDesde = formatDB.format(calendar.getTime());
             });
-
         });
         seleccionarFechaVuelta.setOnClickListener(view -> {
             datePicker.show(getFragmentManager(), "Material_Date_Picker");
@@ -263,7 +248,6 @@ public class fragment_vuelo extends Fragment {
                 seleccionarFechaVuelta.setText(formattedDate);
                 fechaHasta = formatDB.format(calendar.getTime());
                 });
-
         });
     }
 
@@ -280,10 +264,7 @@ public class fragment_vuelo extends Fragment {
                 seleccionarFechaVuelta.setText(formattedDate);
                 fechaHasta = formatDB.format(calendar.getTime());
             });
-
         });
     }
-
-
 
 }

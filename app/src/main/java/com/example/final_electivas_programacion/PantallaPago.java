@@ -9,14 +9,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.TaskStackBuilder;
-
 import java.util.Random;
 
 public class PantallaPago extends AppCompatActivity {
@@ -30,7 +28,6 @@ public class PantallaPago extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pantalla_pago);
-
         codigo_reserva = getIntent().getStringExtra("codigo_reserva");
         codigo_tarifa = getIntent().getStringExtra("codigo_tarifa");
         descuento = getIntent().getFloatExtra("descuento", 0);
@@ -83,7 +80,7 @@ public class PantallaPago extends AppCompatActivity {
                 .setContentTitle("LAUM-AIRLINES")
                 .setContentText(pass)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent); //Cuando el user haga click en la notificacion, lanza la nueva actividad
+                .setContentIntent(pendingIntent);
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(getApplicationContext());
         managerCompat.notify(1, builder.build());
     }

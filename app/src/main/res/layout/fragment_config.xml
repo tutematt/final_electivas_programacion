@@ -5,10 +5,37 @@
     android:layout_height="match_parent"
     tools:context=".fragment_config">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
+        android:id="@+id/formulario_registro"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="40dp"
+        android:paddingTop="0dp"
+        >
+
+        <Button
+            android:id="@+id/ButtonModificarDatosPFG"
+            style="@style/Widget.Material3.Button.IconButton.Filled"
+            android:layout_width="320sp"
+            android:layout_height="70dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30sp"
+            android:fontFamily="@font/lato"
+            android:text="@string/modificar"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/ButtonSalirSesionPFG"
+            style="@style/Widget.Material3.Button.IconButton.Filled"
+            android:layout_width="320sp"
+            android:layout_height="70dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30sp"
+            android:fontFamily="@font/lato"
+            android:text="@string/salir"
+            android:textSize="20sp" />
+    </LinearLayout>
 
 </FrameLayout>

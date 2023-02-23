@@ -5,21 +5,18 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.util.ArrayList;
 
 public class ABM_Reserva extends AppCompatActivity {
     RecyclerView recyclerView;
     FloatingActionButton add_vuelo,volver;
     DataBase db;
-    ArrayList<String> ids_reserva, codigos_reserva, fechasDestino_vuelos, fechasOrigen_vuelos, horasDestino_vuelos, horasOrigen_vuelos, precios_vuelos;
+    ArrayList<String> ids_reserva, codigos_reserva;
     AdapterReservaAdmin customAdapter;
     int i =0;
 
@@ -38,11 +35,6 @@ public class ABM_Reserva extends AppCompatActivity {
         db = new DataBase(ABM_Reserva.this);
         ids_reserva = new ArrayList<>();
         codigos_reserva = new ArrayList<>();
-        /*fechasDestino_vuelos = new ArrayList<>();
-        fechasOrigen_vuelos = new ArrayList<>();
-        horasDestino_vuelos = new ArrayList<>();
-        horasOrigen_vuelos = new ArrayList<>();
-        precios_vuelos = new ArrayList<>();*/
 
         mostrarReservas();
 

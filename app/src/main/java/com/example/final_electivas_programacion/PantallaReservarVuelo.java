@@ -32,7 +32,6 @@ public class PantallaReservarVuelo extends AppCompatActivity {
     private static final String[] metodoDePago = {"Tarjeta", "Efectivo"};
     Button realizarReserva, cancelarReserva, popupRegistrarPasajero;
     AutoCompleteTextView autoCompleteMetodoDePago;
-    MaterialTextView numeroPasajero;
     TextInputLayout registrarPasajeros, layoutVuelo, layoutOrigen, layoutDestino, layoutFechaIda, layoutFechaVuelta, layoutHoraIda, layoutHoraVuelta, layoutDescuento,layoutPrecioAPagar, layoutPrecioTotal, layoutCantPasajeros;
     int cantPasajeros, pasajeroDni;
     int cantPasajerosRegistradosRestantes = -1;
@@ -56,21 +55,20 @@ public class PantallaReservarVuelo extends AppCompatActivity {
 
         if(esAdmin)
         {
-            completarReserva();
+            Cursor cursor = db.buscarReserva(codReserva);
+            completarReserva(cursor);
+            cancelarReserva.setOnClickListener(view -> {
+                cancelarReserva(cursor);
+            });
         }
         else
         {
-
             codigoVuelo = getIntent().getStringExtra("codigo_vuelo");
             precio = Float.parseFloat(getIntent().getStringExtra("precio_vuelo"));
             cantPasajeros = Integer.parseInt(getIntent().getStringExtra("cant_pasajeros"));
             tipoTarifa = getIntent().getStringExtra("tarifa");
-
             setearSeleccionUsuario();
             completarComboMetodoDePago();
-
-
-
             buscarVuelo();
             realizarReserva.setOnClickListener(view -> {
                 reservarPasaje();
@@ -82,8 +80,29 @@ public class PantallaReservarVuelo extends AppCompatActivity {
 
     }
 
-    private void completarReserva() {
-        Cursor cursor = db.buscarReserva(codReserva);
+    private void cancelarReserva(Cursor cursor) {
+        if(cursor.getCount()!=0)
+        {
+            if(cursor.moveToFirst())
+            {
+                db.desocuparAsientoxVuelo(cursor.getString(0), cursor.getString(8), cursor.getInt(4));
+                db.actualizarCapacidad(cursor.getString(0), cursor.getInt(9));
+                db.eliminarReserva(codReserva);
+                volverCancelar();
+            }
+        }
+
+    }
+
+    private void volverCancelar() {
+        Toast.makeText(this, "Reserva Eliminada con Exito.", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this, AdminActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    private void completarReserva(Cursor cursor) {
+
         if(cursor.getCount()!=0)
         {
             while(cursor.moveToNext())
@@ -96,13 +115,13 @@ public class PantallaReservarVuelo extends AppCompatActivity {
                 String[] partesFecha = fechaOrigen.split(" ");
                 layoutFechaIda.getEditText().setText(partesFecha[0]);
                 layoutHoraIda.getEditText().setText(partesFecha[1]);
-                String fechaDestino = cursor.getString(2);
+                String fechaDestino = cursor.getString(1);
                 partesFecha = fechaDestino.split(" ");
                 layoutFechaVuelta.getEditText().setText(partesFecha[0]);
                 layoutHoraVuelta.getEditText().setText(partesFecha[1]);
-                String desc = String.valueOf(cursor.getFloat(5));
+                String desc = String.valueOf(cursor.getFloat(3));
                 layoutDescuento.getEditText().setText(desc);
-                float total = cursor.getFloat(3);
+                float total = cursor.getFloat(5);
                 layoutPrecioTotal.getEditText().setText(String.valueOf(total));
                 int cantPasajeros = cursor.getInt(4);
                 layoutPrecioAPagar.getEditText().setText(String.valueOf(total * cantPasajeros));
@@ -143,7 +162,6 @@ public class PantallaReservarVuelo extends AppCompatActivity {
             Toast.makeText(this, "No se pudo completar el proceso de reserva.", Toast.LENGTH_LONG).show();
             return false;
         }
-
         return true;
     }
 
@@ -161,9 +179,7 @@ public class PantallaReservarVuelo extends AppCompatActivity {
 
     private String generarCodigoReserva() {
         Random generadorAleatorios = new Random();
-
         int numeroAleatorio = 1+generadorAleatorios.nextInt();
-
         return "REV-"+numeroAleatorio;
     }
 
@@ -194,8 +210,8 @@ public class PantallaReservarVuelo extends AppCompatActivity {
                 layoutHoraVuelta.getEditText().setText(partesFecha[1]);
                 layoutCantPasajeros.getEditText().setText(String.valueOf(cantPasajeros));
                 layoutPrecioTotal.getEditText().setText("$ "+String.valueOf(precio));
-                layoutDescuento.getEditText().setText("$ "+String.valueOf(precio-precioDescuento));
-                layoutPrecioAPagar.getEditText().setText("$ "+String.valueOf((precioDescuento * cantPasajeros)));
+                layoutDescuento.getEditText().setText("$ "+String.valueOf(precioDescuento));
+                layoutPrecioAPagar.getEditText().setText("$ "+String.valueOf(((precio-precioDescuento) * cantPasajeros)));
             }
         }
     }
@@ -205,7 +221,7 @@ public class PantallaReservarVuelo extends AppCompatActivity {
             precioDescuento = precio-(precio*75/100);
         else if(diasDiferencia>=1)
         {
-            precioDescuento = (float) (precio-(precio*0.5/100)*diasDiferencia);
+            precioDescuento = (float) ((precio*0.5/100)*diasDiferencia);
         }
         else
             precioDescuento = 0;
@@ -245,7 +261,6 @@ public class PantallaReservarVuelo extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 adapterView.getItemAtPosition(i).toString();
-                //layoutTrivias.getEditText().setText((String)adapterView.getItemAtPosition(i));
             }
         });
         if(getIntent().hasExtra("Seleccionar Metodo de Pago"))
@@ -290,14 +305,11 @@ public class PantallaReservarVuelo extends AppCompatActivity {
             @Override
             public void onClick(View arg0) {
                 if(cantPasajerosRegistradosRestantes>0) {
-                    // get prompts.xml view
                     LayoutInflater li = LayoutInflater.from(context);
                     View promptsView = li.inflate(R.layout.popup_registrar_pasajero, null);
 
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                             context);
-
-                    // set prompts.xml to alertdialog builder
                     alertDialogBuilder.setView(promptsView);
                     MaterialTextView numeroPasajero = (MaterialTextView) promptsView
                             .findViewById(R.id.MaterialTextViewNumeroPasajeroPopupRP);
@@ -309,7 +321,6 @@ public class PantallaReservarVuelo extends AppCompatActivity {
                     final EditText dniCargado = (EditText) promptsView
                             .findViewById(R.id.EditTextDNIPopupRP);
 
-                    // set dialog message
                     alertDialogBuilder
                             .setCancelable(false)
                             .setPositiveButton("OK",
