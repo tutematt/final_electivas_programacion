@@ -13,9 +13,9 @@ public class Persona {
     private ArrayList<Reserva> reservas;
     private Boolean esAdmin;
 
-    public Persona(/*int nro,*/ int doc, String nom, String apell, String user,
+    public Persona(int nro, int doc, String nom, String apell, String user,
                    String contra, Boolean admin){
-        //numero = nro;
+        numero = nro;
         dni = doc;
         nombre = nom;
         apellido = apell;

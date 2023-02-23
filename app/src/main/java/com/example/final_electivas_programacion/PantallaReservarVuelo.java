@@ -154,7 +154,8 @@ public class PantallaReservarVuelo extends AppCompatActivity {
             Globales global = new Globales();
             int dni = global.getDniPersona();
             Persona p = db.buscarPersonaPorDni(dni);
-            db.guardarReserva(codigo_reserva, codigoVuelo, false, p.getNumero());
+            int numero = p.getNumero();
+            db.guardarReserva(codigo_reserva, codigoVuelo, false, numero);
             db.agregarPersonaxReserva(pasajeros);
             db.ocuparAsientoxVuelo(codigoVuelo, tipoTarifa, cantPasajeros);
             pasarApagar(codigo_reserva);
@@ -335,7 +336,7 @@ public class PantallaReservarVuelo extends AppCompatActivity {
                                             pasajeroApellido = apellidoCargado.getText().toString();
                                             pasajeroDni = Integer.parseInt(dniCargado.getText().toString());
                                             cantPasajerosRegistradosRestantes--;
-                                            Persona pasajero = new Persona (pasajeroDni,pasajeroNombre, pasajeroApellido, null, null, false );
+                                            Persona pasajero = new Persona (0,pasajeroDni,pasajeroNombre, pasajeroApellido, null, null, false );
                                             pasajeros.add(pasajero);        //creo un array de pasajeros para despues agregarlos/buscarlos
 
                                         }

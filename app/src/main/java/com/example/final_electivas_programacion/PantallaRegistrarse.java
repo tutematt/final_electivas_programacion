@@ -102,7 +102,10 @@ public class PantallaRegistrarse extends AppCompatActivity {
                     else{
                         admin.crearPersona(userStr, passStr, nameStr, surnameStr, Integer.parseInt(docStr));
                         // crear la persona en el array de personas ??
-                        p = new Persona(Integer.parseInt(docStr), nameStr, surnameStr, userStr, passStr, false);
+                        p = new Persona(0, Integer.parseInt(docStr), nameStr, surnameStr, userStr, passStr, false);
+                        Globales global = new Globales();
+                        int dni = p.getDni();
+                        global.setDniPersona(dni);
                         ingresar(p);
                     }
                 }

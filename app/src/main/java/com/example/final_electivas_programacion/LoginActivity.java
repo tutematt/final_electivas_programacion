@@ -66,6 +66,8 @@ public class LoginActivity extends AppCompatActivity {
             idPersona = p.getDni();
             Globales global = new Globales();
             global.setDniPersona(idPersona);
+            int numero = p.getNumero();
+            p.setNumero(numero);
             Intent intent;
             if(p.getEsAdmin()){
                 intent = new Intent(this, AdminActivity.class);

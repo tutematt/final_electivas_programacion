@@ -51,7 +51,8 @@ public class fragment_reserva extends Fragment {
         Globales global = new Globales();
         int dni = global.getDniPersona();
         Persona p = db.buscarPersonaPorDni(dni);
-        Cursor cursor = db.traerReservasxPersona(p.getNumero());
+        int numero = p.getNumero();
+        Cursor cursor = db.traerReservasxPersona(numero);
         if(cursor.getCount() <= 0)
             Toast.makeText(getActivity(), "No hay reservas para mostrar.", Toast.LENGTH_SHORT).show();
         else
