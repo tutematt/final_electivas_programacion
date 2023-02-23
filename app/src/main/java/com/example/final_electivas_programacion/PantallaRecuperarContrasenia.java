@@ -71,7 +71,7 @@ public class PantallaRecuperarContrasenia extends AppCompatActivity {
                 Persona p = admin.buscarPersonaPorDni(Integer.parseInt(dniiii));
                 if (p != null) {
                     String pass = p.getContrasenia();
-                    if (pass == "") {   // estaba en el padron pero no se registró en la app
+                    if (pass == null) {   // estaba en el padron pero no se registró en la app
                         Toast.makeText(this, "No se encontró ningun usuario asociado a su DNI.", Toast.LENGTH_SHORT).show();
                     } else {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {   // valido la version del sdk
