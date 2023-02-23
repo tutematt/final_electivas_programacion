@@ -14,7 +14,7 @@ import java.util.List;
 public class DataBase extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ELECTIVA_FINAL.db";
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 15;
 
     public DataBase(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -116,7 +116,7 @@ public class DataBase extends SQLiteOpenHelper {
             int id, doc;
             String nom, apell, user, pass;
             Boolean esAdmin;
-            //id = cursor.getInt(0);
+            id = cursor.getInt(0);
             doc = cursor.getInt(1);
             nom = cursor.getString(2);
             apell = cursor.getString(3);
@@ -127,7 +127,7 @@ public class DataBase extends SQLiteOpenHelper {
                 esAdmin = true;
             else
                 esAdmin = false;
-            p = new Persona(/*id, */ doc, nom, apell, user, pass, esAdmin);
+            p = new Persona(id, doc, nom, apell, user, pass, esAdmin);
         }
         return p;
     }
@@ -141,13 +141,14 @@ public class DataBase extends SQLiteOpenHelper {
             int id, doc;
             String nom, apell, user, pass;
             Boolean esAdmin;
+            id = cursor.getInt(0);
             doc = cursor.getInt(1);
             nom = cursor.getString(2);
             apell = cursor.getString(3);
             user = cursor.getString(4);
             pass = cursor.getString(5);
             esAdmin = Boolean.parseBoolean(cursor.getString(6));
-            p = new Persona(/*id,*/ doc, nom, apell, user, pass, esAdmin);
+            p = new Persona(id, doc, nom, apell, user, pass, esAdmin);
         }
         return p;
     }
@@ -168,7 +169,7 @@ public class DataBase extends SQLiteOpenHelper {
             user = cursor.getString(4);
             pass = cursor.getString(5);
             esAdmin = Boolean.parseBoolean(cursor.getString(6));
-            p = new Persona(/*id,*/ doc, nom, apell, user, pass, esAdmin);
+            p = new Persona(id, doc, nom, apell, user, pass, esAdmin);
         }
         return p;
     }
