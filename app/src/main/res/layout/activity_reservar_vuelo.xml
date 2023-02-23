@@ -589,7 +589,7 @@
                             android:focusable="false"
                             android:fontFamily="@font/lato"
                             android:minWidth="130dp"
-                            android:text="Precio Total:"
+                            android:text="Precio por persona:"
 
                             />
 
@@ -665,7 +665,7 @@
                             android:focusable="false"
                             android:fontFamily="@font/lato"
                             android:minWidth="130dp"
-                            android:text="Precio a pagar:" />
+                            android:text="Total a pagar:" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 

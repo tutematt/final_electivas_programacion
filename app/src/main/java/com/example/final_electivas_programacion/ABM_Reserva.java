@@ -62,7 +62,7 @@ public class ABM_Reserva extends AppCompatActivity {
             {
                 i++;
                 ids_reserva.add(String.valueOf(i));
-                codigos_reserva.add(cursor.getString(0));
+                codigos_reserva.add(cursor.getString(1));
             }
         }
     }

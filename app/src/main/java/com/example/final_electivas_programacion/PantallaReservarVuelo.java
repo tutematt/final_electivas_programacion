@@ -187,8 +187,8 @@ public class PantallaReservarVuelo extends AppCompatActivity {
                 layoutHoraVuelta.getEditText().setText(partesFecha[1]);
                 layoutCantPasajeros.getEditText().setText(String.valueOf(cantPasajeros));
                 layoutPrecioTotal.getEditText().setText("$ "+String.valueOf(precio));
-                layoutDescuento.getEditText().setText("$ "+String.valueOf(precioDescuento));
-                layoutPrecioAPagar.getEditText().setText("$ "+String.valueOf(precio-precioDescuento));
+                layoutDescuento.getEditText().setText("$ "+String.valueOf(precio-precioDescuento));
+                layoutPrecioAPagar.getEditText().setText("$ "+String.valueOf((precioDescuento * cantPasajeros)));
             }
         }
     }
