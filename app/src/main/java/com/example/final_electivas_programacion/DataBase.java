@@ -440,6 +440,11 @@ public class DataBase extends SQLiteOpenHelper {
             id = data.getInt(0);
         return id;
     }
+
+    public Cursor traerReservasxPersona() {
+        Cursor cursor = null;
+        return cursor;
+    }
     // endregion
 
 }
