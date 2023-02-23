@@ -151,7 +151,10 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         String codigo_reserva = generarCodigoReserva();
         try
         {
-            db.guardarReserva(codigo_reserva, codigoVuelo, false, 1);
+            Globales global = new Globales();
+            int dni = global.getDniPersona();
+            Persona p = db.buscarPersonaPorDni(dni);
+            db.guardarReserva(codigo_reserva, codigoVuelo, false, p.getNumero());
             db.agregarPersonaxReserva(pasajeros);
             db.ocuparAsientoxVuelo(codigoVuelo, tipoTarifa, cantPasajeros);
             pasarApagar(codigo_reserva);

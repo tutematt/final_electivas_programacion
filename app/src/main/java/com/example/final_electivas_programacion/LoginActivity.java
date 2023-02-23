@@ -64,6 +64,8 @@ public class LoginActivity extends AppCompatActivity {
         Persona p = validarUsuario(); // valido que complete los campos requeridos
         if(p != null){
             idPersona = p.getDni();
+            Globales global = new Globales();
+            global.setDniPersona(idPersona);
             Intent intent;
             if(p.getEsAdmin()){
                 intent = new Intent(this, AdminActivity.class);

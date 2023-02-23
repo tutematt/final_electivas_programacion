@@ -27,7 +27,7 @@
             android:textStyle="italic" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycleViewResultadoVuelos"
+            android:id="@+id/recycleResultadosReservasUser"
             android:layout_width="match_parent"
             android:layout_height="683dp">
 

@@ -29,8 +29,9 @@ public class fragment_reserva extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        this.inflatedView = inflater.inflate(R.layout.fragment_config, container, false);
+        this.inflatedView = inflater.inflate(R.layout.fragment_reserva, container, false);
 
+        recyclerView = inflatedView.findViewById(R.id.recycleResultadosReservasUser);
 
         db = new DataBase(getActivity());
         ids_reserva = new ArrayList<>();
@@ -47,8 +48,11 @@ public class fragment_reserva extends Fragment {
 
     void mostrarReservas()
     {
-        Cursor cursor = db.traerReservasxPersona();
-        if(cursor.getCount() == 0)
+        Globales global = new Globales();
+        int dni = global.getDniPersona();
+        Persona p = db.buscarPersonaPorDni(dni);
+        Cursor cursor = db.traerReservasxPersona(p.getNumero());
+        if(cursor.getCount() <= 0)
             Toast.makeText(getActivity(), "No hay reservas para mostrar.", Toast.LENGTH_SHORT).show();
         else
         {

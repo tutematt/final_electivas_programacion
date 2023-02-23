@@ -441,9 +441,10 @@ public class DataBase extends SQLiteOpenHelper {
         return id;
     }
 
-    public Cursor traerReservasxPersona() {
-        Cursor cursor = null;
-        return cursor;
+    public Cursor traerReservasxPersona(int id) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor data = database.rawQuery("SELECT ID_RESERVA, CODE FROM RESERVA WHERE IS_CANCEL = false AND ID_PASAJERO ="+"'"+ id +"'", null);
+        return data;
     }
     // endregion
 

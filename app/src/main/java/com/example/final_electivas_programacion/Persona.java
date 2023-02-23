@@ -1,11 +1,10 @@
 package com.example.final_electivas_programacion;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Persona {
 
-    //private int numero; // Id_Persona
+    private int numero; // Id_Persona
     private int dni;
     private String nombre;
     private String apellido;
@@ -25,7 +24,7 @@ public class Persona {
         reservas = new ArrayList<Reserva>();
         esAdmin = admin;
     }
-/*
+
     public int getNumero() {
         return numero;
     }
@@ -34,7 +33,7 @@ public class Persona {
         this.numero = numero;
     }
     
- */
+
 
     public int getDni() {
         return dni;
