@@ -36,7 +36,7 @@ public class ABM_Tarifas extends AppCompatActivity {
         btnTurista = findViewById(R.id.ButtonTuristaPT);
         btnTurista.setOnClickListener(view -> {
             nombreTarifa=btnTurista.getText().toString();
-            precioTarifa.getEditText().setText(String.valueOf(precioPrimera));
+            precioTarifa.getEditText().setText(String.valueOf(precioTurista));
 
         });
         btnPrimera = findViewById(R.id.ButtonPrimeraPT);
@@ -52,7 +52,7 @@ public class ABM_Tarifas extends AppCompatActivity {
             }
             else
             {
-                enviarTarifa();
+                //enviarTarifa();
             }
 
 
@@ -77,11 +77,11 @@ public class ABM_Tarifas extends AppCompatActivity {
         }
     }
 
-    private void enviarTarifa() {
+    /*private void enviarTarifa() {
         precio = Float.parseFloat(precioTarifa.getEditText().getText().toString().replace(",", "."));
         if(bd.crearTarifa(nombreTarifa, nombreTarifa, precio))
             Toast.makeText(this, "Tarifa creada correctamente", Toast.LENGTH_LONG).show();
-    }
+    }*/
 
     public void volver() {
         Intent intent = new Intent(this, AdminActivity.class);

@@ -36,8 +36,6 @@ public class LoginActivity extends AppCompatActivity {
         DataBase admin = new DataBase(LoginActivity.this);
         admin.validarUsuariosAdmin();
         admin.crearAsientos(340);
-        //admin.crearTarifa("Turista", "Turista", 238000);
-        //this.databaseExists();
         setearBotones();
 
 

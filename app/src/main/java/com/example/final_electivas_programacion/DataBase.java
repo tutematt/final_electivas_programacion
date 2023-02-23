@@ -57,26 +57,22 @@ public class DataBase extends SQLiteOpenHelper {
             SQLiteDatabase dataBase = this.getWritableDatabase();
             String q = "INSERT INTO PERSONA(DNI, USERNAME, PASSWORD, SURNAME, IS_ADMIN) SELECT * FROM (SELECT 9999 AS dni, 'admin' as username, '1234' as password, 'user' as surname, 1 as is_admin) AS X WHERE NOT EXISTS (SELECT * FROM PERSONA WHERE DNI=X.dni)";
             dataBase.execSQL( q );
+            crearTarifa("Turista", "Turista", 220000);
+                crearTarifa("Primera", "Primera", 338000);
         } catch (Exception exception) {
             exception.getMessage();
         }
     }
 
     //region tarifas
-    boolean crearTarifa(String code, String name, float price)
+    void crearTarifa(String code, String name, float price)
     {
         try {
             SQLiteDatabase dataBase = this.getWritableDatabase();
-            ContentValues campos = new ContentValues();
-            campos.put("CODE", code);
-            campos.put("NAME", name);
-            campos.put("PRICE", price);
-            dataBase.insert("TARIFA", null, campos);
-            dataBase.close();
-            return true;
+            String q = "INSERT INTO TARIFA(CODE, NAME, PRICE) SELECT * FROM (SELECT " + "'" + code + "' AS CODE, " + "'" + name + "' as username, " + "" + price + " as price) AS X WHERE NOT EXISTS (SELECT * FROM TARIFA WHERE CODE=X.CODE)";
+            dataBase.execSQL(q);
         } catch (Exception exception) {
             exception.getMessage();
-            return false;
         }
     }
 
