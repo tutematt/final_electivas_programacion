@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ABM_Vuelo extends AppCompatActivity {
     RecyclerView recyclerView;
@@ -70,4 +72,26 @@ public class ABM_Vuelo extends AppCompatActivity {
         }
 
     }
+
+    public int calcularDiferenciaFecha (String origenFecha, String destinoFecha){
+        int dias=0;
+        try {
+            //usamos SimpleDateFormat
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            //creamos una variable date con la fecha inicial
+            Date fechaOrigen = dateFormat.parse(origenFecha);
+            //variable date con la fecha final
+            Date fechaDestino = dateFormat.parse(destinoFecha);          // Alta vuelo, buscar vuelo
+            //calculamos los días restando la inicial de la final y dividiendolo entre los milisegundos que tiene un día y almacenamos el resultado en la variable entera
+            dias = (int) ((fechaDestino.getTime() - fechaOrigen.getTime()) / 86400000);
+            //se imprime el resultado
+            System.out.println("Hay " + dias + " dias de diferencia");
+
+        }catch(Exception e)
+        {
+            e.getMessage();
+        }
+        return dias;
+    }
+
 }
