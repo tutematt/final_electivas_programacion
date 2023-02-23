@@ -22,12 +22,13 @@ public class AdapterReservaAdmin extends RecyclerView.Adapter<AdapterReservaAdmi
     private String modoUso, cantPasajeros;
 
 
-    AdapterReservaAdmin(Activity activity, Context context, ArrayList ids, ArrayList codigo)
+    AdapterReservaAdmin(Activity activity, Context context, ArrayList ids, ArrayList codigo, String modoUso)
     {
         this.activity = activity;
         this.context = context;
         this.nombres = codigo;
         this.ids = ids;
+        this.modoUso  = modoUso;
 
     }
     @NonNull
@@ -46,7 +47,10 @@ public class AdapterReservaAdmin extends RecyclerView.Adapter<AdapterReservaAdmi
         holder.mainLayout.setOnClickListener(view -> {
 
             Intent intent = new Intent(context, PantallaReservarVuelo.class);
-            intent.putExtra("editar", true);
+            if(modoUso.equals("Admin"))
+                intent.putExtra("editar", true);
+            else
+                intent.putExtra("editar", false);
             intent.putExtra("codigo_reserva", String.valueOf(nombres.get(position)));
             activity.startActivityForResult(intent, 1);
         });

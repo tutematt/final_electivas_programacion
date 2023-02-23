@@ -38,7 +38,7 @@ public class ABM_Reserva extends AppCompatActivity {
 
         mostrarReservas();
 
-        customAdapter = new AdapterReservaAdmin(ABM_Reserva.this, this, ids_reserva, codigos_reserva);
+        customAdapter = new AdapterReservaAdmin(ABM_Reserva.this, this, ids_reserva, codigos_reserva, "Admin");
         recyclerView.setAdapter(customAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(ABM_Reserva.this));
     }

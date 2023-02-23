@@ -58,11 +58,22 @@ public class PantallaReservarVuelo extends AppCompatActivity {
             Cursor cursor = db.buscarReserva(codReserva);
             completarReserva(cursor);
             cancelarReserva.setOnClickListener(view -> {
-                cancelarReserva(cursor);
+                if(esAdmin)
+                    cancelarReserva(cursor);
+                else
+                    Toast.makeText(this, "Debe comunicarse con atención al cliente para realizar la cancelación de la reserva", Toast.LENGTH_LONG).show();
+
             });
         }
-        else
+        else if(!esAdmin && !reservar_vuelo)
         {
+            cancelarReserva.setVisibility(View.GONE);
+            Cursor cursor = db.buscarReserva(codReserva);
+            completarReserva(cursor);
+        }
+        else if(reservar_vuelo)
+        {
+
             codigoVuelo = getIntent().getStringExtra("codigo_vuelo");
             precio = Float.parseFloat(getIntent().getStringExtra("precio_vuelo"));
             cantPasajeros = Integer.parseInt(getIntent().getStringExtra("cant_pasajeros"));
@@ -109,7 +120,7 @@ public class PantallaReservarVuelo extends AppCompatActivity {
             {
                 layoutVuelo.getEditText().setText(cursor.getString(0));
                 layoutOrigen.getEditText().setText("Ezeiza");
-                layoutDestino.getEditText().setText("Destino");
+                layoutDestino.getEditText().setText("Roma");
                 layoutCantPasajeros.getEditText().setText(cursor.getString(4));
                 String fechaOrigen = cursor.getString(2);
                 String[] partesFecha = fechaOrigen.split(" ");
