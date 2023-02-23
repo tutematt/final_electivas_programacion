@@ -50,7 +50,8 @@ public class PantallaPago extends AppCompatActivity {
                     int idPago = bd.buscarIdPago(numeroAleatorio);
                     bd.actualizarReservaPago(idPago, idReserva);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        enviarNotificacion("Gracias por volar con UM-AIRLINES. Ya tienes disponible tu código de reserva es "+ codigo_reserva);
+                        //enviarNotificacion("Gracias por volar con UM-AIRLINES. Código de reserva: "+ codigo_reserva);
+                        enviarNotificacion("Código de reserva: "+ codigo_reserva);
                     }
                     Toast.makeText(PantallaPago.this, "Se ha corfirmado el pago. Muchas gracias por volar con nosotros.", Toast.LENGTH_LONG).show();
                     Intent i = new Intent(PantallaPago.this, MainActivity.class);

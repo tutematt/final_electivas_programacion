@@ -100,9 +100,14 @@ public class PantallaReservarVuelo extends AppCompatActivity {
                 partesFecha = fechaDestino.split(" ");
                 layoutFechaVuelta.getEditText().setText(partesFecha[0]);
                 layoutHoraVuelta.getEditText().setText(partesFecha[1]);
-                layoutDescuento.getEditText().setText(String.valueOf(cursor.getFloat(3)));
-                layoutPrecioTotal.getEditText().setText(String.valueOf(cursor.getFloat(5)));
-                autoCompleteMetodoDePago.setText(cursor.getString(6)+cursor.getString(7));
+                String desc = String.valueOf(cursor.getFloat(5));
+                layoutDescuento.getEditText().setText(desc);
+                float total = cursor.getFloat(3);
+                layoutPrecioTotal.getEditText().setText(String.valueOf(total));
+                int cantPasajeros = cursor.getInt(4);
+                layoutPrecioAPagar.getEditText().setText(String.valueOf(total * cantPasajeros));
+                autoCompleteMetodoDePago.setText(cursor.getString(6)+ " - Nro. "+ cursor.getString(7));
+                popupRegistrarPasajero.setVisibility(View.INVISIBLE);
             }
         }
     }
