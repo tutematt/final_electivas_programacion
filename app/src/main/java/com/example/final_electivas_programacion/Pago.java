@@ -6,10 +6,10 @@ public class Pago {
     private int nro;  //ID_PAGO
     private LocalDateTime fecha;
     private Tarifa tarifa;
-    private float descuento; //DEPENDIENDO EL ENUNCIADO
+    private float descuento;
     private float totalAPagar;
     private int cantPasajeros;
-    private String TipoDePago; // UTILIZAR HERENCIA
+    private String TipoDePago;
 
     public Pago(int num, LocalDateTime fech, Tarifa t, float desc,
                 float total, int cant, String tipo){

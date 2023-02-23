@@ -12,15 +12,12 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Toast;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.TextInputLayout;
@@ -86,8 +83,6 @@ public class PantallaVuelos extends AppCompatActivity {
                 Toast.makeText(this, "Hubo un error, vuelva a intentar más tarde.", Toast.LENGTH_SHORT).show();
             else
             {
-                // FALTA validar que no se de de alta el mismo avion en el misma fecha
-
                 String fechaYHora = fechaOrigen+" "+horarioOrigen;
                 String fechaYHoraDestino = fechaDestino+" "+horarioDestino;
                 admin.actualizarVuelo(fechaYHora, getIntent().getStringExtra("codigo_vuelo"), fechaYHoraDestino);
@@ -144,7 +139,6 @@ public class PantallaVuelos extends AppCompatActivity {
             timeButton.setText(String.format(Locale.getDefault(), "%02d:%02d",hour, minute));
         };
 
-        // int style = AlertDialog.THEME_HOLO_DARK;
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(this, /*style,*/ onTimeSetListener, hour, minute, true);
 
@@ -191,7 +185,6 @@ public class PantallaVuelos extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 adapterView.getItemAtPosition(i).toString();
-                //layoutTrivias.getEditText().setText((String)adapterView.getItemAtPosition(i));
             }
         });
 
@@ -204,7 +197,6 @@ public class PantallaVuelos extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 adapterView.getItemAtPosition(i).toString();
-                //layoutTrivias.getEditText().setText((String)adapterView.getItemAtPosition(i));
             }
         });
         if(getIntent().hasExtra("editar"))
@@ -308,9 +300,6 @@ public class PantallaVuelos extends AppCompatActivity {
             Toast.makeText(this, "Por favor, complete todos los campos.", Toast.LENGTH_LONG).show();
             return false;
         }
-
-        // FALTA: Validar que la fecha seleccionada sea mayor a hoy
-
         return true;
     }
     public int calcularCapacidad(){

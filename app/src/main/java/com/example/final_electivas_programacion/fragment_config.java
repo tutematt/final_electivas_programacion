@@ -23,13 +23,11 @@ public class fragment_config extends Fragment {
         btnSalir.setOnClickListener(view -> {
             salir();
         });
-        // Inflate the layout for this fragment
         return inflatedView;
     }
 
     private void salir() {
         Intent i = new Intent(getActivity(), LoginActivity.class);
         startActivity(i);
-        //overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 }

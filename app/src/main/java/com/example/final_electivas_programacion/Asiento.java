@@ -1,8 +1,4 @@
 package com.example.final_electivas_programacion;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-
 public class Asiento {
 
     private int nro;

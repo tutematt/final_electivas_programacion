@@ -32,7 +32,6 @@ public class PantallaReservarVuelo extends AppCompatActivity {
     private static final String[] metodoDePago = {"Tarjeta", "Efectivo"};
     Button realizarReserva, cancelarReserva, popupRegistrarPasajero;
     AutoCompleteTextView autoCompleteMetodoDePago;
-    MaterialTextView numeroPasajero;
     TextInputLayout registrarPasajeros, layoutVuelo, layoutOrigen, layoutDestino, layoutFechaIda, layoutFechaVuelta, layoutHoraIda, layoutHoraVuelta, layoutDescuento,layoutPrecioAPagar, layoutPrecioTotal, layoutCantPasajeros;
     int cantPasajeros, pasajeroDni;
     int cantPasajerosRegistradosRestantes = -1;
@@ -64,17 +63,12 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         }
         else
         {
-
             codigoVuelo = getIntent().getStringExtra("codigo_vuelo");
             precio = Float.parseFloat(getIntent().getStringExtra("precio_vuelo"));
             cantPasajeros = Integer.parseInt(getIntent().getStringExtra("cant_pasajeros"));
             tipoTarifa = getIntent().getStringExtra("tarifa");
-
             setearSeleccionUsuario();
             completarComboMetodoDePago();
-
-
-
             buscarVuelo();
             realizarReserva.setOnClickListener(view -> {
                 reservarPasaje();
@@ -168,7 +162,6 @@ public class PantallaReservarVuelo extends AppCompatActivity {
             Toast.makeText(this, "No se pudo completar el proceso de reserva.", Toast.LENGTH_LONG).show();
             return false;
         }
-
         return true;
     }
 
@@ -186,9 +179,7 @@ public class PantallaReservarVuelo extends AppCompatActivity {
 
     private String generarCodigoReserva() {
         Random generadorAleatorios = new Random();
-
         int numeroAleatorio = 1+generadorAleatorios.nextInt();
-
         return "REV-"+numeroAleatorio;
     }
 
@@ -270,7 +261,6 @@ public class PantallaReservarVuelo extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 adapterView.getItemAtPosition(i).toString();
-                //layoutTrivias.getEditText().setText((String)adapterView.getItemAtPosition(i));
             }
         });
         if(getIntent().hasExtra("Seleccionar Metodo de Pago"))
@@ -315,14 +305,11 @@ public class PantallaReservarVuelo extends AppCompatActivity {
             @Override
             public void onClick(View arg0) {
                 if(cantPasajerosRegistradosRestantes>0) {
-                    // get prompts.xml view
                     LayoutInflater li = LayoutInflater.from(context);
                     View promptsView = li.inflate(R.layout.popup_registrar_pasajero, null);
 
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                             context);
-
-                    // set prompts.xml to alertdialog builder
                     alertDialogBuilder.setView(promptsView);
                     MaterialTextView numeroPasajero = (MaterialTextView) promptsView
                             .findViewById(R.id.MaterialTextViewNumeroPasajeroPopupRP);
@@ -334,7 +321,6 @@ public class PantallaReservarVuelo extends AppCompatActivity {
                     final EditText dniCargado = (EditText) promptsView
                             .findViewById(R.id.EditTextDNIPopupRP);
 
-                    // set dialog message
                     alertDialogBuilder
                             .setCancelable(false)
                             .setPositiveButton("OK",

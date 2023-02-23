@@ -14,7 +14,7 @@ import java.util.List;
 public class DataBase extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ELECTIVA_FINAL.db";
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 14;
 
     public DataBase(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -22,18 +22,14 @@ public class DataBase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase dataBase) {
-        // IF NOT EXIST CREATE DATABASE
         dataBase.execSQL("CREATE TABLE TARIFA(ID_TARIFA INTEGER PRIMARY KEY AUTOINCREMENT, CODE text, NAME text, PRICE float)");
         dataBase.execSQL("CREATE TABLE PAGO(ID_PAGO INTEGER PRIMARY KEY AUTOINCREMENT, DateTime DATE, ID_TARIFA int, DISCOUNT float, NUMBER_PASSENGERS int, TOTAL_AMOUNT float, PAYMENT_TYPE text, NUMBER_CONFIRM int)");
         dataBase.execSQL("CREATE TABLE VUELO(ID_VUELO INTEGER PRIMARY KEY AUTOINCREMENT, CODE text, ORIGIN text, ARRIVAL text, DATE_ORIGIN text, DATE_ARRIVAL text, CAPABILITY int, RESTRICTION double, AVION text)");
         dataBase.execSQL("CREATE TABLE ASIENTO_VUELO(ID_ASIENTO_VUELO INTEGER PRIMARY KEY AUTOINCREMENT, ID_VUELO int, CODE_ASIENTO text, ESTADO text)");
         dataBase.execSQL("CREATE TABLE ASIENTO(ID_ASIENTO INTEGER PRIMARY KEY AUTOINCREMENT, LINE text, NUMBER int, CODE text, ID_TARIFA int)");
         dataBase.execSQL("CREATE TABLE RESERVA(ID_RESERVA INTEGER PRIMARY KEY AUTOINCREMENT, CODE text, CODE_VUELO text, ID_PAGO int, IS_CANCEL boolean, ID_PASAJERO int)");
-        //tabla intermedia entre los la reserva y los tickets
-        //dataBase.execSQL("CREATE TABLE ASIENTOS_RESERVAS(id int primary key, id_reserva int, id_asiento int)");
         dataBase.execSQL("CREATE TABLE RESERVA_PERSONA(ID_RESERVA_PERSONA INTEGER PRIMARY KEY AUTOINCREMENT, CODE_RESERVA, DNI_PERSONA)");
         dataBase.execSQL("CREATE TABLE PERSONA(ID_PERSONA INTEGER PRIMARY KEY AUTOINCREMENT, DNI int, NAME text, SURNAME text, USERNAME text, PASSWORD text, IS_ADMIN boolean)");
-        // tabla intermedia para asociar las reservas a la persona
         dataBase.execSQL("CREATE TABLE TICKET(ID_TICKET INTEGER PRIMARY KEY AUTOINCREMENT, CODE text, ID_PERSONA int, ISVALID boolean)");
     }
 
@@ -131,7 +127,6 @@ public class DataBase extends SQLiteOpenHelper {
                 esAdmin = true;
             else
                 esAdmin = false;
-            //esAdmin = Boolean.parseBoolean(cursor.getString(6));
             p = new Persona(/*id, */ doc, nom, apell, user, pass, esAdmin);
         }
         return p;
@@ -146,7 +141,6 @@ public class DataBase extends SQLiteOpenHelper {
             int id, doc;
             String nom, apell, user, pass;
             Boolean esAdmin;
-            // id = cursor.getInt(0);
             doc = cursor.getInt(1);
             nom = cursor.getString(2);
             apell = cursor.getString(3);
@@ -302,7 +296,7 @@ public class DataBase extends SQLiteOpenHelper {
     //region reserva
     public Cursor traerReservas() {
         SQLiteDatabase database = this.getWritableDatabase();
-        Cursor data = database.rawQuery("SELECT ID_RESERVA, CODE FROM RESERVA", null);
+        Cursor data = database.rawQuery("SELECT ID_RESERVA, CODE FROM RESERVA WHERE IS_CANCEL = false", null);
         return data;
     }
 
@@ -341,7 +335,6 @@ public class DataBase extends SQLiteOpenHelper {
 
     }
 
-    //region asiento_vuelos
     //region asiento_vuelos
     public void ocuparAsientoxVuelo(String codeVuelo, String tipoTarifa, int cantPasajeros)
     {
@@ -390,14 +383,6 @@ public class DataBase extends SQLiteOpenHelper {
     //endregion
 
     //region pago
-    /*public void guardarPago(String code, float discount, int cantPasajeros, float totalPrice, String payment, int nroConfirm)
-    {
-        SQLiteDatabase dataBase = this.getWritableDatabase();
-        String q = "INSERT INTO PAGO(ID_TARIFA, DISCOUNT, NUMBER_PASSENGERS, TOTAL_AMOUNT, PAYMENT_TYPE, NUMBER_CONFIRM) SELECT * FROM ( SELECT T.ID_TARIFA AS ID_TARIFA,"+discount+" AS DISCOUNT,"+cantPasajeros+" AS NUMBER_PASSENGERS,"+totalPrice+" AS TOTAL_AMAOUNT,"+"'"+payment+"'"+" AS PAYMENT_TYPE,"+nroConfirm+" )";
-                //"SELECT * FROM ( SELECT T.ID_TARIFA AS ID_TARIFA,"+discount+" AS DISCOUNT, "+cantPasajeros+" AS NUMBER_PASSENGERS,"+totalPrice+" AS TOTAL_AMAOUNT,+"'"+payment+"',"+""+nroConfirm+"" +
-                //"FROM TARIFA AS T WHERE CODE="+"'"+code+"'";
-        dataBase.execSQL( q );
-    }*/
 
     public int guardarPago(int idTarifa, float discount, int cantPasajeros, float totalPrice, String payment, int nroConfirm)
     {
@@ -432,8 +417,10 @@ public class DataBase extends SQLiteOpenHelper {
 
     public void eliminarReserva(String code)
     {
-            SQLiteDatabase db= this.getWritableDatabase();
-            db.delete("RESERVA","CODE=?",new String[]{code});
+        SQLiteDatabase dataBase = this.getWritableDatabase();
+        ContentValues campos = new ContentValues();
+        campos.put("IS_CANCEL", true);
+        dataBase.update("RESERVA", campos, "CODE=?",new String[]{code});
     }
 
     public int buscarIdPago(int numeroAleatorio ) {
@@ -453,9 +440,6 @@ public class DataBase extends SQLiteOpenHelper {
             id = data.getInt(0);
         return id;
     }
-
-
-
     // endregion
 
 }

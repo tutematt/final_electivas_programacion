@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,7 +29,6 @@ public class PantallaRecuperarContrasenia extends AppCompatActivity {
     Button btnVolver, btnRecuperar;
     TextInputLayout dni;
     int idPersona = 0;
-    String docStr = "";
     DataBase admin = new DataBase(PantallaRecuperarContrasenia.this);
 
     @Override

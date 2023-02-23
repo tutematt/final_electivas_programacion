@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class AdapterReservaAdmin extends RecyclerView.Adapter<AdapterReservaAdmin.MyViewHolder>{
     private Context context;
-    private ArrayList nombres, ids, fechaOrigen, fechaDestino, precioVuelos;
+    private ArrayList nombres, ids;
     private Activity activity;
     private String modoUso, cantPasajeros;
 
@@ -59,8 +59,8 @@ public class AdapterReservaAdmin extends RecyclerView.Adapter<AdapterReservaAdmi
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
 
-        TextView nombres, ids, fechaOrigen, fechaDestino, horaOrigen, horaDestino, precioVuelo;
-        LinearLayout mainLayout, searchLayout;
+        TextView nombres, ids;
+        LinearLayout mainLayout;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -1,7 +1,5 @@
 package com.example.final_electivas_programacion;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,20 +9,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
-
 import com.google.android.material.textfield.TextInputLayout;
-
-import java.time.LocalDate;
-
 
 public class LoginActivity extends AppCompatActivity {
 
     Button login, crearUsuario, recuperarContrasenia;
     Cursor data;
-    Integer idPersona; // REVISAR COMO MANEJAR VARIABLES "GLOBALES" PARA SABER SI ES ADMIN O NO
-    Boolean esAdmin; // REVISAR COMO MANEJAR VARIABLES "GLOBALES" PARA SABER SI ES ADMIN O NO
-
-    /*Layout*/
+    Integer idPersona;
     TextInputLayout layoutUser, layoutPass;
 
     @Override
