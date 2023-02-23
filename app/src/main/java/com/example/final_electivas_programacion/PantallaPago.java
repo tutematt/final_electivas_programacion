@@ -23,7 +23,7 @@ public class PantallaPago extends AppCompatActivity {
     private static final String CHANNEL_ID = "canal";
     private PendingIntent pendingIntent;
     String codigo_reserva, codigo_tarifa;
-            Float descuento, total;
+    float descuento, total;
     int cantPasajeros;
     DataBase bd;
     @Override
@@ -33,9 +33,9 @@ public class PantallaPago extends AppCompatActivity {
 
         codigo_reserva = getIntent().getStringExtra("codigo_reserva");
         codigo_tarifa = getIntent().getStringExtra("codigo_tarifa");
-        descuento = Float.parseFloat(getIntent().getStringExtra("descuento"));
-        cantPasajeros = Integer.parseInt(getIntent().getStringExtra("cant_pasajeros"));
-        total = Float.parseFloat(getIntent().getStringExtra("total"));
+        descuento = getIntent().getFloatExtra("descuento", 0);
+        cantPasajeros = getIntent().getIntExtra("cant_pasajeros", 0);
+        total = getIntent().getFloatExtra("total", 0);
         bd = new DataBase(PantallaPago.this);
 
         Handler handler = new Handler();
