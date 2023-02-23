@@ -56,7 +56,11 @@ public class PantallaReservarVuelo extends AppCompatActivity {
 
         if(esAdmin)
         {
-            completarReserva();
+            Cursor cursor = db.buscarReserva(codReserva);
+            completarReserva(cursor);
+            cancelarReserva.setOnClickListener(view -> {
+                cancelarReserva(cursor);
+            });
         }
         else
         {
@@ -82,8 +86,29 @@ public class PantallaReservarVuelo extends AppCompatActivity {
 
     }
 
-    private void completarReserva() {
-        Cursor cursor = db.buscarReserva(codReserva);
+    private void cancelarReserva(Cursor cursor) {
+        if(cursor.getCount()!=0)
+        {
+            if(cursor.moveToFirst())
+            {
+                db.desocuparAsientoxVuelo(cursor.getString(0), cursor.getString(8), cursor.getInt(4));
+                db.actualizarCapacidad(cursor.getString(0), cursor.getInt(9));
+                db.eliminarReserva(codReserva);
+                volverCancelar();
+            }
+        }
+
+    }
+
+    private void volverCancelar() {
+        Toast.makeText(this, "Reserva Eliminada con Exito.", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this, AdminActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
+
+    private void completarReserva(Cursor cursor) {
+
         if(cursor.getCount()!=0)
         {
             while(cursor.moveToNext())
@@ -96,7 +121,7 @@ public class PantallaReservarVuelo extends AppCompatActivity {
                 String[] partesFecha = fechaOrigen.split(" ");
                 layoutFechaIda.getEditText().setText(partesFecha[0]);
                 layoutHoraIda.getEditText().setText(partesFecha[1]);
-                String fechaDestino = cursor.getString(2);
+                String fechaDestino = cursor.getString(1);
                 partesFecha = fechaDestino.split(" ");
                 layoutFechaVuelta.getEditText().setText(partesFecha[0]);
                 layoutHoraVuelta.getEditText().setText(partesFecha[1]);
@@ -194,8 +219,8 @@ public class PantallaReservarVuelo extends AppCompatActivity {
                 layoutHoraVuelta.getEditText().setText(partesFecha[1]);
                 layoutCantPasajeros.getEditText().setText(String.valueOf(cantPasajeros));
                 layoutPrecioTotal.getEditText().setText("$ "+String.valueOf(precio));
-                layoutDescuento.getEditText().setText("$ "+String.valueOf(precio-precioDescuento));
-                layoutPrecioAPagar.getEditText().setText("$ "+String.valueOf((precioDescuento * cantPasajeros)));
+                layoutDescuento.getEditText().setText("$ "+String.valueOf(precioDescuento));
+                layoutPrecioAPagar.getEditText().setText("$ "+String.valueOf(((precio-precioDescuento) * cantPasajeros)));
             }
         }
     }
@@ -205,7 +230,7 @@ public class PantallaReservarVuelo extends AppCompatActivity {
             precioDescuento = precio-(precio*75/100);
         else if(diasDiferencia>=1)
         {
-            precioDescuento = (float) (precio-(precio*0.5/100)*diasDiferencia);
+            precioDescuento = (float) ((precio*0.5/100)*diasDiferencia);
         }
         else
             precioDescuento = 0;

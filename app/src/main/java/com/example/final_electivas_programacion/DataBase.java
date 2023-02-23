@@ -235,6 +235,19 @@ public class DataBase extends SQLiteOpenHelper {
         return data;
     }
 
+    public Cursor traerVuelossinFecha(String tarifa) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor data = database.rawQuery("SELECT V.CODE, COUNT(AV.ESTADO) AS ASIENTOS_DISPONIBLES, T.PRICE, V.DATE_ORIGIN, V.DATE_ARRIVAL " +
+                "FROM VUELO AS V " +
+                "JOIN ASIENTO_VUELO AS AV ON V.ID_VUELO=AV.ID_VUELO " +
+                "JOIN ASIENTO AS A ON A.CODE=AV.CODE_ASIENTO " +
+                "JOIN TARIFA AS T ON T.ID_TARIFA=A.ID_TARIFA " +
+                "WHERE V.CAPABILITY>0 AND AV.ESTADO='Disponible' AND T.NAME="+"'"+tarifa+"' " +
+                "GROUP BY V.CODE, V.DATE_ORIGIN, V.DATE_ARRIVAL, AV.ESTADO, T.PRICE " +
+                "ORDER BY V.CODE", null);
+        return data;
+    }
+
 
 
     public void crearAsientos(int cant) {
@@ -316,8 +329,9 @@ public class DataBase extends SQLiteOpenHelper {
     public Cursor buscarReserva(String code) { //Busco la reserva con el IdReserva
         //ERROR     Caused by: android.database.sqlite.SQLiteException: no such column: Reserva.idReserva (code 1 SQLITE_ERROR): , while compiling: SELECT CODE, CODE_VUELO, ID_PASAJERO FROM RESERVA WHERE Reserva.idReserva = idReserva
         SQLiteDatabase database = this.getWritableDatabase();
-        Cursor data = database.rawQuery("SELECT R.CODE, V.DATE_ARRIVAL, V.DATE_ORIGIN, P.DISCOUNT, P.NUMBER_PASSENGERS, P.TOTAL_AMOUNT, P.PAYMENT_TYPE, P.NUMBER_CONFIRM " +
+        Cursor data = database.rawQuery("SELECT V.CODE, V.DATE_ARRIVAL, V.DATE_ORIGIN, P.DISCOUNT, P.NUMBER_PASSENGERS, P.TOTAL_AMOUNT, P.PAYMENT_TYPE, P.NUMBER_CONFIRM, T.NAME, V.CAPABILITY " +
                 "FROM RESERVA AS R JOIN PAGO AS P ON R.ID_PAGO = P.ID_PAGO " +
+                "JOIN TARIFA AS T ON T.ID_TARIFA=P.ID_TARIFA " +
                 "JOIN VUELO AS V ON V.CODE=R.CODE_VUELO WHERE R.CODE="+"'"+code+"'", null);
         return data;
     }
@@ -343,6 +357,32 @@ public class DataBase extends SQLiteOpenHelper {
         }catch (Exception exception) {
             exception.getMessage();
         }
+    }
+
+    public void desocuparAsientoxVuelo(String codeVuelo, String tipoTarifa, int cantPasajeros)
+    {
+        try
+        {
+            SQLiteDatabase dataBase = this.getWritableDatabase();
+            String q = "UPDATE ASIENTO_VUELO SET ESTADO='Disponible' " +
+                    "WHERE ID_ASIENTO_VUELO IN (SELECT ID_ASIENTO_VUELO FROM VUELO AS V " +
+                    "JOIN ASIENTO_VUELO AS AV ON V.ID_VUELO=AV.ID_VUELO " +
+                    "JOIN ASIENTO AS A ON AV.CODE_ASIENTO=A.CODE " +
+                    "JOIN TARIFA AS T ON T.ID_TARIFA=A.ID_TARIFA " +
+                    "WHERE V.CODE="+"'"+codeVuelo+"'  AND T.NAME="+"'"+tipoTarifa+"'  AND AV.ESTADO='Ocupado' LIMIT "+""+cantPasajeros+" ) ";
+            dataBase.execSQL( q );
+        }catch (Exception exception) {
+            exception.getMessage();
+        }
+    }
+
+    public void actualizarCapacidad(String codeVuelo, int cantPasajeros)
+    {
+        SQLiteDatabase db= this.getWritableDatabase();
+        ContentValues registro = new ContentValues();
+        registro.put("CAPABILITY", cantPasajeros);
+
+        db.update("VUELO", registro, "CODE =?",new String[]{String.valueOf(codeVuelo)});
     }
     //endregion
 
@@ -372,10 +412,6 @@ public class DataBase extends SQLiteOpenHelper {
         dataBase.close();
         return (int) insertID;
     }
-
-
-
-
     //endregion
 
     public Cursor cargarTarfias() {
@@ -391,6 +427,12 @@ public class DataBase extends SQLiteOpenHelper {
         if(data.moveToFirst())
             id = data.getInt(0);
         return id;
+    }
+
+    public void eliminarReserva(String code)
+    {
+            SQLiteDatabase db= this.getWritableDatabase();
+            db.delete("RESERVA","CODE=?",new String[]{code});
     }
 
     public int buscarIdPago(int numeroAleatorio ) {
@@ -411,28 +453,6 @@ public class DataBase extends SQLiteOpenHelper {
         return id;
     }
 
-   /*
-    public Vuelo buscarVueloPorAvionYFecha(String username) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Persona v = null;
-        String q = "SELECT * FROM Vuelo WHERE AVION = " + "'" + FECHA + "';";
-        Cursor cursor = db.rawQuery(q, null);
-        if (cursor.moveToFirst()) {
-            int capacidad;
-            double restriccion;
-            String codigo, origen, destino;
-            codigo = cursor.getString(0);
-            doc = cursor.getInt(1);
-            nom = cursor.getString(2);
-            apell = cursor.getString(3);
-            user = cursor.getString(4);
-            pass = cursor.getString(5);
-            esAdmin = Boolean.parseBoolean(cursor.getString(6));
-            v = new Vuelo(doc, nom, apell, user, pass, esAdmin);
-        }
-        return v;
-    }
-    */
 
 
     // endregion

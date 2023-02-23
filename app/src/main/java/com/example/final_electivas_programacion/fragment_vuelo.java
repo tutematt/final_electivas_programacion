@@ -193,7 +193,7 @@ public class fragment_vuelo extends Fragment {
         if(seleccionoFecha)
             cursor = db.traerVuelosxFecha(fechaDesde, fechaHasta, tarifa);
         else
-            cursor = db.traerVuelos();
+            cursor = db.traerVuelossinFecha(tarifa);
         if(cursor.getCount() == 0)
             Toast.makeText(getActivity(), "No hay vuelos para mostrar.", Toast.LENGTH_SHORT).show();
         else
