@@ -33,14 +33,13 @@ public class PantallaReservarVuelo extends AppCompatActivity {
     Button realizarReserva, cancelarReserva, popupRegistrarPasajero;
     AutoCompleteTextView autoCompleteMetodoDePago;
     MaterialTextView numeroPasajero;
-    TextInputLayout registrarPasajeros, layoutVuelo, layoutOrigen, layoutDestino, layoutFechaIda, layoutFechaVuelta, layoutHoraIda,
-            layoutHoraVuelta, layoutDescuento,layoutPrecioAPagar, layoutPrecioTotal, layoutCantPasajeros;
+    TextInputLayout registrarPasajeros, layoutVuelo, layoutOrigen, layoutDestino, layoutFechaIda, layoutFechaVuelta, layoutHoraIda, layoutHoraVuelta, layoutDescuento,layoutPrecioAPagar, layoutPrecioTotal, layoutCantPasajeros;
     int cantPasajeros, pasajeroDni;
     int cantPasajerosRegistradosRestantes = -1;
     float precio, precioDescuento = 0;
-    boolean reservar_vuelo = false;
+    boolean reservar_vuelo, esAdmin;
     String codigoVuelo = "", tipoTarifa ="";
-    String pasajeroNombre, pasajeroApellido;
+    String pasajeroNombre, pasajeroApellido, codReserva;
 
     DataBase db;
 
@@ -54,18 +53,55 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         precio = Float.parseFloat(getIntent().getStringExtra("precio_vuelo"));
         cantPasajeros = Integer.parseInt(getIntent().getStringExtra("cant_pasajeros"));
         tipoTarifa = getIntent().getStringExtra("tarifa");
+        esAdmin = getIntent().getBooleanExtra("editar", false);
+        codReserva = getIntent().getStringExtra("codigo_reserva");
 
-        setearBotones();
-        setearSeleccionUsuario();
-        completarComboMetodoDePago();
-        db = new DataBase(PantallaReservarVuelo.this);
-        buscarVuelo();
-        realizarReserva.setOnClickListener(view -> {
-            reservarPasaje();
-        });
-        popupRegistrarPasajero.setOnClickListener(view -> {
-            registrarPasajero();
-        });
+        if(esAdmin)
+        {
+            completarReserva();
+        }
+        else
+        {
+            setearBotones();
+            setearSeleccionUsuario();
+            completarComboMetodoDePago();
+
+            db = new DataBase(PantallaReservarVuelo.this);
+
+            buscarVuelo();
+            realizarReserva.setOnClickListener(view -> {
+                reservarPasaje();
+            });
+            popupRegistrarPasajero.setOnClickListener(view -> {
+                registrarPasajero();
+            });
+        }
+
+    }
+
+    private void completarReserva() {
+        Cursor cursor = db.buscarReserva(codReserva);
+        if(cursor.getCount()!=0)
+        {
+            while(cursor.moveToNext())
+            {
+                layoutVuelo.getEditText().setText(cursor.getString(0));
+                layoutOrigen.getEditText().setText("Ezeiza");
+                layoutDestino.getEditText().setText("Destino");
+                layoutCantPasajeros.getEditText().setText(cursor.getString(4));
+                String fechaOrigen = cursor.getString(2);
+                String[] partesFecha = fechaOrigen.split(" ");
+                layoutFechaIda.getEditText().setText(partesFecha[0]);
+                layoutHoraIda.getEditText().setText(partesFecha[1]);
+                String fechaDestino = cursor.getString(3);
+                partesFecha = fechaDestino.split(" ");
+                layoutFechaVuelta.getEditText().setText(partesFecha[0]);
+                layoutHoraVuelta.getEditText().setText(partesFecha[1]);
+                layoutDescuento.getEditText().setText(String.valueOf(cursor.getFloat(3)));
+                layoutPrecioTotal.getEditText().setText(String.valueOf(cursor.getFloat(5)));
+                autoCompleteMetodoDePago.setText(cursor.getString(6)+cursor.getString(7));
+            }
+        }
     }
 
     private void reservarPasaje() {
@@ -127,9 +163,6 @@ public class PantallaReservarVuelo extends AppCompatActivity {
     }
 
     private void buscarVuelo(){
-        db.buscarVuelo(codigoVuelo);
-
-
         Cursor cursor = db.buscarVuelo(codigoVuelo);
         if(cursor.getCount()!=0)
         {
@@ -162,10 +195,12 @@ public class PantallaReservarVuelo extends AppCompatActivity {
     private void calcularDescuento(int diasDiferencia) {
         if(diasDiferencia >= 150)
             precioDescuento = precio-(precio*75/100);
-        else
+        else if(diasDiferencia>=1)
         {
-            precioDescuento = (float) (precio*(precio*0.5/100));
+            precioDescuento = (float) (precio-(precio*0.5/100)*diasDiferencia);
         }
+        else
+            precioDescuento = 0;
     }
 
     private void setearBotones() {
@@ -306,7 +341,7 @@ public class PantallaReservarVuelo extends AppCompatActivity {
             pasajeroNombre = pasajero.getNombre();
             pasajeroApellido = pasajero.getApellido();
             pasajeroDni = pasajero.getDni();
-            if(buscarPasajeroPorDNI(pasajero.getDni()) == false){   //false = no existe registro
+            if(buscarPasajeroPorDNI(pasajero.getDni()) == false){//false = no existe registro
                 db.crearPasajero(pasajeroNombre, pasajeroApellido, pasajeroDni);
             }
         }

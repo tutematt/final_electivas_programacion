@@ -14,7 +14,7 @@ import java.util.List;
 public class DataBase extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ELECTIVA_FINAL.db";
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 13;
 
     public DataBase(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -313,10 +313,12 @@ public class DataBase extends SQLiteOpenHelper {
 
         db.update("RESERVA", registro, "ID_RESERVA =?",new String[]{String.valueOf(idReserva)});
     }
-    public Cursor buscarReserva(int idReserva) { //Busco la reserva con el IdReserva
+    public Cursor buscarReserva(String code) { //Busco la reserva con el IdReserva
         //ERROR     Caused by: android.database.sqlite.SQLiteException: no such column: Reserva.idReserva (code 1 SQLITE_ERROR): , while compiling: SELECT CODE, CODE_VUELO, ID_PASAJERO FROM RESERVA WHERE Reserva.idReserva = idReserva
         SQLiteDatabase database = this.getWritableDatabase();
-        Cursor data = database.rawQuery("SELECT CODE, CODE_VUELO, ID_PASAJERO FROM RESERVA WHERE Reserva.idReserva = idReserva", null);
+        Cursor data = database.rawQuery("SELECT R.CODE, V.DATE_ARRIVAL, V.DATE_ORIGIN, P.DISCOUNT, P.NUMBER_PASSENGERS, P.TOTAL_AMOUNT, P.PAYMENT, P.NUMBER_CONFIRM " +
+                "FROM RESERVA AS R JOIN PAGO AS P ON R.ID_PAGO = P.ID_PAGO " +
+                "JOIN VUELO AS V ON V.CODE=R.CODE_VUELO WHERE R.CODE="+"'"+code+"'", null);
         return data;
     }
     public void agregarPersonaxReserva(List<Persona> pasajeros)
@@ -347,14 +349,31 @@ public class DataBase extends SQLiteOpenHelper {
     //endregion
 
     //region pago
-    public void guardarPago(String code, float discount, int cantPasajeros, float totalPrice, String payment, int nroConfirm)
+    /*public void guardarPago(String code, float discount, int cantPasajeros, float totalPrice, String payment, int nroConfirm)
     {
         SQLiteDatabase dataBase = this.getWritableDatabase();
-        String q = "INSERT INTO PAGO(ID_TARIFA, DISCOUNT, NUMBER_PASSENGERS, TOTAL_AMOUNT, PAYMENT_TYPE, NUMBER_CONFIRM)" +
-                "SELECT * FROM ( SELECT T.ID_TARIFA,"+"'"+discount+"',"+"'"+cantPasajeros+"',"+"'"+totalPrice+"',"+"'"+payment+"',"+"'"+nroConfirm+"'  " +
-                "FROM TARIFA WHERE CODE="+"'"+code+"'";
+        String q = "INSERT INTO PAGO(ID_TARIFA, DISCOUNT, NUMBER_PASSENGERS, TOTAL_AMOUNT, PAYMENT_TYPE, NUMBER_CONFIRM) SELECT * FROM ( SELECT T.ID_TARIFA AS ID_TARIFA,"+discount+" AS DISCOUNT,"+cantPasajeros+" AS NUMBER_PASSENGERS,"+totalPrice+" AS TOTAL_AMAOUNT,"+"'"+payment+"'"+" AS PAYMENT_TYPE,"+nroConfirm+" )";
+                //"SELECT * FROM ( SELECT T.ID_TARIFA AS ID_TARIFA,"+discount+" AS DISCOUNT, "+cantPasajeros+" AS NUMBER_PASSENGERS,"+totalPrice+" AS TOTAL_AMAOUNT,+"'"+payment+"',"+""+nroConfirm+"" +
+                //"FROM TARIFA AS T WHERE CODE="+"'"+code+"'";
         dataBase.execSQL( q );
+    }*/
+
+    public int guardarPago(int idTarifa, float discount, int cantPasajeros, float totalPrice, String payment, int nroConfirm)
+    {
+        SQLiteDatabase dataBase = this.getWritableDatabase();
+        ContentValues campos = new ContentValues();
+        campos.put("ID_TARIFA", idTarifa);
+        campos.put("NUMBER_PASSENGERS", cantPasajeros);
+        campos.put("DISCOUNT", discount);
+        campos.put("TOTAL_AMOUNT", totalPrice);
+        campos.put("PAYMENT_TYPE", payment);
+        campos.put("NUMBER_CONFIRM", nroConfirm);
+        long insertID = dataBase.insert("PAGO", null, campos);
+        dataBase.close();
+        return (int) insertID;
     }
+
+
 
 
     //endregion
@@ -363,6 +382,33 @@ public class DataBase extends SQLiteOpenHelper {
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor data = database.rawQuery("SELECT NAME, PRICE FROM TARIFA", null);
         return data;
+    }
+
+    public int buscarIdReserva(String codigo_reserva) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        int id=0;
+        Cursor data = database.rawQuery("SELECT ID_RESERVA FROM RESERVA WHERE CODE="+"'"+codigo_reserva+"'", null);
+        if(data.moveToFirst())
+            id = data.getInt(0);
+        return id;
+    }
+
+    public int buscarIdPago(int numeroAleatorio ) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        int id=0;
+        Cursor data = database.rawQuery("SELECT ID_PAGO FROM PAGO WHERE NUMBER_CONFIRM="+"'"+numeroAleatorio+"'", null);
+        if(data.moveToFirst())
+            id = data.getInt(0);
+        return id;
+    }
+
+    public int buscarTarifa(String codigo_tarifa) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        int id=0;
+        Cursor data = database.rawQuery("SELECT ID_TARIFA FROM TARIFA WHERE CODE="+"'"+codigo_tarifa+"'", null);
+        if(data.moveToFirst())
+            id = data.getInt(0);
+        return id;
     }
 
    /*

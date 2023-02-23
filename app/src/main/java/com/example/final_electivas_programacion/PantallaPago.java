@@ -43,8 +43,12 @@ public class PantallaPago extends AppCompatActivity {
             public void run() {
                 try {
                     Random generadorAleatorios = new Random();
-                    int numeroAleatorio = 1+generadorAleatorios.nextInt();
-                    bd.guardarPago(codigo_reserva, descuento, cantPasajeros, total, "efectivo", numeroAleatorio);
+                    int numeroAleatorio = 1+generadorAleatorios.nextInt(999999999);
+                    int idTarifa = bd.buscarTarifa(codigo_tarifa);
+                    bd.guardarPago(idTarifa, descuento, cantPasajeros, total, "efectivo", numeroAleatorio);
+                    int idReserva = bd.buscarIdReserva(codigo_reserva);
+                    int idPago = bd.buscarIdPago(numeroAleatorio);
+                    bd.actualizarReservaPago(idPago, idReserva);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         enviarNotificacion("Gracias por volar con UM-AIRLINES. Ya tienes disponible tu código de reserva es "+ codigo_reserva);
                     }
