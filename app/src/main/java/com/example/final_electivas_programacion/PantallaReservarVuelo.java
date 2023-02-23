@@ -125,9 +125,9 @@ public class PantallaReservarVuelo extends AppCompatActivity {
                 partesFecha = fechaDestino.split(" ");
                 layoutFechaVuelta.getEditText().setText(partesFecha[0]);
                 layoutHoraVuelta.getEditText().setText(partesFecha[1]);
-                String desc = String.valueOf(cursor.getFloat(5));
+                String desc = String.valueOf(cursor.getFloat(3));
                 layoutDescuento.getEditText().setText(desc);
-                float total = cursor.getFloat(3);
+                float total = cursor.getFloat(5);
                 layoutPrecioTotal.getEditText().setText(String.valueOf(total));
                 int cantPasajeros = cursor.getInt(4);
                 layoutPrecioAPagar.getEditText().setText(String.valueOf(total * cantPasajeros));
