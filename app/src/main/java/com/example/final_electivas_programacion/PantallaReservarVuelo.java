@@ -48,7 +48,8 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservar_vuelo);
 
-
+        setearBotones();
+        db = new DataBase(PantallaReservarVuelo.this);
         esAdmin = getIntent().getBooleanExtra("editar", false);
         codReserva = getIntent().getStringExtra("codigo_reserva");
 
@@ -63,11 +64,11 @@ public class PantallaReservarVuelo extends AppCompatActivity {
             precio = Float.parseFloat(getIntent().getStringExtra("precio_vuelo"));
             cantPasajeros = Integer.parseInt(getIntent().getStringExtra("cant_pasajeros"));
             tipoTarifa = getIntent().getStringExtra("tarifa");
-            setearBotones();
+
             setearSeleccionUsuario();
             completarComboMetodoDePago();
 
-            db = new DataBase(PantallaReservarVuelo.this);
+
 
             buscarVuelo();
             realizarReserva.setOnClickListener(view -> {
@@ -94,7 +95,7 @@ public class PantallaReservarVuelo extends AppCompatActivity {
                 String[] partesFecha = fechaOrigen.split(" ");
                 layoutFechaIda.getEditText().setText(partesFecha[0]);
                 layoutHoraIda.getEditText().setText(partesFecha[1]);
-                String fechaDestino = cursor.getString(3);
+                String fechaDestino = cursor.getString(2);
                 partesFecha = fechaDestino.split(" ");
                 layoutFechaVuelta.getEditText().setText(partesFecha[0]);
                 layoutHoraVuelta.getEditText().setText(partesFecha[1]);
