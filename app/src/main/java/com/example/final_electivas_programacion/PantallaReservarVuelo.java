@@ -48,11 +48,7 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservar_vuelo);
 
-        reservar_vuelo = getIntent().getBooleanExtra("reservar_vuelo", false);
-        codigoVuelo = getIntent().getStringExtra("codigo_vuelo");
-        precio = Float.parseFloat(getIntent().getStringExtra("precio_vuelo"));
-        cantPasajeros = Integer.parseInt(getIntent().getStringExtra("cant_pasajeros"));
-        tipoTarifa = getIntent().getStringExtra("tarifa");
+
         esAdmin = getIntent().getBooleanExtra("editar", false);
         codReserva = getIntent().getStringExtra("codigo_reserva");
 
@@ -62,6 +58,11 @@ public class PantallaReservarVuelo extends AppCompatActivity {
         }
         else
         {
+            reservar_vuelo = getIntent().getBooleanExtra("reservar_vuelo", false);
+            codigoVuelo = getIntent().getStringExtra("codigo_vuelo");
+            precio = Float.parseFloat(getIntent().getStringExtra("precio_vuelo"));
+            cantPasajeros = Integer.parseInt(getIntent().getStringExtra("cant_pasajeros"));
+            tipoTarifa = getIntent().getStringExtra("tarifa");
             setearBotones();
             setearSeleccionUsuario();
             completarComboMetodoDePago();
