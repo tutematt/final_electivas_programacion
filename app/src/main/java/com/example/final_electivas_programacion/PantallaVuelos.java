@@ -123,7 +123,6 @@ public class PantallaVuelos extends AppCompatActivity {
                     timeButtonVuelta.setText(partesFecha[1]);
                     autoCompleteAvion.setText(cursor.getString(4));
                 }
-
             }
             btnEnviar.setText("Actualizar");
         }
